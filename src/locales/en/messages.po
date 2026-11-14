@@ -67,11 +67,11 @@ msgstr "Could not change the role. Please try again."
 msgid "Could not create category. Please try again."
 msgstr "Could not create category. Please try again."
 
-#: src/pages/access.tsx:84
+#: src/pages/access.tsx:74
 msgid "Could not create permission. Please try again."
 msgstr "Could not create permission. Please try again."
 
-#: src/pages/access.tsx:109
+#: src/pages/access.tsx:96
 msgid "Could not create role. Please try again."
 msgstr "Could not create role. Please try again."
 
@@ -88,7 +88,7 @@ msgstr "Could not create the account"
 msgid "Could not load categories. Please try again."
 msgstr "Could not load categories. Please try again."
 
-#: src/pages/access.tsx:99
+#: src/pages/access.tsx:89
 msgid "Could not load permissions. Please try again."
 msgstr "Could not load permissions. Please try again."
 
@@ -96,7 +96,7 @@ msgstr "Could not load permissions. Please try again."
 msgid "Could not load products. Please try again."
 msgstr "Could not load products. Please try again."
 
-#: src/pages/access.tsx:132
+#: src/pages/access.tsx:119
 msgid "Could not load roles. Please try again."
 msgstr "Could not load roles. Please try again."
 
@@ -141,13 +141,13 @@ msgstr "Create categories and assign subcategories to them."
 msgid "Create category"
 msgstr "Create category"
 
-#: src/pages/access.tsx:77
-#: src/pages/access.tsx:86
+#: src/pages/access.tsx:67
+#: src/pages/access.tsx:76
 msgid "Create permission"
 msgstr "Create permission"
 
-#: src/pages/access.tsx:91
-#: src/pages/access.tsx:111
+#: src/pages/access.tsx:81
+#: src/pages/access.tsx:98
 msgid "Create role"
 msgstr "Create role"
 
@@ -156,7 +156,7 @@ msgstr "Create role"
 msgid "Create subcategory"
 msgstr "Create subcategory"
 
-#: src/pages/access.tsx:73
+#: src/pages/access.tsx:63
 msgid "Create, edit and delete roles and permissions, and assign roles to users."
 msgstr "Create, edit and delete roles and permissions, and assign roles to users."
 
@@ -246,12 +246,12 @@ msgstr "Language"
 msgid "Loading categories…"
 msgstr "Loading categories…"
 
-#: src/pages/access.tsx:98
-#: src/pages/access.tsx:120
+#: src/pages/access.tsx:88
+#: src/pages/access.tsx:107
 msgid "Loading permissions…"
 msgstr "Loading permissions…"
 
-#: src/pages/access.tsx:130
+#: src/pages/access.tsx:117
 msgid "Loading roles…"
 msgstr "Loading roles…"
 
@@ -291,8 +291,8 @@ msgstr "No categories yet."
 msgid "No permissions assigned."
 msgstr "No permissions assigned."
 
-#: src/pages/access.tsx:101
-#: src/pages/access.tsx:121
+#: src/pages/access.tsx:91
+#: src/pages/access.tsx:108
 msgid "No permissions yet."
 msgstr "No permissions yet."
 
@@ -300,7 +300,7 @@ msgstr "No permissions yet."
 msgid "No products found."
 msgstr "No products found."
 
-#: src/pages/access.tsx:136
+#: src/pages/access.tsx:123
 msgid "No roles yet."
 msgstr "No roles yet."
 
@@ -339,13 +339,13 @@ msgid "Passwords do not match"
 msgstr "Passwords do not match"
 
 #: src/components/access/permission-list.tsx:52
-#: src/pages/access.tsx:80
+#: src/pages/access.tsx:70
 msgid "Permission name"
 msgstr "Permission name"
 
 #: src/components/access/role-list.tsx:67
-#: src/pages/access.tsx:97
-#: src/pages/access.tsx:118
+#: src/pages/access.tsx:87
+#: src/pages/access.tsx:105
 msgid "Permissions"
 msgstr "Permissions"
 
@@ -368,17 +368,16 @@ msgid "Role for {0}"
 msgstr "Role for {0}"
 
 #: src/components/access/role-list.tsx:64
-#: src/pages/access.tsx:94
+#: src/pages/access.tsx:84
 msgid "Role name"
 msgstr "Role name"
 
-#: src/pages/access.tsx:128
+#: src/pages/access.tsx:115
 msgid "Roles"
 msgstr "Roles"
 
 #: src/components/store-layout.tsx:27
-#: src/pages/access.tsx:50
-#: src/pages/access.tsx:72
+#: src/pages/access.tsx:62
 msgid "Roles and permissions"
 msgstr "Roles and permissions"
 
@@ -447,15 +446,11 @@ msgstr "Subcategory"
 msgid "Subcategory name"
 msgstr "Subcategory name"
 
-#: src/pages/access.tsx:105
-msgid "The access:manage permission grants control over roles and permissions."
-msgstr "The access:manage permission grants control over roles and permissions."
-
 #: src/pages/categories.tsx:73
 msgid "This category already exists."
 msgstr "This category already exists."
 
-#: src/pages/access.tsx:84
+#: src/pages/access.tsx:74
 msgid "This permission already exists."
 msgstr "This permission already exists."
 
@@ -463,7 +458,7 @@ msgstr "This permission already exists."
 msgid "This permission is protected, already exists, or is still assigned to a role."
 msgstr "This permission is protected, already exists, or is still assigned to a role."
 
-#: src/pages/access.tsx:109
+#: src/pages/access.tsx:96
 msgid "This role already exists."
 msgstr "This role already exists."
 
@@ -477,8 +472,8 @@ msgstr "This subcategory already exists in the selected category."
 
 #: src/components/access/user-roles-card.tsx:49
 #: src/components/auth/require-auth.tsx:29
-#: src/pages/access.tsx:100
-#: src/pages/access.tsx:133
+#: src/pages/access.tsx:90
+#: src/pages/access.tsx:120
 #: src/pages/products.tsx:96
 msgid "Try again"
 msgstr "Try again"
@@ -490,7 +485,3 @@ msgstr "Users"
 #: src/pages/login.tsx:45
 msgid "Welcome back"
 msgstr "Welcome back"
-
-#: src/pages/access.tsx:52
-msgid "You need the access:manage permission to manage roles and permissions."
-msgstr "You need the access:manage permission to manage roles and permissions."

@@ -44,16 +44,6 @@ function AccessContent() {
   if (errors.some((error) => error instanceof AccessApiError && error.status === 401)) {
     return <Navigate to={buildLinkWithRedirect('/login', location.pathname + location.search)} replace />
   }
-  if (errors.some((error) => error instanceof AccessApiError && error.status === 403)) {
-    return (
-      <div className="mx-auto max-w-6xl p-4 sm:p-6">
-        <h1 className="text-2xl font-semibold tracking-tight">{t`Roles and permissions`}</h1>
-        <p role="alert" className="mt-4 text-sm text-destructive">
-          {t`You need the access:manage permission to manage roles and permissions.`}
-        </p>
-      </div>
-    )
-  }
 
   const submitPermission = (event: FormEvent) => {
     event.preventDefault()
@@ -101,9 +91,6 @@ function AccessContent() {
                 {permissions.isSuccess && permissions.data.length === 0 && <p className="text-sm text-muted-foreground">{t`No permissions yet.`}</p>}
                 {permissions.data && <PermissionChecklist permissions={permissions.data} selected={permissionIds} onChange={setPermissionIds} />}
               </fieldset>
-              {permissions.data?.some((permission) => permission.name === 'access:manage' && permissionIds.includes(permission.id)) && (
-                <p className="text-sm text-muted-foreground">{t`The access:manage permission grants control over roles and permissions.`}</p>
-              )}
               {roleMutation.isError && <p role="alert" className="text-sm text-destructive">
                 {roleMutation.error instanceof AccessApiError && roleMutation.error.status === 409
                   ? t`This role already exists.` : t`Could not create role. Please try again.`}

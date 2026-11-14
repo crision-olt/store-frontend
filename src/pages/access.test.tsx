@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
-import { AccessApiError } from '@/lib/access-api'
 import { ThemeContext } from '@/providers/theme-context'
 import { AccessPage } from './access'
 
@@ -41,15 +40,5 @@ describe('access page', () => {
     expect(markup).toContain('Delete permission products:read')
     expect(markup).toContain('member@example.com')
     expect(markup).toContain('Role for member@example.com')
-  })
-
-  it('shows an access-denied message instead of forms after a 403', async () => {
-    const client = new QueryClient({ defaultOptions: { queries: { retry: false, retryOnMount: false } } })
-    await client.prefetchQuery({ queryKey: ['permissions'], queryFn: () => Promise.reject(new AccessApiError(403)) })
-    const markup = renderAccess(client)
-
-    expect(markup).toContain('You need the access:manage permission')
-    expect(markup).not.toContain('Create role')
-    expect(markup).not.toContain('Create permission')
   })
 })
