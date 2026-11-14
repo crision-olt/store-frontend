@@ -77,7 +77,7 @@ function RoleRow({ role, permissions }: { role: Role; permissions: Permission[] 
       {error && (
         <p role="alert" className="text-sm text-destructive">
           {error instanceof AccessApiError && error.status === 409
-            ? t`This role is protected, already exists, is assigned to users, or is the last one granting access:manage.`
+            ? t`This role is protected, already exists, or is assigned to users.`
             : t`Could not update role. Please try again.`}
         </p>
       )}

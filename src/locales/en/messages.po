@@ -19,10 +19,6 @@ msgstr "All"
 msgid "Already have an account?"
 msgstr "Already have an account?"
 
-#: src/components/access/user-roles-card.tsx:32
-msgid "At least one user must keep the access:manage permission."
-msgstr "At least one user must keep the access:manage permission."
-
 #: src/components/products/products-filters.tsx:135
 msgid "Availability"
 msgstr "Availability"
@@ -63,7 +59,7 @@ msgstr "Confirm password"
 msgid "Confirm your password"
 msgstr "Confirm your password"
 
-#: src/components/access/user-roles-card.tsx:33
+#: src/components/access/user-roles-card.tsx:31
 msgid "Could not change the role. Please try again."
 msgstr "Could not change the role. Please try again."
 
@@ -104,7 +100,7 @@ msgstr "Could not load products. Please try again."
 msgid "Could not load roles. Please try again."
 msgstr "Could not load roles. Please try again."
 
-#: src/components/access/user-roles-card.tsx:50
+#: src/components/access/user-roles-card.tsx:48
 msgid "Could not load users. Please try again."
 msgstr "Could not load users. Please try again."
 
@@ -259,7 +255,7 @@ msgstr "Loading permissions…"
 msgid "Loading roles…"
 msgstr "Loading roles…"
 
-#: src/components/access/user-roles-card.tsx:48
+#: src/components/access/user-roles-card.tsx:46
 msgid "Loading users…"
 msgstr "Loading users…"
 
@@ -312,7 +308,7 @@ msgstr "No roles yet."
 msgid "No subcategories yet."
 msgstr "No subcategories yet."
 
-#: src/components/access/user-roles-card.tsx:54
+#: src/components/access/user-roles-card.tsx:52
 msgid "No users yet."
 msgstr "No users yet."
 
@@ -472,14 +468,14 @@ msgid "This role already exists."
 msgstr "This role already exists."
 
 #: src/components/access/role-list.tsx:80
-msgid "This role is protected, already exists, is assigned to users, or is the last one granting access:manage."
-msgstr "This role is protected, already exists, is assigned to users, or is the last one granting access:manage."
+msgid "This role is protected, already exists, or is assigned to users."
+msgstr "This role is protected, already exists, or is assigned to users."
 
 #: src/pages/categories.tsx:96
 msgid "This subcategory already exists in the selected category."
 msgstr "This subcategory already exists in the selected category."
 
-#: src/components/access/user-roles-card.tsx:51
+#: src/components/access/user-roles-card.tsx:49
 #: src/components/auth/require-auth.tsx:29
 #: src/pages/access.tsx:100
 #: src/pages/access.tsx:133
@@ -487,7 +483,7 @@ msgstr "This subcategory already exists in the selected category."
 msgid "Try again"
 msgstr "Try again"
 
-#: src/components/access/user-roles-card.tsx:46
+#: src/components/access/user-roles-card.tsx:44
 msgid "Users"
 msgstr "Users"
 

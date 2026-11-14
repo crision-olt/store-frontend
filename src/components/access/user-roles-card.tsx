@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { AccessApiError, listUsers, updateUserRole, type AccessUser, type Role } from '@/lib/access-api'
+import { listUsers, updateUserRole, type AccessUser, type Role } from '@/lib/access-api'
 
 function UserRow({ user, roles }: { user: AccessUser; roles: Role[] }) {
   const { t } = useLingui()
@@ -28,9 +28,7 @@ function UserRow({ user, roles }: { user: AccessUser; roles: Role[] }) {
       </div>
       {change.isError && (
         <p role="alert" className="text-sm text-destructive">
-          {change.error instanceof AccessApiError && change.error.status === 409
-            ? t`At least one user must keep the access:manage permission.`
-            : t`Could not change the role. Please try again.`}
+          {t`Could not change the role. Please try again.`}
         </p>
       )}
     </li>
