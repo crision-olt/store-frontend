@@ -8,6 +8,16 @@ const roleSchema = z.object({
   permissions: z.array(permissionSchema),
 })
 
+const userSchema = z.object({
+  id: z.number().int().positive(),
+  email: z.string(),
+  role: z.object({ id: z.number().int().positive(), name: z.string() }),
+})
+
+export type Permission = z.infer<typeof permissionSchema>
+export type Role = z.infer<typeof roleSchema>
+export type AccessUser = z.infer<typeof userSchema>
+
 export class AccessApiError extends Error {
   readonly status: number
 
@@ -19,17 +29,19 @@ export class AccessApiError extends Error {
 }
 
 export function createAccessApi(serviceUrl: string) {
-  async function request(path: string, body?: object) {
-    const response = await fetch(resolveServiceUrl(serviceUrl, path), body === undefined
+  async function request(path: string, body?: object, method?: 'PUT' | 'DELETE') {
+    const response = await fetch(resolveServiceUrl(serviceUrl, path), body === undefined && method === undefined
       ? { credentials: 'include' }
       : {
-          method: 'POST',
+          method: method ?? 'POST',
           credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body),
+          ...(body === undefined ? {} : {
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+          }),
         })
     if (!response.ok) throw new AccessApiError(response.status)
-    return response.json()
+    return response.status === 204 ? undefined : response.json()
   }
 
   return {
@@ -45,8 +57,28 @@ export function createAccessApi(serviceUrl: string) {
     async createRole(name: string, permissionIds: number[]) {
       return roleSchema.parse(await request('/roles', { name, permissionIds }))
     },
+    async updatePermission(id: number, name: string) {
+      return permissionSchema.parse(await request(`/permissions/${id}`, { name }, 'PUT'))
+    },
+    async deletePermission(id: number) {
+      await request(`/permissions/${id}`, undefined, 'DELETE')
+    },
+    async updateRole(id: number, name: string, permissionIds: number[]) {
+      return roleSchema.parse(await request(`/roles/${id}`, { name, permissionIds }, 'PUT'))
+    },
+    async deleteRole(id: number) {
+      await request(`/roles/${id}`, undefined, 'DELETE')
+    },
+    async listUsers() {
+      return z.array(userSchema).parse(await request('/users'))
+    },
+    async updateUserRole(id: number, roleId: number) {
+      return userSchema.parse(await request(`/users/${id}/role`, { roleId }, 'PUT'))
+    },
   }
 }
 
-export const { listPermissions, listRoles, createPermission, createRole } =
-  createAccessApi(import.meta.env.AUTH_SERVICE_URL)
+export const {
+  listPermissions, listRoles, createPermission, createRole, updatePermission, deletePermission,
+  updateRole, deleteRole, listUsers, updateUserRole,
+} = createAccessApi(import.meta.env.AUTH_SERVICE_URL)

@@ -2,9 +2,12 @@ import { useLingui } from '@lingui/react/macro'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState, type FormEvent } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
+import { PermissionChecklist } from '@/components/access/permission-checklist'
+import { PermissionList } from '@/components/access/permission-list'
+import { RoleList } from '@/components/access/role-list'
+import { UserRolesCard } from '@/components/access/user-roles-card'
 import { RequireAuth } from '@/components/auth/require-auth'
 import { StoreLayout } from '@/components/store-layout'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -67,7 +70,7 @@ function AccessContent() {
     <div className="mx-auto flex max-w-6xl flex-col gap-6 p-4 sm:p-6">
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-semibold tracking-tight">{t`Roles and permissions`}</h1>
-        <p className="text-sm text-muted-foreground">{t`Create permissions and assign them to new roles.`}</p>
+        <p className="text-sm text-muted-foreground">{t`Create, edit and delete roles and permissions, and assign roles to users.`}</p>
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
@@ -96,19 +99,7 @@ function AccessContent() {
                 {permissions.isError && <p role="alert" className="text-sm text-destructive">{t`Could not load permissions. Please try again.`}</p>}
                 {permissions.isError && <Button type="button" variant="outline" size="sm" onClick={() => permissions.refetch()}>{t`Try again`}</Button>}
                 {permissions.isSuccess && permissions.data.length === 0 && <p className="text-sm text-muted-foreground">{t`No permissions yet.`}</p>}
-                {permissions.data?.map((permission) => (
-                  <label key={permission.id} className="flex items-center gap-2 text-sm">
-                    <input
-                      type="checkbox"
-                      className="size-4 accent-primary"
-                      checked={permissionIds.includes(permission.id)}
-                      onChange={(event) => setPermissionIds((current) => event.target.checked
-                        ? [...current, permission.id]
-                        : current.filter((id) => id !== permission.id))}
-                    />
-                    {permission.name}
-                  </label>
-                ))}
+                {permissions.data && <PermissionChecklist permissions={permissions.data} selected={permissionIds} onChange={setPermissionIds} />}
               </fieldset>
               {permissions.data?.some((permission) => permission.name === 'access:manage' && permissionIds.includes(permission.id)) && (
                 <p className="text-sm text-muted-foreground">{t`The access:manage permission grants control over roles and permissions.`}</p>
@@ -129,9 +120,7 @@ function AccessContent() {
             {permissions.isPending ? <p>{t`Loading permissions…`}</p> : permissions.isError ? null : permissions.data.length === 0 ? (
               <p className="text-sm text-muted-foreground">{t`No permissions yet.`}</p>
             ) : (
-              <ul className="flex flex-col gap-2">
-                {permissions.data.map((permission) => <li key={permission.id} className="break-all text-sm">{permission.name}</li>)}
-              </ul>
+              <PermissionList permissions={permissions.data} />
             )}
           </CardContent>
         </Card>
@@ -146,22 +135,12 @@ function AccessContent() {
             ) : roles.data.length === 0 ? (
               <p className="text-sm text-muted-foreground">{t`No roles yet.`}</p>
             ) : (
-              <ul className="flex flex-col gap-4">
-                {roles.data.map((role) => (
-                  <li key={role.id} className="flex flex-col gap-2">
-                    <span className="break-all text-sm font-medium">{role.name}</span>
-                    <div className="flex flex-wrap gap-1">
-                      {role.permissions.length === 0
-                        ? <span className="text-sm text-muted-foreground">{t`No permissions assigned.`}</span>
-                        : role.permissions.map((permission) => <Badge key={permission.id} variant="secondary">{permission.name}</Badge>)}
-                    </div>
-                  </li>
-                ))}
-              </ul>
+              <RoleList roles={roles.data} permissions={permissions.data ?? []} />
             )}
           </CardContent>
         </Card>
       </div>
+      {roles.isSuccess && <UserRolesCard roles={roles.data} />}
     </div>
   )
 }
