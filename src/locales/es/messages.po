@@ -7,6 +7,70 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 "Language: es\n"
 
+#: src/pages/access.tsx
+msgid "Roles and permissions"
+msgstr "Roles y permisos"
+
+msgid "You need the access:manage permission to manage roles and permissions."
+msgstr "Necesitas el permiso access:manage para gestionar roles y permisos."
+
+msgid "Create permissions and assign them to new roles."
+msgstr "Crea permisos y asígnalos a roles nuevos."
+
+msgid "Create permission"
+msgstr "Crear permiso"
+
+msgid "Permission name"
+msgstr "Nombre del permiso"
+
+msgid "This permission already exists."
+msgstr "Este permiso ya existe."
+
+msgid "Could not create permission. Please try again."
+msgstr "No se pudo crear el permiso. Inténtalo de nuevo."
+
+msgid "Create role"
+msgstr "Crear rol"
+
+msgid "Role name"
+msgstr "Nombre del rol"
+
+msgid "Permissions"
+msgstr "Permisos"
+
+msgid "Loading permissions…"
+msgstr "Cargando permisos…"
+
+msgid "Could not load permissions. Please try again."
+msgstr "No se pudieron cargar los permisos. Inténtalo de nuevo."
+
+msgid "No permissions yet."
+msgstr "Todavía no hay permisos."
+
+msgid "The access:manage permission grants control over roles and permissions."
+msgstr "El permiso access:manage otorga control sobre roles y permisos."
+
+msgid "This role already exists."
+msgstr "Este rol ya existe."
+
+msgid "Could not create role. Please try again."
+msgstr "No se pudo crear el rol. Inténtalo de nuevo."
+
+msgid "Roles"
+msgstr "Roles"
+
+msgid "Loading roles…"
+msgstr "Cargando roles…"
+
+msgid "Could not load roles. Please try again."
+msgstr "No se pudieron cargar los roles. Inténtalo de nuevo."
+
+msgid "No roles yet."
+msgstr "Todavía no hay roles."
+
+msgid "No permissions assigned."
+msgstr "Sin permisos asignados."
+
 #: src/components/products/products-filters.tsx:40
 #: src/components/products/products-filters.tsx:68
 #: src/components/products/products-filters.tsx:71

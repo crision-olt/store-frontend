@@ -18,6 +18,7 @@ function renderLayout(path: string) {
             <Routes>
               <Route path="/products" element={<StoreLayout><div>Products content</div></StoreLayout>} />
               <Route path="/categories" element={<StoreLayout><div>Categories content</div></StoreLayout>} />
+              <Route path="/access" element={<StoreLayout><div>Access content</div></StoreLayout>} />
             </Routes>
           </MemoryRouter>
         </QueryClientProvider>
@@ -30,11 +31,13 @@ describe('store navigation', () => {
   it.each([
     ['/products', 'Products content'],
     ['/categories', 'Categories content'],
-  ])('links to both pages and marks %s as current', (path, content) => {
+    ['/access', 'Access content'],
+  ])('links to the pages and marks %s as current', (path, content) => {
     const markup = renderLayout(path)
 
     expect(markup).toContain('href="/products"')
     expect(markup).toContain('href="/categories"')
+    expect(markup).toContain('href="/access"')
     expect(markup).toMatch(new RegExp(`aria-current="page"[^>]*href="${path}"`))
     expect(markup).toContain(content)
     expect(markup).toContain('Sign out')

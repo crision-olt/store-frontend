@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Boxes, FolderTree, LogOut, Store } from 'lucide-react'
+import { Boxes, FolderTree, LogOut, ShieldCheck, Store } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { LanguageSwitcher } from '@/components/language-switcher'
@@ -24,6 +24,7 @@ export function StoreLayout({ children }: { children: ReactNode }) {
   const links = [
     { to: '/products', label: t`Products`, icon: Boxes },
     { to: '/categories', label: t`Categories`, icon: FolderTree },
+    { to: '/access', label: t`Roles and permissions`, icon: ShieldCheck },
   ]
 
   return (
@@ -35,13 +36,13 @@ export function StoreLayout({ children }: { children: ReactNode }) {
           </div>
           <span className="text-sm font-semibold tracking-tight">{t`Store`}</span>
         </div>
-        <nav aria-label={t`Store`} className="flex gap-1 px-3 pb-3 md:flex-col">
+        <nav aria-label={t`Store`} className="flex gap-1 overflow-x-auto px-3 pb-3 md:flex-col">
           {links.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to}
               to={to}
               className={({ isActive }) => cn(
-                'flex min-h-10 items-center gap-3 rounded-md px-3 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring',
+                'flex min-h-10 shrink-0 items-center gap-3 whitespace-nowrap rounded-md px-3 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring',
                 isActive
                   ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                   : 'text-muted-foreground hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground',

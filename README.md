@@ -11,9 +11,13 @@ Configure the auth service's `AUTH_FRONTEND_URL` to match this application's ori
 CORS. The service uses a `SameSite=Lax` cookie, so the applications must be deployed
 on compatible sites for the browser to send the session cookie.
 
-After setting up the service's database, use **Manage categories** on the
-products page to create categories and subcategories. Product filters use their IDs
+After setting up the service's database, use **Categories** in the navigation
+to create categories and subcategories. Product filters use their IDs
 while displaying their names.
+
+Use **Roles and permissions** to create permissions and new roles with selected
+permissions. The API requires `access:manage`; see the service's roles and permissions
+setup for bootstrapping an administrator. This page does not assign roles to users.
 
 The existing redirect parameter accepts only paths on this frontend's origin; it does
 not redirect to external applications.
