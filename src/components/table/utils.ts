@@ -1,5 +1,7 @@
 import type { RowData } from '@tanstack/react-table'
 import type { DataCell, DataHeader, DataTable } from '@/components/table/features'
+import { isNotEmptyArray } from '@/utils/is-not-empty-array'
+import { isNotNil } from '@/utils/is-not-nil'
 
 export type CellAlign = 'center' | 'left' | 'right'
 
@@ -25,10 +27,10 @@ export const hasFooter = <T extends RowData>(table: DataTable<T>) =>
 export const hasHeaderBorderLeft = <T extends RowData, U = unknown>(
   header: DataHeader<T, U>,
   previous: DataHeader<T, unknown> | undefined,
-) => previous !== undefined && (header.subHeaders.length > 0 || previous.column.parent?.id !== header.column.parent?.id)
+) => isNotNil(previous) && (isNotEmptyArray(header.subHeaders) || previous.column.parent?.id !== header.column.parent?.id)
 
 // A cell has a left border when its column starts a new column group. `previous` is the cell rendered before it.
 export const hasCellBorderLeft = <T extends RowData, U = unknown>(
   cell: DataCell<T, U>,
   previous: DataCell<T, unknown> | undefined,
-) => previous !== undefined && previous.column.parent?.id !== cell.column.parent?.id
+) => isNotNil(previous) && previous.column.parent?.id !== cell.column.parent?.id

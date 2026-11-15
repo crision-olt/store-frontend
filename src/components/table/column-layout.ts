@@ -1,6 +1,7 @@
 import type { RowData } from '@tanstack/react-table'
 import type { DataColumn, DataTable } from '@/components/table/features'
 import { createContext, useContext } from 'react'
+import { isNotEmptyArray } from '@/utils/is-not-empty-array'
 
 // Same defaults as TanStack Table's column sizing
 const DEFAULT_SIZE = 150
@@ -125,7 +126,7 @@ export const computeColumnLayout = <T extends RowData>(
   for (const column of flatColumns) {
     if (column.columns.length === 0) continue
     const leaves = column.getLeafColumns().filter((leaf) => leaf.getIsVisible())
-    if (leaves.length === 0) continue
+    if (!isNotEmptyArray(leaves)) continue
     starts.set(column.id, starts.get(leaves[0].id) ?? 0)
     allStarts.set(column.id, allStarts.get(leaves[0].id) ?? 0)
     afters.set(column.id, afters.get(leaves[leaves.length - 1].id) ?? 0)
