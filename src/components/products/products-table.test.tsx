@@ -4,10 +4,14 @@ import { beforeEach, describe, expect, test, vi } from 'vitest'
 import '@testing-library/jest-dom/vitest'
 import '@/test/setup-dom'
 
-import type { PaginationState, SortingState, Updater } from '@tanstack/react-table'
+import type { SortingState, Updater } from '@tanstack/react-table'
 import type { Product } from '@/lib/products-api'
+import { defineBoundingClientRect, defineClientDimensions } from '@/test/dom'
 import { AppWrapper } from '@/test/utils'
 import { ProductsTable } from '@/components/products/products-table'
+
+defineBoundingClientRect()
+defineClientDimensions()
 
 const product: Product = {
   id: 1,
@@ -24,17 +28,13 @@ const product: Product = {
 }
 
 const onSortingChange = vi.fn<(updater: Updater<SortingState>) => void>()
-const onPaginationChange = vi.fn<(updater: Updater<PaginationState>) => void>()
 
 const defaultProps = {
   products: [product],
-  total: 1,
   isLoading: false,
   isFetching: false,
   sorting: [] as SortingState,
   onSortingChange,
-  pagination: { pageIndex: 0, pageSize: 10 },
-  onPaginationChange,
 }
 
 const renderProductsTable = (props: Partial<typeof defaultProps> = {}) =>
@@ -71,20 +71,16 @@ describe('ProductsTable', () => {
   })
 
   test('shows the shared empty state', () => {
-    renderProductsTable({ products: [], total: 0 })
+    renderProductsTable({ products: [] })
 
     expect(screen.getByTestId('table-feedback-state')).toHaveTextContent('No products found.')
   })
 
-  test('delegates server-side page changes', () => {
-    renderProductsTable({ total: 21 })
+  test('does not show pagination controls', () => {
+    renderProductsTable()
 
-    fireEvent.click(screen.getByRole('button', { name: 'Next' }))
-
-    const updater = onPaginationChange.mock.calls[0]?.[0]
-    expect(typeof updater).toBe('function')
-    if (typeof updater === 'function') {
-      expect(updater({ pageIndex: 0, pageSize: 10 })).toEqual({ pageIndex: 1, pageSize: 10 })
-    }
+    expect(screen.queryByRole('button', { name: 'Next' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Previous' })).not.toBeInTheDocument()
+    expect(screen.queryByText('Rows per page')).not.toBeInTheDocument()
   })
 })

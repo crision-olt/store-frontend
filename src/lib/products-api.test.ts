@@ -53,6 +53,48 @@ describe('products API', () => {
     expect(fetch.mock.calls[0][0]).toBe('https://api.example.com/products')
   })
 
+  it('loads all matching products across API pages', async () => {
+    const firstPage = Array.from({ length: 100 }, (_, index) => ({ ...product, id: index + 1 }))
+    const lastProduct = { ...product, id: 101 }
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ data: firstPage, total: 101, page: 1, pageSize: 100 })))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ data: [lastProduct], total: 101, page: 2, pageSize: 100 })))
+    vi.stubGlobal('fetch', fetch)
+
+    await expect(createProductsApi('https://api.example.com').listAllProducts({ search: 'mug', sortBy: 'name' }))
+      .resolves.toEqual([...firstPage, lastProduct])
+    expect(fetch.mock.calls.map(([url]) => url)).toEqual([
+      'https://api.example.com/products?search=mug&sortBy=name&page=1&pageSize=100',
+      'https://api.example.com/products?search=mug&sortBy=name&page=2&pageSize=100',
+    ])
+  })
+
+  it('fails rather than returning incomplete results when an API page is unexpectedly empty', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ data: [], total: 1, page: 1, pageSize: 100 })),
+    ))
+
+    await expect(createProductsApi('https://api.example.com').listAllProducts()).rejects.toThrow()
+  })
+
+  it('passes cancellation to every page request and surfaces later request failures', async () => {
+    const firstPage = Array.from({ length: 100 }, (_, index) => ({ ...product, id: index + 1 }))
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ data: firstPage, total: 101, page: 1, pageSize: 100 })))
+      .mockResolvedValueOnce(new Response(null, { status: 401 }))
+    vi.stubGlobal('fetch', fetch)
+    const { signal } = new AbortController()
+
+    await expect(createProductsApi('https://api.example.com').listAllProducts({}, signal)).rejects.toMatchObject({
+      name: 'ProductsApiError',
+      status: 401,
+    })
+    expect(fetch.mock.calls.map(([, options]) => options)).toEqual([
+      { credentials: 'include', signal },
+      { credentials: 'include', signal },
+    ])
+  })
+
   it('exposes unsuccessful HTTP statuses', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(null, { status: 401 })))
 

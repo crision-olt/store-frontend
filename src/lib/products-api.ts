@@ -57,8 +57,11 @@ export class ProductsApiError extends Error {
 }
 
 export function createProductsApi(serviceUrl: string) {
-  async function get(path: string) {
-    const response = await fetch(resolveServiceUrl(serviceUrl, path), { credentials: 'include' })
+  async function get(path: string, signal?: AbortSignal) {
+    const response = await fetch(resolveServiceUrl(serviceUrl, path), {
+      credentials: 'include',
+      ...(signal ? { signal } : {}),
+    })
     if (!response.ok) throw new ProductsApiError(response.status)
     return response.json()
   }
@@ -74,14 +77,27 @@ export function createProductsApi(serviceUrl: string) {
     return response.json()
   }
 
+  async function listProducts(query: ProductsQuery = {}, signal?: AbortSignal) {
+    const params = new URLSearchParams()
+    for (const [key, value] of Object.entries(query)) {
+      if (value !== undefined && value !== '') params.set(key, String(value))
+    }
+    const suffix = params.size ? `?${params}` : ''
+    return productsPageSchema.parse(await get(`/products${suffix}`, signal))
+  }
+
   return {
-    async listProducts(query: ProductsQuery = {}) {
-      const params = new URLSearchParams()
-      for (const [key, value] of Object.entries(query)) {
-        if (value !== undefined && value !== '') params.set(key, String(value))
+    listProducts,
+    async listAllProducts(query: Omit<ProductsQuery, 'page' | 'pageSize'> = {}, signal?: AbortSignal) {
+      const products: Product[] = []
+      let page = 1
+      while (true) {
+        const result = await listProducts({ ...query, page, pageSize: 100 }, signal)
+        products.push(...result.data)
+        if (products.length >= result.total) return products
+        if (result.data.length === 0) throw new Error('Product listing ended before all products were returned')
+        page += 1
       }
-      const suffix = params.size ? `?${params}` : ''
-      return productsPageSchema.parse(await get(`/products${suffix}`))
     },
     async listCategories() {
       return z.array(categorySchema).parse(await get('/products/categories'))
@@ -99,5 +115,5 @@ export function createProductsApi(serviceUrl: string) {
   }
 }
 
-export const { listProducts, listCategories, listSubcategories, createCategory, createSubcategory } =
+export const { listProducts, listAllProducts, listCategories, listSubcategories, createCategory, createSubcategory } =
   createProductsApi(import.meta.env.AUTH_SERVICE_URL)

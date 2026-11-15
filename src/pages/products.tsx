@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import type { PaginationState, SortingState } from '@tanstack/react-table'
+import type { SortingState } from '@tanstack/react-table'
 import { useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { RequireAuth } from '@/components/auth/require-auth'
@@ -13,7 +13,7 @@ import { useDebouncedValue } from '@/hooks/use-debounced-value'
 import { emptyFilters, hasInvalidPriceRange, toProductsQuery, type ProductFilterValues } from '@/lib/product-filters'
 import {
   listCategories,
-  listProducts,
+  listAllProducts,
   listSubcategories,
   ProductsApiError,
   type ProductsQuery,
@@ -29,21 +29,18 @@ function ProductsContent() {
 
   const [filters, setFilters] = useState<ProductFilterValues>(emptyFilters)
   const [sorting, setSorting] = useState<SortingState>([{ id: 'created_at', desc: true }])
-  const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 10 })
 
   const appliedFilters = useDebouncedValue(filters, SEARCH_DEBOUNCE_MS)
   const sort = sorting[0]
-  const query: ProductsQuery = {
+  const query: Omit<ProductsQuery, 'page' | 'pageSize'> = {
     ...toProductsQuery(appliedFilters),
     sortBy: sort?.id as SortableColumn | undefined,
     sortOrder: sort?.desc ? 'desc' : 'asc',
-    page: pagination.pageIndex + 1,
-    pageSize: pagination.pageSize,
   }
 
   const products = useQuery({
     queryKey: ['products', query],
-    queryFn: () => listProducts(query),
+    queryFn: ({ signal }) => listAllProducts(query, signal),
     placeholderData: keepPreviousData,
     retry: false,
     enabled: !hasInvalidPriceRange(appliedFilters),
@@ -58,7 +55,6 @@ function ProductsContent() {
     queryFn: () => listSubcategories(filters.category || undefined),
     retry: false,
   })
-  const resetPage = () => setPagination((current) => ({ ...current, pageIndex: 0 }))
 
   if (products.error instanceof ProductsApiError && products.error.status === 401) {
     return <Navigate to={buildLinkWithRedirect('/login', location.pathname + location.search)} replace />
@@ -77,10 +73,7 @@ function ProductsContent() {
               filters={filters}
               categories={categories.data ?? []}
               subcategories={subcategories.data ?? []}
-              onChange={(next) => {
-                setFilters(next)
-                resetPage()
-              }}
+              onChange={setFilters}
             />
           </CardContent>
         </Card>
@@ -99,17 +92,11 @@ function ProductsContent() {
         )}
 
         <ProductsTable
-          products={products.data?.data}
-          total={products.data?.total ?? 0}
+          products={products.data}
           isLoading={products.isPending && !products.isError}
           isFetching={products.isFetching}
           sorting={sorting}
-          onSortingChange={(updater) => {
-            setSorting(updater)
-            resetPage()
-          }}
-          pagination={pagination}
-          onPaginationChange={setPagination}
+          onSortingChange={setSorting}
         />
     </div>
   )
