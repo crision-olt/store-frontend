@@ -82,11 +82,11 @@ msgstr "Revisa el correo, la contraseña (de 8 a 72 caracteres) y el rol."
 msgid "Clear filters"
 msgstr "Borrar filtros"
 
-#: src/components/table/components/table-header-cell.tsx:71
+#: src/components/table/components/table-header-cell.tsx:78
 msgid "Clear sorting"
 msgstr "Quitar orden"
 
-#: src/components/table/components/table-header-cell.tsx:128
+#: src/components/table/components/table-header-cell.tsx:142
 msgid "Close filter"
 msgstr "Cerrar filtro"
 
@@ -290,8 +290,8 @@ msgstr "Introduce un rango de precios válido: el mínimo no puede superar al m�
 msgid "Enter your details to get started"
 msgstr "Introduce tus datos para empezar"
 
-#: src/components/table/components/table-header-cell.tsx:161
-#: src/components/table/components/table-header-cell.tsx:168
+#: src/components/table/components/table-header-cell.tsx:175
+#: src/components/table/components/table-header-cell.tsx:182
 msgid "Filter"
 msgstr "Filtrar"
 
@@ -512,11 +512,11 @@ msgstr "Iniciando sesión…"
 msgid "SKU"
 msgstr "SKU"
 
-#: src/components/table/components/table-header-cell.tsx:71
+#: src/components/table/components/table-header-cell.tsx:78
 msgid "Sort ascending"
 msgstr "Ordenar ascendente"
 
-#: src/components/table/components/table-header-cell.tsx:71
+#: src/components/table/components/table-header-cell.tsx:78
 msgid "Sort descending"
 msgstr "Ordenar descendente"
 

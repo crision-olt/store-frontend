@@ -42,7 +42,7 @@ describe('computeColumnLayout', () => {
     const layout = layoutFor('fixed', 1200)
 
     expect([...layout.sizes.values()]).toEqual(Array(6).fill(150))
-    expect(layout.totalSize).toBe('300px')
+    expect(layout.totalSize).toBe('900px')
   })
 
   test('uses the default sizes and an auto width in auto mode', () => {

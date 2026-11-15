@@ -61,14 +61,7 @@ describe('TableProvider', () => {
       sizeRef: { current: null },
       tbodyRef: { current: null },
       sizeRect: { width: 0, height: 0 },
-      scrollPosition: {
-        scrollLeft: 0,
-        scrollTop: 0,
-        offsetWidth: 0,
-        offsetHeight: 0,
-        scrollWidth: 0,
-        scrollHeight: 0,
-      },
+      scrollEdges: { atStart: true, atEnd: true },
     })
   })
 

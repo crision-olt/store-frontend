@@ -12,7 +12,7 @@ describe('TableFeedbackState', () => {
   it('should render correctly', async () => {
     render(<TableFeedbackState header={<SearchXIcon />} title="No results" subtitle="No results found." />)
 
-    const feedback = screen.getByTestId('product-table-feedback-state')
+    const feedback = screen.getByTestId('table-feedback-state')
     expect(feedback).toBeInTheDocument()
   })
 })

@@ -23,6 +23,6 @@ describe('TableLoading', () => {
         <TableLoading />
       </AppWrapper>,
     )
-    expect(screen.getByTestId('product-table-loading')).toBeInTheDocument()
+    expect(screen.getByTestId('table-loading')).toBeInTheDocument()
   })
 })

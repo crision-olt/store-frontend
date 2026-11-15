@@ -20,20 +20,15 @@ export const hasFooter = <T extends RowData>(table: LegacyTable<T>) =>
     .flatMap((group) => group.headers.map((header) => header.column.columnDef.footer))
     .some(Boolean)
 
-// Check if a header has border left
-export const hasHeaderBorderLeft = <T extends RowData, U = unknown>(header: LegacyHeader<T, U>) => {
-  const headers = header.headerGroup?.headers ?? []
-  const index = headers.findIndex((h) => h.id === header.id)
-  if (index <= 0) return false
-  const previousHeader = headers[index - 1]
-  return header.subHeaders.length > 0 || previousHeader.column.parent?.id !== header.column.parent?.id
-}
+// A header has a left border when it starts a new column group. `previous` is the header rendered before it in the
+// same header group; the caller passes it so each check is O(1) instead of searching the whole group.
+export const hasHeaderBorderLeft = <T extends RowData, U = unknown>(
+  header: LegacyHeader<T, U>,
+  previous: LegacyHeader<T, unknown> | undefined,
+) => previous !== undefined && (header.subHeaders.length > 0 || previous.column.parent?.id !== header.column.parent?.id)
 
-// Check if a cell has border left
-export const hasCellBorderLeft = <T extends RowData, U = unknown>(cell: LegacyCell<T, U>) => {
-  const visibleCells = cell.row.getVisibleCells()
-  const index = visibleCells.findIndex((c) => c.id === cell.id)
-  if (index <= 0) return false
-  const previousCell = visibleCells[index - 1]
-  return previousCell.column.parent?.id !== cell.column.parent?.id
-}
+// A cell has a left border when its column starts a new column group. `previous` is the cell rendered before it.
+export const hasCellBorderLeft = <T extends RowData, U = unknown>(
+  cell: LegacyCell<T, U>,
+  previous: LegacyCell<T, unknown> | undefined,
+) => previous !== undefined && previous.column.parent?.id !== cell.column.parent?.id

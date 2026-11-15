@@ -52,7 +52,7 @@ describe('TextInputFilter', () => {
       </AppWrapper>,
     )
 
-    const input = screen.getByTestId('product-table-filter-input')
+    const input = screen.getByTestId('table-filter-input')
     expect(input).toBeInTheDocument()
     expect(input).toHaveAttribute('type', 'text')
     expect(input).toHaveAttribute('tabIndex', '0')
@@ -78,7 +78,7 @@ describe('TextInputFilter', () => {
       </AppWrapper>,
     )
 
-    const input = screen.getByTestId('product-table-filter-input')
+    const input = screen.getByTestId('table-filter-input')
     expect(input).toHaveAttribute('placeholder', 'STORE NAME')
   })
 
@@ -101,9 +101,10 @@ describe('TextInputFilter', () => {
       </AppWrapper>,
     )
 
-    const input = screen.getByTestId('product-table-filter-input') as HTMLInputElement
-    await user.type(input, 'test filter')
-    expect(mockSetFilterValue).toHaveBeenCalledWith('test filter')
+    const input = screen.getByTestId('table-filter-input') as HTMLInputElement
+    expect(input.value).toBe('test filter')
+    await user.type(input, '!')
+    expect(mockSetFilterValue).toHaveBeenLastCalledWith('test filter!')
   })
 
   it('handles empty filter value', async () => {
@@ -124,7 +125,7 @@ describe('TextInputFilter', () => {
       </AppWrapper>,
     )
 
-    const input = screen.getByTestId('product-table-filter-input') as HTMLInputElement
+    const input = screen.getByTestId('table-filter-input') as HTMLInputElement
     expect(input.value).toBe('')
   })
 
@@ -148,7 +149,7 @@ describe('TextInputFilter', () => {
       </AppWrapper>,
     )
 
-    const input = screen.getByTestId('product-table-filter-input')
+    const input = screen.getByTestId('table-filter-input')
 
     fireEvent.change(input, { target: { value: 'new filter' } })
 
@@ -173,7 +174,7 @@ describe('TextInputFilter', () => {
       </AppWrapper>,
     )
 
-    const input = screen.getByTestId('product-table-filter-input')
+    const input = screen.getByTestId('table-filter-input')
 
     fireEvent.change(input, { target: { value: 'new filter' } })
 
@@ -200,7 +201,7 @@ describe('TextInputFilter', () => {
       </AppWrapper>,
     )
 
-    const input = screen.getByTestId('product-table-filter-input')
+    const input = screen.getByTestId('table-filter-input')
 
     fireEvent.change(input, { target: { value: 'test' } })
 
@@ -220,7 +221,7 @@ describe('TextInputFilter', () => {
     )
 
     expect(mockInputRef.current).toBeInstanceOf(HTMLInputElement)
-    expect(mockInputRef.current).toHaveAttribute('data-testid', 'product-table-filter-input')
+    expect(mockInputRef.current).toHaveAttribute('data-testid', 'table-filter-input')
   })
 
   it('handles multiple rapid input changes', () => {
@@ -243,7 +244,7 @@ describe('TextInputFilter', () => {
       </AppWrapper>,
     )
 
-    const input = screen.getByTestId('product-table-filter-input')
+    const input = screen.getByTestId('table-filter-input')
 
     fireEvent.change(input, { target: { value: 'a' } })
     fireEvent.change(input, { target: { value: 'ab' } })

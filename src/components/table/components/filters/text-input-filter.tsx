@@ -10,9 +10,10 @@ export const TextInputFilter = <TData extends RowData>({
 }: FilterComponentProps<TData, unknown>) => (
   <Input
     type="text"
-    data-testid="product-table-filter-input"
+    data-testid="table-filter-input"
     tabIndex={0}
     ref={inputRef}
+    defaultValue={String(header.column.getFilterValue() ?? '')}
     placeholder={typeof header.column.columnDef.header === 'string' ? header.column.columnDef.header.toUpperCase() : ''}
     className="h-7 text-xs font-medium"
     onChange={(event: ChangeEvent<HTMLInputElement>) => {

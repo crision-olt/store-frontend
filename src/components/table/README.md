@@ -29,6 +29,23 @@ return (
 The table fills the height of its parent. Every prop is documented in `components/table-container.tsx`.
 Column options (`align`, `lineClamp`, `width`, `className`, `showFilter`, `Filter`...) go in the column `meta`.
 
+### Sizing (`sizeMode`)
+
+- `full` (default): columns use their `size` or `meta.width` and grow proportionally to fill the container.
+- `fixed`: columns keep their sizes and the table is exactly as wide as the sum of its visible columns.
+- `auto`: the browser sizes the columns from their content (slower with many rows).
+
+### Column ordering
+
+Pass `enableColumnOrdering` and control `columnOrder` with `onColumnOrderChange`. The order may start empty: columns
+that are not listed keep their definition order. Columns move among their siblings only (inside the same group, or
+top level columns and whole groups).
+
+### Filters
+
+Columns with `meta.showFilter` show a filter button. A column that already has a filter value (for example from the
+initial state) opens with its filter input visible and filled.
+
 ## Dependencies
 
 - `@tanstack/react-table` (v9, the `/legacy` entry keeps the v8 style `getCoreRowModel()` options)

@@ -252,17 +252,17 @@ describe('Table', () => {
     const columns = TableFactory.createColumns()
     render(<Wrapper data={data} columns={columns} isVirtualized={false} />)
 
-    expect(screen.getByTestId('product-table')).toBeInTheDocument()
+    expect(screen.getByTestId('table')).toBeInTheDocument()
 
     // Header
     for (const column of columns) {
-      expect(screen.getByTestId(`product-table-header-cell-${column.accessorKey}`)).toBeInTheDocument()
+      expect(screen.getByTestId(`table-header-cell-${column.accessorKey}`)).toBeInTheDocument()
     }
 
     // Rows
     for (let i = 0; i < data.length; i++) {
       for (const column of columns) {
-        expect(screen.getByTestId(`product-table-row-cell-${i}-${column.accessorKey}`)).toBeInTheDocument()
+        expect(screen.getByTestId(`table-row-cell-${i}-${column.accessorKey}`)).toBeInTheDocument()
       }
     }
   })
@@ -272,11 +272,11 @@ describe('Table', () => {
     const columnsWithFooter = TableFactory.createColumns(true)
     render(<Wrapper data={data} columns={columnsWithFooter} isVirtualized={false} />)
 
-    expect(screen.getByTestId('product-table')).toBeInTheDocument()
+    expect(screen.getByTestId('table')).toBeInTheDocument()
 
     // Footer
     for (const column of columnsWithFooter) {
-      expect(screen.getByTestId(`product-table-footer-cell-${column.accessorKey}`)).toBeInTheDocument()
+      expect(screen.getByTestId(`table-footer-cell-${column.accessorKey}`)).toBeInTheDocument()
     }
   })
 
@@ -284,7 +284,7 @@ describe('Table', () => {
     const data = TableFactory.createData(1)
     const columnsWithFooter = TableFactory.createWithNestedColumns(true)
     render(<Wrapper data={data} columns={columnsWithFooter} isVirtualized={false} />)
-    expect(screen.getByTestId('product-table')).toBeInTheDocument()
+    expect(screen.getByTestId('table')).toBeInTheDocument()
   })
 
   describe('Sorting', () => {
@@ -292,12 +292,12 @@ describe('Table', () => {
       const data = TableFactory.createData(1)
       const columns = TableFactory.createColumns()
       render(<Wrapper data={data} columns={columns} isVirtualized={false} />)
-      expect(screen.getByTestId('product-table')).toBeInTheDocument()
-      const noSortingButton = screen.getByTestId('product-table-header-cell-id-sort-button-false')
+      expect(screen.getByTestId('table')).toBeInTheDocument()
+      const noSortingButton = screen.getByTestId('table-header-cell-id-sort-button-false')
       fireEvent.click(noSortingButton)
-      const descSortingButton = screen.getByTestId('product-table-header-cell-id-sort-button-desc')
+      const descSortingButton = screen.getByTestId('table-header-cell-id-sort-button-desc')
       fireEvent.click(descSortingButton)
-      const ascSortingButton = screen.getByTestId('product-table-header-cell-id-sort-button-asc')
+      const ascSortingButton = screen.getByTestId('table-header-cell-id-sort-button-asc')
       fireEvent.click(ascSortingButton)
     })
   })
@@ -308,27 +308,27 @@ describe('Table', () => {
         const data = TableFactory.createData(1)
         const columnsAlignLeft = TableFactory.createColumns(true, { align: 'left' })
         render(<Wrapper data={data} columns={columnsAlignLeft} isVirtualized={false} />)
-        expect(screen.getByTestId('product-table-header-cell-id')).toHaveClass('text-left')
-        expect(screen.getByTestId('product-table-row-cell-0-id')).toHaveClass('text-left')
-        expect(screen.getByTestId('product-table-footer-cell-id')).toHaveClass('text-left')
+        expect(screen.getByTestId('table-header-cell-id')).toHaveClass('text-left')
+        expect(screen.getByTestId('table-row-cell-0-id')).toHaveClass('text-left')
+        expect(screen.getByTestId('table-footer-cell-id')).toHaveClass('text-left')
       })
 
       test('should render correctly with align center', () => {
         const data = TableFactory.createData(1)
         const columnsAlignCenter = TableFactory.createColumns(true, { align: 'center' })
         render(<Wrapper data={data} columns={columnsAlignCenter} isVirtualized={false} />)
-        expect(screen.getByTestId('product-table-header-cell-id')).toHaveClass('text-center')
-        expect(screen.getByTestId('product-table-row-cell-0-id')).toHaveClass('text-center')
-        expect(screen.getByTestId('product-table-footer-cell-id')).toHaveClass('text-center')
+        expect(screen.getByTestId('table-header-cell-id')).toHaveClass('text-center')
+        expect(screen.getByTestId('table-row-cell-0-id')).toHaveClass('text-center')
+        expect(screen.getByTestId('table-footer-cell-id')).toHaveClass('text-center')
       })
 
       test('should render correctly with align right', () => {
         const data = TableFactory.createData(1)
         const columnsAlignRight = TableFactory.createColumns(true, { align: 'right' })
         render(<Wrapper data={data} columns={columnsAlignRight} isVirtualized={false} />)
-        expect(screen.getByTestId('product-table-header-cell-id')).toHaveClass('text-right')
-        expect(screen.getByTestId('product-table-row-cell-0-id')).toHaveClass('text-right')
-        expect(screen.getByTestId('product-table-footer-cell-id')).toHaveClass('text-right')
+        expect(screen.getByTestId('table-header-cell-id')).toHaveClass('text-right')
+        expect(screen.getByTestId('table-row-cell-0-id')).toHaveClass('text-right')
+        expect(screen.getByTestId('table-footer-cell-id')).toHaveClass('text-right')
       })
     })
 
@@ -337,9 +337,9 @@ describe('Table', () => {
         const data = TableFactory.createData(1)
         const columnsAlignLeft = TableFactory.createColumns(true, { className: 'test-class' })
         render(<Wrapper data={data} columns={columnsAlignLeft} isVirtualized={false} />)
-        expect(screen.getByTestId('product-table-header-cell-id')).toHaveClass('test-class')
-        expect(screen.getByTestId('product-table-row-cell-0-id')).toHaveClass('test-class')
-        expect(screen.getByTestId('product-table-footer-cell-id')).toHaveClass('test-class')
+        expect(screen.getByTestId('table-header-cell-id')).toHaveClass('test-class')
+        expect(screen.getByTestId('table-row-cell-0-id')).toHaveClass('test-class')
+        expect(screen.getByTestId('table-footer-cell-id')).toHaveClass('test-class')
       })
     })
 
@@ -348,14 +348,14 @@ describe('Table', () => {
         const data = TableFactory.createData(1)
         const columnsAlignLeft = TableFactory.createColumns(true, { lineClamp: 1 })
         render(<Wrapper data={data} columns={columnsAlignLeft} isVirtualized={false} />)
-        expect(screen.getByTestId('product-table-header-cell-id').querySelector('.line-clamp-1')).toBeInTheDocument()
+        expect(screen.getByTestId('table-header-cell-id').querySelector('.line-clamp-1')).toBeInTheDocument()
       })
 
       test('should render correctly with LineClamp 2', () => {
         const data = TableFactory.createData(1)
         const columnsAlignLeft = TableFactory.createColumns(true, { lineClamp: 2 })
         render(<Wrapper data={data} columns={columnsAlignLeft} isVirtualized={false} />)
-        expect(screen.getByTestId('product-table-header-cell-id').querySelector('.line-clamp-2')).toBeInTheDocument()
+        expect(screen.getByTestId('table-header-cell-id').querySelector('.line-clamp-2')).toBeInTheDocument()
       })
 
       test('should show filter button when column can filter', () => {
@@ -363,7 +363,7 @@ describe('Table', () => {
         const columns = TableFactory.createColumns(false, { showFilter: true })
 
         render(<Wrapper data={data} columns={columns} isVirtualized={false} />)
-        expect(screen.getByTestId('product-table-header-cell-id-filter-button')).toBeInTheDocument()
+        expect(screen.getByTestId('table-header-cell-id-filter-button')).toBeInTheDocument()
       })
 
       describe('textEllipsis', () => {
@@ -371,7 +371,7 @@ describe('Table', () => {
           const data = TableFactory.createData(1)
           const columnsAlignLeft = TableFactory.createColumns(true, { textEllipsis: true })
           render(<Wrapper data={data} columns={columnsAlignLeft} isVirtualized={false} />)
-          expect(screen.getByTestId('product-table-row-cell-0-id')).toHaveClass('text-ellipsis')
+          expect(screen.getByTestId('table-row-cell-0-id')).toHaveClass('text-ellipsis')
         })
       })
     })
@@ -383,12 +383,12 @@ describe('Table', () => {
 
         render(<Wrapper data={data} columns={columns} isVirtualized={false} />)
 
-        const filterButton = screen.getByTestId('product-table-header-cell-id-filter-button')
+        const filterButton = screen.getByTestId('table-header-cell-id-filter-button')
 
         fireEvent.click(filterButton)
 
         await waitFor(() => {
-          expect(screen.getByTestId('product-table-filter-input')).toBeInTheDocument()
+          expect(screen.getByTestId('table-filter-input')).toBeInTheDocument()
         })
       })
 
@@ -414,7 +414,7 @@ describe('Table', () => {
 
         render(<Wrapper data={data} columns={columns} isVirtualized={false} />)
 
-        expect(screen.getByTestId('product-table-header-cell-id-filter-button')).toBeInTheDocument()
+        expect(screen.getByTestId('table-header-cell-id-filter-button')).toBeInTheDocument()
       })
 
       test('should hide filter button when column cannot filter', () => {
@@ -430,7 +430,7 @@ describe('Table', () => {
 
         render(<Wrapper data={data} columns={columns} isVirtualized={false} />)
 
-        expect(screen.queryByTestId('product-table-header-cell-id-filter-button')).not.toBeInTheDocument()
+        expect(screen.queryByTestId('table-header-cell-id-filter-button')).not.toBeInTheDocument()
       })
     })
 
@@ -450,7 +450,7 @@ describe('Table', () => {
 
         let left = 0
         state.columnPinning?.start?.forEach((columnId) => {
-          expect(screen.getByTestId(`product-table-header-cell-${columnId}`)).toHaveStyle({
+          expect(screen.getByTestId(`table-header-cell-${columnId}`)).toHaveStyle({
             left: `${left}px`,
             position: 'sticky',
             zIndex: 1,
@@ -460,7 +460,7 @@ describe('Table', () => {
 
         let right = 0
         state.columnPinning?.end?.reverse().forEach((columnId) => {
-          expect(screen.getByTestId(`product-table-header-cell-${columnId}`)).toHaveStyle({
+          expect(screen.getByTestId(`table-header-cell-${columnId}`)).toHaveStyle({
             right: `${right}px`,
             position: 'sticky',
             zIndex: 1,
@@ -476,17 +476,17 @@ describe('Table', () => {
         const columns = TableFactory.createColumns()
         render(<Wrapper data={data} columns={columns} isVirtualized={true} />)
 
-        expect(screen.getByTestId('product-table')).toBeInTheDocument()
+        expect(screen.getByTestId('table')).toBeInTheDocument()
 
         // Header
         for (const column of columns) {
-          expect(screen.getByTestId(`product-table-header-cell-${column.accessorKey}`)).toBeInTheDocument()
+          expect(screen.getByTestId(`table-header-cell-${column.accessorKey}`)).toBeInTheDocument()
         }
 
         // Only two rows in the DOM since the overscan is 1 by default
         for (let i = 0; i <= 1; i++) {
           for (const column of columns) {
-            expect(screen.getByTestId(`product-table-row-cell-${i}-${column.accessorKey}`)).toBeInTheDocument()
+            expect(screen.getByTestId(`table-row-cell-${i}-${column.accessorKey}`)).toBeInTheDocument()
           }
         }
       })
@@ -499,9 +499,9 @@ describe('Table', () => {
       const columns = TableFactory.createColumns()
       render(<DndWrapper data={data} columns={columns} isVirtualized={false} enableColumnOrdering={true} />)
 
-      expect(screen.getByTestId('product-table')).toBeInTheDocument()
+      expect(screen.getByTestId('table')).toBeInTheDocument()
       for (const column of columns) {
-        expect(screen.getByTestId(`product-table-header-cell-${column.accessorKey}`)).toBeInTheDocument()
+        expect(screen.getByTestId(`table-header-cell-${column.accessorKey}`)).toBeInTheDocument()
       }
     })
 
@@ -510,8 +510,8 @@ describe('Table', () => {
       const columns = TableFactory.createColumns()
       render(<DndWrapper data={data} columns={columns} isVirtualized={false} enableColumnOrdering={true} />)
 
-      const firstHeader = screen.getByTestId('product-table-header-cell-id')
-      const secondHeader = screen.getByTestId('product-table-header-cell-firstName')
+      const firstHeader = screen.getByTestId('table-header-cell-id')
+      const secondHeader = screen.getByTestId('table-header-cell-firstName')
 
       // Simulate pointer down on first header to start drag
       fireEvent.pointerDown(firstHeader, { pointerId: 1, clientX: 50, clientY: 10 })
@@ -523,28 +523,28 @@ describe('Table', () => {
       fireEvent.pointerUp(secondHeader, { pointerId: 1, clientX: 200, clientY: 10 })
 
       // Table should still be rendered (no crash)
-      expect(screen.getByTestId('product-table')).toBeInTheDocument()
+      expect(screen.getByTestId('table')).toBeInTheDocument()
     })
 
     test('should render with sizeMode auto', () => {
       const data = TableFactory.createData(2)
       const columns = TableFactory.createColumns()
       render(<DndWrapper data={data} columns={columns} isVirtualized={false} sizeMode="auto" />)
-      expect(screen.getByTestId('product-table')).toBeInTheDocument()
+      expect(screen.getByTestId('table')).toBeInTheDocument()
     })
 
     test('should render with sizeMode fixed', () => {
       const data = TableFactory.createData(2)
       const columns = TableFactory.createColumns()
       render(<DndWrapper data={data} columns={columns} isVirtualized={false} sizeMode="fixed" />)
-      expect(screen.getByTestId('product-table')).toBeInTheDocument()
+      expect(screen.getByTestId('table')).toBeInTheDocument()
     })
 
     test('should render with custom className', () => {
       const data = TableFactory.createData(2)
       const columns = TableFactory.createColumns()
       render(<DndWrapper data={data} columns={columns} isVirtualized={false} className="custom-table-class" />)
-      expect(screen.getByTestId('product-table-container')).toHaveClass('custom-table-class')
+      expect(screen.getByTestId('table-container')).toHaveClass('custom-table-class')
     })
 
     test('should render startSlot and endSlot', () => {
@@ -567,7 +567,7 @@ describe('Table', () => {
       const data = TableFactory.createData(2)
       const columns = TableFactory.createColumns()
       render(<DndWrapper data={data} columns={columns} isVirtualized={false} enableColumnOrdering={true} />)
-      expect(screen.queryByTestId('product-table-drag-placeholder')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('table-drag-placeholder')).not.toBeInTheDocument()
     })
 
     test('should handle pointer events on headers without crashing', async () => {
@@ -575,7 +575,7 @@ describe('Table', () => {
       const columns = TableFactory.createColumns()
       render(<DndWrapper data={data} columns={columns} isVirtualized={false} enableColumnOrdering={true} />)
 
-      const header = screen.getByTestId('product-table-header-cell-id')
+      const header = screen.getByTestId('table-header-cell-id')
 
       fireEvent.pointerDown(header, { pointerId: 1, clientX: 50, clientY: 10 })
 
@@ -583,21 +583,21 @@ describe('Table', () => {
 
       fireEvent.pointerUp(header, { pointerId: 1, clientX: 55, clientY: 10 })
 
-      expect(screen.getByTestId('product-table')).toBeInTheDocument()
+      expect(screen.getByTestId('table')).toBeInTheDocument()
     })
 
     test('should render with columns using width in meta', () => {
       const data = TableFactory.createData(2)
       const columns = TableFactory.createColumns(false, { width: '100px' })
       render(<DndWrapper data={data} columns={columns} isVirtualized={false} sizeMode="full" />)
-      expect(screen.getByTestId('product-table')).toBeInTheDocument()
+      expect(screen.getByTestId('table')).toBeInTheDocument()
     })
 
     test('should render with columns using percentage width in meta', () => {
       const data = TableFactory.createData(2)
       const columns = TableFactory.createColumns(false, { width: '10%' })
       render(<DndWrapper data={data} columns={columns} isVirtualized={false} sizeMode="full" />)
-      expect(screen.getByTestId('product-table')).toBeInTheDocument()
+      expect(screen.getByTestId('table')).toBeInTheDocument()
     })
 
     describe('handleDragOver callback', () => {
@@ -617,7 +617,7 @@ describe('Table', () => {
           )
         })
 
-        expect(screen.queryByTestId('product-table-drag-placeholder')).not.toBeInTheDocument()
+        expect(screen.queryByTestId('table-drag-placeholder')).not.toBeInTheDocument()
       })
 
       test('should clear placeholder when source and target are the same', () => {
@@ -637,7 +637,7 @@ describe('Table', () => {
           )
         })
 
-        expect(screen.queryByTestId('product-table-drag-placeholder')).not.toBeInTheDocument()
+        expect(screen.queryByTestId('table-drag-placeholder')).not.toBeInTheDocument()
       })
 
       test('should clear placeholder when source column is not found', () => {
@@ -661,7 +661,7 @@ describe('Table', () => {
           )
         })
 
-        expect(screen.queryByTestId('product-table-drag-placeholder')).not.toBeInTheDocument()
+        expect(screen.queryByTestId('table-drag-placeholder')).not.toBeInTheDocument()
       })
 
       test('should show placeholder when dragging to a valid target (positive x)', () => {
@@ -685,7 +685,7 @@ describe('Table', () => {
           )
         })
 
-        expect(screen.getByTestId('product-table-drag-placeholder')).toBeInTheDocument()
+        expect(screen.getByTestId('table-drag-placeholder')).toBeInTheDocument()
       })
 
       test('should show placeholder when dragging to a valid target (negative x)', () => {
@@ -709,7 +709,7 @@ describe('Table', () => {
           )
         })
 
-        expect(screen.getByTestId('product-table-drag-placeholder')).toBeInTheDocument()
+        expect(screen.getByTestId('table-drag-placeholder')).toBeInTheDocument()
       })
 
       test('should clear placeholder when dragging between headers of different depths', () => {
@@ -734,7 +734,7 @@ describe('Table', () => {
           )
         })
 
-        expect(screen.queryByTestId('product-table-drag-placeholder')).not.toBeInTheDocument()
+        expect(screen.queryByTestId('table-drag-placeholder')).not.toBeInTheDocument()
       })
     })
 
@@ -760,7 +760,7 @@ describe('Table', () => {
             manager,
           )
         })
-        expect(screen.getByTestId('product-table-drag-placeholder')).toBeInTheDocument()
+        expect(screen.getByTestId('table-drag-placeholder')).toBeInTheDocument()
 
         // Then end drag
         act(() => {
@@ -777,7 +777,7 @@ describe('Table', () => {
           )
         })
 
-        expect(screen.queryByTestId('product-table-drag-placeholder')).not.toBeInTheDocument()
+        expect(screen.queryByTestId('table-drag-placeholder')).not.toBeInTheDocument()
       })
 
       test('should not reorder when drag is canceled', () => {
@@ -799,7 +799,7 @@ describe('Table', () => {
           )
         })
 
-        expect(screen.getByTestId('product-table')).toBeInTheDocument()
+        expect(screen.getByTestId('table')).toBeInTheDocument()
       })
 
       test('should not reorder when source and target are the same', () => {
@@ -821,7 +821,7 @@ describe('Table', () => {
           )
         })
 
-        expect(screen.getByTestId('product-table')).toBeInTheDocument()
+        expect(screen.getByTestId('table')).toBeInTheDocument()
       })
 
       test('should not reorder when source is missing', () => {
@@ -843,7 +843,7 @@ describe('Table', () => {
           )
         })
 
-        expect(screen.getByTestId('product-table')).toBeInTheDocument()
+        expect(screen.getByTestId('table')).toBeInTheDocument()
       })
 
       test('should not reorder when column is not found', () => {
@@ -866,7 +866,7 @@ describe('Table', () => {
           )
         })
 
-        expect(screen.getByTestId('product-table')).toBeInTheDocument()
+        expect(screen.getByTestId('table')).toBeInTheDocument()
         consoleSpy.mockRestore()
       })
 
@@ -876,7 +876,7 @@ describe('Table', () => {
         render(<DndWrapper data={data} columns={columns} isVirtualized={false} enableColumnOrdering={true} />)
 
         // Get initial header order
-        const headersBefore = screen.getAllByTestId(/^product-table-header-cell-(?!.*sort|.*filter|.*ellipsis)/)
+        const headersBefore = screen.getAllByTestId(/^table-header-cell-(?!.*sort|.*filter|.*ellipsis)/)
         const firstHeaderBefore = headersBefore[0].getAttribute('data-testid')
 
         act(() => {
@@ -894,9 +894,9 @@ describe('Table', () => {
         })
 
         // Table should still render after reorder
-        expect(screen.getByTestId('product-table')).toBeInTheDocument()
+        expect(screen.getByTestId('table')).toBeInTheDocument()
         // The first header should have changed
-        const headersAfter = screen.getAllByTestId(/^product-table-header-cell-(?!.*sort|.*filter|.*ellipsis)/)
+        const headersAfter = screen.getAllByTestId(/^table-header-cell-(?!.*sort|.*filter|.*ellipsis)/)
         expect(headersAfter[0].getAttribute('data-testid')).not.toBe(firstHeaderBefore)
       })
 
@@ -919,7 +919,7 @@ describe('Table', () => {
           )
         })
 
-        expect(screen.getByTestId('product-table')).toBeInTheDocument()
+        expect(screen.getByTestId('table')).toBeInTheDocument()
       })
 
       test('should move a column group together with its columns', () => {
@@ -928,7 +928,7 @@ describe('Table', () => {
         render(<NestedDndWrapper data={data} columns={columns} />)
         const leafHeaders = () =>
           [...document.querySelectorAll('thead tr:last-child th')].map((th) =>
-            th.getAttribute('data-testid')?.replace('product-table-header-cell-', ''),
+            th.getAttribute('data-testid')?.replace('table-header-cell-', ''),
           )
         expect(leafHeaders()).toEqual(['id', 'firstName', 'lastName', 'age', 'status', 'createdAt'])
 
@@ -964,7 +964,7 @@ describe('Table', () => {
         })
 
         const leafHeaders = [...document.querySelectorAll('thead tr:last-child th')].map((th) =>
-          th.getAttribute('data-testid')?.replace('product-table-header-cell-', ''),
+          th.getAttribute('data-testid')?.replace('table-header-cell-', ''),
         )
         expect(leafHeaders).toEqual(['lastName', 'id', 'firstName', 'age', 'status', 'createdAt'])
       })
@@ -989,7 +989,7 @@ describe('Table', () => {
           )
         })
 
-        expect(screen.getByTestId('product-table')).toBeInTheDocument()
+        expect(screen.getByTestId('table')).toBeInTheDocument()
       })
     })
 
@@ -1022,35 +1022,35 @@ describe('Table', () => {
         const data = TableFactory.createData(2)
         const columns = TableFactory.createColumns()
         render(<DndWrapper data={data} columns={columns} isVirtualized={false} sizeMode="fixed" />)
-        expect(screen.getByTestId('product-table')).toBeInTheDocument()
+        expect(screen.getByTestId('table')).toBeInTheDocument()
       })
 
       test('should calculate column sizes in full mode with populated size rect', () => {
         const data = TableFactory.createData(2)
         const columns = TableFactory.createColumns()
         render(<DndWrapper data={data} columns={columns} isVirtualized={false} sizeMode="full" />)
-        expect(screen.getByTestId('product-table')).toBeInTheDocument()
+        expect(screen.getByTestId('table')).toBeInTheDocument()
       })
 
       test('should calculate column sizes with pixel width in meta', () => {
         const data = TableFactory.createData(2)
         const columns = TableFactory.createColumns(false, { width: '100px' })
         render(<DndWrapper data={data} columns={columns} isVirtualized={false} sizeMode="full" />)
-        expect(screen.getByTestId('product-table')).toBeInTheDocument()
+        expect(screen.getByTestId('table')).toBeInTheDocument()
       })
 
       test('should calculate column sizes with percentage width in meta', () => {
         const data = TableFactory.createData(2)
         const columns = TableFactory.createColumns(false, { width: '50%' })
         render(<DndWrapper data={data} columns={columns} isVirtualized={false} sizeMode="full" />)
-        expect(screen.getByTestId('product-table')).toBeInTheDocument()
+        expect(screen.getByTestId('table')).toBeInTheDocument()
       })
 
       test('should calculate column sizes with invalid width string in meta', () => {
         const data = TableFactory.createData(2)
         const columns = TableFactory.createColumns(false, { width: 'invalid' })
         render(<DndWrapper data={data} columns={columns} isVirtualized={false} sizeMode="full" />)
-        expect(screen.getByTestId('product-table')).toBeInTheDocument()
+        expect(screen.getByTestId('table')).toBeInTheDocument()
       })
     })
   })
@@ -1069,8 +1069,8 @@ describe('Table', () => {
           )}
         />,
       )
-      expect(screen.getByTestId('product-table-expanded-row-0')).toBeInTheDocument()
-      expect(screen.getByTestId('product-table-expanded-row-cell-0')).toBeInTheDocument()
+      expect(screen.getByTestId('table-expanded-row-0')).toBeInTheDocument()
+      expect(screen.getByTestId('table-expanded-row-cell-0')).toBeInTheDocument()
       expect(screen.getByTestId('expanded-content-0')).toBeInTheDocument()
     })
 
@@ -1087,8 +1087,8 @@ describe('Table', () => {
           )}
         />,
       )
-      expect(screen.getByTestId('product-table-expanded-row-0')).toBeInTheDocument()
-      expect(screen.getByTestId('product-table-expanded-row-cell-0')).toBeInTheDocument()
+      expect(screen.getByTestId('table-expanded-row-0')).toBeInTheDocument()
+      expect(screen.getByTestId('table-expanded-row-cell-0')).toBeInTheDocument()
       expect(screen.getByTestId('expanded-content-0')).toBeInTheDocument()
     })
 
@@ -1101,11 +1101,11 @@ describe('Table', () => {
       }))
       const columns = TableFactory.createColumns() as unknown as ColumnDef<PersonWithSubRows, ColumnTypes>[]
       render(<NestedRowWrapper data={nestedData} columns={columns} isVirtualized={false} />)
-      expect(screen.getByTestId('product-table')).toBeInTheDocument()
+      expect(screen.getByTestId('table')).toBeInTheDocument()
       // Parent row 1 is visible
-      expect(screen.getByTestId('product-table-row-1')).toBeInTheDocument()
+      expect(screen.getByTestId('table-row-1')).toBeInTheDocument()
       // Parent row 0 is expanded: both parent row 0 and its child (also index 0) are rendered
-      expect(screen.getAllByTestId('product-table-row-0')).toHaveLength(2)
+      expect(screen.getAllByTestId('table-row-0')).toHaveLength(2)
     })
 
     test('should render two-level nested rows (virtualized)', () => {
@@ -1117,9 +1117,9 @@ describe('Table', () => {
       }))
       const columns = TableFactory.createColumns() as unknown as ColumnDef<PersonWithSubRows, ColumnTypes>[]
       render(<NestedRowWrapper data={nestedData} columns={columns} isVirtualized={true} />)
-      expect(screen.getByTestId('product-table')).toBeInTheDocument()
+      expect(screen.getByTestId('table')).toBeInTheDocument()
       // Parent row 0 and its child are both within the virtual window
-      expect(screen.getAllByTestId('product-table-row-0')).toHaveLength(2)
+      expect(screen.getAllByTestId('table-row-0')).toHaveLength(2)
     })
   })
 
@@ -1130,9 +1130,9 @@ describe('Table', () => {
       // Row at index 0 is sticky; since startIndex=0 and 0>=0, rangeExtractor lines 84-85 are reached
       const isRowSticky = (row: Row<Person>) => row.index === 0
       render(<Wrapper data={data} columns={columns} isVirtualized={true} isRowSticky={isRowSticky} />)
-      expect(screen.getByTestId('product-table')).toBeInTheDocument()
+      expect(screen.getByTestId('table')).toBeInTheDocument()
       // Sticky row 0 is rendered and receives the sticky style position
-      const stickyRow = screen.getByTestId('product-table-row-0')
+      const stickyRow = screen.getByTestId('table-row-0')
       expect(stickyRow).toBeInTheDocument()
       expect(stickyRow).toHaveStyle({ position: 'sticky' })
     })
@@ -1162,6 +1162,151 @@ describe('Table', () => {
       await waitFor(() => {
         expect(mockOnChange).toHaveBeenCalled()
       })
+    })
+  })
+
+  describe('Column ordering without an initial column order', () => {
+    const EmptyOrderWrapper = ({ data, columns }: { data: Person[]; columns: ColumnDef<Person, ColumnTypes>[] }) => {
+      const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([])
+      const table = useLegacyTable({
+        data,
+        columns,
+        state: { columnOrder },
+        onColumnOrderChange: setColumnOrder,
+        getCoreRowModel: getCoreRowModel<Person>(),
+      })
+      return (
+        <AppWrapper>
+          <Table<Person> table={table} isVirtualized={false} enableColumnOrdering />
+        </AppWrapper>
+      )
+    }
+
+    test('keeps every column when the column order state starts empty', () => {
+      render(<EmptyOrderWrapper data={TableFactory.createData(1)} columns={TableFactory.createColumns()} />)
+
+      act(() => {
+        capturedOnDragEnd?.(
+          {
+            canceled: false,
+            suspend: () => ({ abort: vi.fn(), resume: vi.fn() }),
+            operation: { source: { id: 'id' }, target: { id: 'lastName' } } as Operation,
+          },
+          manager,
+        )
+      })
+
+      const headers = [...document.querySelectorAll('thead th')].map((th) =>
+        th.getAttribute('data-testid')?.replace('table-header-cell-', ''),
+      )
+      expect(headers).toEqual(['firstName', 'lastName', 'id', 'age', 'status', 'createdAt'])
+    })
+  })
+
+  describe('onChangeRenderedRows callback updates', () => {
+    test('calls the latest callback after it changes', async () => {
+      const first = vi.fn()
+      const second = vi.fn()
+      const columns = TableFactory.createColumns()
+      const { rerender } = render(
+        <Wrapper data={TableFactory.createData(3)} columns={columns} isVirtualized onChangeRenderedRows={first} />,
+      )
+
+      await act(async () => {
+        rerender(
+          <Wrapper data={TableFactory.createData(3)} columns={columns} isVirtualized onChangeRenderedRows={second} />,
+        )
+      })
+      first.mockClear()
+      await act(async () => {
+        rerender(
+          <Wrapper data={TableFactory.createData(5)} columns={columns} isVirtualized onChangeRenderedRows={second} />,
+        )
+      })
+
+      await waitFor(() => expect(second).toHaveBeenCalled())
+      expect(first).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('Initial filter state', () => {
+    test('shows the filter input with the active filter value', () => {
+      const columns = TableFactory.createColumns(false, { showFilter: true })
+      render(
+        <Wrapper
+          data={TableFactory.createData(3)}
+          columns={columns}
+          state={{ columnFilters: [{ id: 'firstName', value: 'First2' }] }}
+        />,
+      )
+
+      const input = screen.getByTestId('table-filter-input') as HTMLInputElement
+      expect(input.value).toBe('First2')
+      expect(screen.getAllByTestId(/^table-row-\d+$/)).toHaveLength(1)
+    })
+
+    test('focuses the filter input when it is opened', async () => {
+      const columns = TableFactory.createColumns(false, { showFilter: true })
+      render(<Wrapper data={TableFactory.createData(3)} columns={columns} />)
+
+      fireEvent.click(screen.getByTestId('table-header-cell-id-filter-button'))
+
+      await waitFor(() => expect(document.activeElement).toBe(screen.getByTestId('table-filter-input')))
+    })
+  })
+
+  describe('Sort button accessibility', () => {
+    test('keeps the unsorted sort button in the tab order', () => {
+      render(<Wrapper data={TableFactory.createData(1)} columns={TableFactory.createColumns()} />)
+
+      const button = screen.getByTestId('table-header-cell-id-sort-button-false')
+      expect(button).not.toHaveClass('hidden')
+      expect(button).toHaveClass('opacity-0', 'focus-visible:opacity-100')
+    })
+  })
+
+  describe('Group borders', () => {
+    test('draws a left border where the column group changes', () => {
+      render(<Wrapper data={TableFactory.createData(1)} columns={TableFactory.createWithNestedColumns(true)} />)
+
+      expect(screen.getByTestId('table-row-cell-0-firstName')).not.toHaveClass('border-l')
+      expect(screen.getByTestId('table-row-cell-0-age')).toHaveClass('border-l')
+      expect(screen.getByTestId('table-row-cell-0-status')).not.toHaveClass('border-l')
+      const headerRow = document.querySelectorAll('thead tr')[1]
+      expect(headerRow.querySelector('[data-testid=table-header-cell-age]')).toHaveClass('border-l')
+      expect(headerRow.querySelector('[data-testid=table-header-cell-lastName]')).not.toHaveClass('border-l')
+    })
+  })
+
+  describe('Scroll rendering', () => {
+    test('does not re-render the cells while scrolling between the edges', () => {
+      let renders = 0
+      const columns = TableFactory.createColumns().map((column, index) =>
+        index === 0
+          ? {
+              ...column,
+              cell: () => {
+                renders++
+                return 'cell'
+              },
+            }
+          : column,
+      )
+      render(<Wrapper data={TableFactory.createData(1)} columns={columns} />)
+      const scroller = screen.getByTestId('table-scroll-container')
+      Object.defineProperty(scroller, 'scrollWidth', { configurable: true, value: 3000 })
+      const scrollTo = (left: number) =>
+        act(() => {
+          Object.defineProperty(scroller, 'scrollLeft', { configurable: true, value: left })
+          fireEvent.scroll(scroller)
+        })
+
+      scrollTo(10)
+      const afterLeavingStart = renders
+      scrollTo(20)
+      scrollTo(30)
+
+      expect(renders).toBe(afterLeavingStart)
     })
   })
 })

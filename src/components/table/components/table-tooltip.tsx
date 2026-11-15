@@ -11,23 +11,14 @@ type Props = {
   children: ReactNode
 }
 
-// Wraps `children` in a div that shows `content` as a tooltip, unless disabled
-export const TableTooltip = ({ content, disabled, className, testId, children }: Props) => {
-  const wrapper = <div className={className} data-testid={testId} />
-  if (disabled)
-    return (
-      <div className={className} data-testid={testId}>
-        {children}
-      </div>
-    )
-
-  return (
-    <Tooltip>
-      <TooltipTrigger render={wrapper}>{children}</TooltipTrigger>
-      <TooltipContent>{content}</TooltipContent>
-    </Tooltip>
-  )
-}
+// Wraps `children` in a div that shows `content` as a tooltip, unless disabled.
+// The tooltip is disabled instead of removed so the wrapped content is not remounted when it toggles.
+export const TableTooltip = ({ content, disabled, className, testId, children }: Props) => (
+  <Tooltip disabled={disabled}>
+    <TooltipTrigger render={<div className={className} data-testid={testId} />}>{children}</TooltipTrigger>
+    <TooltipContent>{content}</TooltipContent>
+  </Tooltip>
+)
 
 type EllipsisProps = {
   content: ReactNode

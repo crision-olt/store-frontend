@@ -2,18 +2,21 @@ import type { RowData } from '@tanstack/react-table'
 import { flexRender } from '@tanstack/react-table'
 import type { LegacyHeader } from '@tanstack/react-table/legacy'
 import { useCellStyles } from '@/components/table/hooks/use-cell-styles'
-import { ALIGN_CLASSES, LINE_CLAMP_CLASSES, hasHeaderBorderLeft } from '@/components/table/utils'
+import { ALIGN_CLASSES, LINE_CLAMP_CLASSES } from '@/components/table/utils'
 import { TableCell as UiTableCell } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 
 export type TableFooterCellProps<T extends RowData, U = unknown> = {
   footer: LegacyHeader<T, U>
+  /** Whether the cell starts a new column group (see `hasHeaderBorderLeft`). */
+  hasBorderLeft?: boolean
   testId?: string
 }
 
 export const TableFooterCell = <T extends RowData>({
   footer,
-  testId = 'product-table-footer-cell',
+  hasBorderLeft = false,
+  testId = 'table-footer-cell',
 }: TableFooterCellProps<T>) => {
   const meta = footer.column.columnDef.meta
   const styles = useCellStyles(footer.column)
@@ -26,7 +29,7 @@ export const TableFooterCell = <T extends RowData>({
       className={cn(
         'border-t bg-card font-bold whitespace-normal break-words empty:contents has-[[data-slot=footer-cell-content]:empty]:contents',
         align,
-        hasHeaderBorderLeft(footer) && 'border-l',
+        hasBorderLeft && 'border-l',
         meta?.className,
       )}
       colSpan={footer.colSpan > 1 ? footer.colSpan : undefined}

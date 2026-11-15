@@ -4,11 +4,11 @@ import { useSortable } from '@dnd-kit/react/sortable'
 import { flexRender, type SortDirection } from '@tanstack/react-table'
 import type { LegacyHeader } from '@tanstack/react-table/legacy'
 import { ArrowDownIcon, ArrowUpDownIcon, ArrowUpIcon, SearchIcon, XIcon } from 'lucide-react'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { EllipsisTooltip } from '@/components/table/components/table-tooltip'
 import { TextInputFilter } from '@/components/table/components/filters/text-input-filter'
 import { useCellStyles } from '@/components/table/hooks/use-cell-styles'
-import { ALIGN_CLASSES, LINE_CLAMP_CLASSES, hasHeaderBorderLeft } from '@/components/table/utils'
+import { ALIGN_CLASSES, LINE_CLAMP_CLASSES } from '@/components/table/utils'
 import { Button } from '@/components/ui/button'
 import { TableHead as UiTableHead } from '@/components/ui/table'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -16,6 +16,8 @@ import { cn } from '@/lib/utils'
 
 export type TableHeaderCellProps<T extends RowData, U = unknown> = {
   header: LegacyHeader<T, U>
+  /** Whether the cell starts a new column group (see `hasHeaderBorderLeft`). */
+  hasBorderLeft?: boolean
   testId?: string
   onSort?: (columnId: string, state: SortDirection | false) => void
   onShowFilter?: (columnId: string) => void
@@ -30,7 +32,8 @@ const SortedIcon = ({ isSorted }: { isSorted: SortDirection | false }) => {
 
 export const TableHeaderCell = <T extends RowData>({
   header,
-  testId = 'product-table-header-cell',
+  hasBorderLeft = false,
+  testId = 'table-header-cell',
   onSort,
   onShowFilter,
   enableColumnOrdering = false,
@@ -41,7 +44,11 @@ export const TableHeaderCell = <T extends RowData>({
   const inputRef = useRef<HTMLInputElement | null>(null)
   const canSort = header.column.getCanSort()
   const canFilter = meta?.showFilter && header.column.getCanFilter()
-  const [isFilterVisible, setIsFilterVisible] = useState(false)
+  // A filter that is already active (initial state, URL...) starts open so the user can see and clear it
+  const [isFilterVisible, setIsFilterVisible] = useState(() =>
+    Boolean(canFilter && header.column.getFilterValue() !== undefined),
+  )
+  const focusFilterOnOpenRef = useRef(false)
   const nextSortingOrder = header.column.getNextSortingOrder()
   const cellStyles = useCellStyles(header.column)
   const isResizing = header.column.getIsResizing()
@@ -80,9 +87,16 @@ export const TableHeaderCell = <T extends RowData>({
 
   const handleShowFilter = useCallback(() => {
     onShowFilter?.(header.id)
+    focusFilterOnOpenRef.current = true
     setIsFilterVisible(true)
-    setTimeout(() => inputRef.current?.focus(), 5)
   }, [onShowFilter, header.id])
+
+  // Custom filters receive `inputRef`, so focusing here works for them too
+  useEffect(() => {
+    if (!isFilterVisible || !focusFilterOnOpenRef.current) return
+    focusFilterOnOpenRef.current = false
+    inputRef.current?.focus()
+  }, [isFilterVisible])
 
   const handleSort = useCallback(
     (event: unknown) => {
@@ -102,10 +116,10 @@ export const TableHeaderCell = <T extends RowData>({
       className={cn(
         'group/th relative py-0 whitespace-normal break-words',
         align,
-        hasHeaderBorderLeft(header) && 'border-l',
+        hasBorderLeft && 'border-l',
         isColumnOrderable && 'cursor-grab',
         isDragSource && 'z-5 outline-1 -outline-offset-1 outline-dotted outline-muted-foreground',
-        '[[data-resizing=true]+&_[data-sort=false]]:hidden',
+        '[[data-resizing=true]+&_[data-sort=false]]:opacity-0!',
         meta?.className,
       )}
       colSpan={header.colSpan > 1 ? header.colSpan : undefined}
@@ -180,7 +194,8 @@ export const TableHeaderCell = <T extends RowData>({
                       data-sort={isSorted}
                       aria-label={sortLabel}
                       className={cn(
-                        !isSorted && 'hidden group-hover/th:inline-flex group-data-[resizing=true]/th:inline-flex',
+                        !isSorted &&
+                          'opacity-0 group-hover/th:opacity-100 group-data-[resizing=true]/th:opacity-100 focus-visible:opacity-100',
                       )}
                       onClick={handleSort}
                     />

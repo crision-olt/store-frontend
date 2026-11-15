@@ -1,12 +1,13 @@
 import type { RowData } from '@tanstack/react-table'
 import type { LegacyRow } from '@tanstack/react-table/legacy'
-import type { ForwardedRef, HTMLAttributes, MouseEventHandler, ReactElement } from 'react'
-import { forwardRef } from 'react'
+import type { HTMLAttributes, MouseEventHandler, Ref } from 'react'
 import { TableRowCell } from '@/components/table/components/table-row-cell'
+import { hasCellBorderLeft } from '@/components/table/utils'
 import { TableRow as UiTableRow } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 
 export type TableRowProps<T extends RowData> = Omit<HTMLAttributes<HTMLTableRowElement>, 'onClick'> & {
+  ref?: Ref<HTMLTableRowElement>
   row: LegacyRow<T>
   testId: string
   getClickRow?: (row: T) => MouseEventHandler | undefined
@@ -16,11 +17,18 @@ export type TableRowProps<T extends RowData> = Omit<HTMLAttributes<HTMLTableRowE
   dataIndex?: number
 }
 
-export const TableRow = forwardRef(function TableRowInner<T extends RowData>(
-  { row, testId, getClickRow, getDblClickRow, className, rowClassName, ...rest }: TableRowProps<T>,
-  ref: ForwardedRef<HTMLTableRowElement>,
-) {
+export const TableRow = <T extends RowData>({
+  ref,
+  row,
+  testId,
+  getClickRow,
+  getDblClickRow,
+  className,
+  rowClassName,
+  ...rest
+}: TableRowProps<T>) => {
   const isClickable = Boolean(getClickRow) || Boolean(getDblClickRow)
+  const cells = row.getVisibleCells()
 
   return (
     <UiTableRow
@@ -39,9 +47,14 @@ export const TableRow = forwardRef(function TableRowInner<T extends RowData>(
       )}
       {...rest}
     >
-      {row.getVisibleCells().map((cell, index) => (
-        <TableRowCell key={cell.id} testId={`${testId}-row-cell-${row.index}-${cell.column.id ?? index}`} cell={cell} />
+      {cells.map((cell, index) => (
+        <TableRowCell
+          key={cell.id}
+          testId={`${testId}-row-cell-${row.index}-${cell.column.id ?? index}`}
+          cell={cell}
+          hasBorderLeft={hasCellBorderLeft(cell, cells[index - 1])}
+        />
       ))}
     </UiTableRow>
   )
-}) as <T extends RowData>(props: TableRowProps<T> & { ref?: ForwardedRef<HTMLTableRowElement> }) => ReactElement
+}

@@ -6,11 +6,11 @@ export type TableLoadingProps = {
   testId?: string
 }
 
-export const TableLoading: FC<TableLoadingProps> = ({ testId = 'product-table-loading' }) => {
+export const TableLoading: FC<TableLoadingProps> = ({ testId = 'table-loading' }) => {
   const { t } = useLingui()
   return (
     <div
-      data-slot="product-table-loading"
+      data-slot="table-loading"
       data-testid={testId}
       className="absolute inset-0 z-10 flex items-center justify-center bg-card/70"
     >

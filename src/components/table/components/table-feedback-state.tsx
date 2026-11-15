@@ -15,10 +15,10 @@ export const TableFeedbackState: FC<TableFeedbackStateProps> = ({
   title,
   subtitle,
   className,
-  testId = 'product-table-feedback-state',
+  testId = 'table-feedback-state',
 }) => (
   <div
-    data-slot="product-table-feedback-state"
+    data-slot="table-feedback-state"
     data-testid={testId}
     className={cn('absolute inset-0 z-10 flex items-center justify-center bg-card', className)}
   >

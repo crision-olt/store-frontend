@@ -8,7 +8,7 @@ const DEFAULT_MIN_SIZE = 20
 const DEFAULT_MAX_SIZE = Number.MAX_SAFE_INTEGER
 
 export type ColumnLayout = {
-  /** Width of the `<table>`: `auto`, `100%` or a pixel value. */
+  /** Width of the `<table>`: `auto`, `100%` (full mode) or the sum of the column sizes in px (fixed mode). */
   totalSize: string
   /** Rendered width in px of every column (a group column is the sum of its visible leaf columns). */
   sizes: Map<string, number>
@@ -74,8 +74,6 @@ export const computeColumnLayout = <T extends RowData>(
         const factor = width / columnsWidth
         columns.forEach((column) => computed.set(column.id, (computed.get(column.id) ?? 0) * factor))
       }
-    } else {
-      totalSize = `${totalWidth}px`
     }
   }
 
@@ -131,6 +129,12 @@ export const computeColumnLayout = <T extends RowData>(
     starts.set(column.id, starts.get(leaves[0].id) ?? 0)
     allStarts.set(column.id, allStarts.get(leaves[0].id) ?? 0)
     afters.set(column.id, afters.get(leaves[leaves.length - 1].id) ?? 0)
+  }
+
+  // In fixed mode the table is exactly as wide as its visible columns
+  if (sizeMode === 'fixed' && width > 0) {
+    const leaves = flatColumns.filter((column) => column.columns.length === 0 && column.getIsVisible())
+    totalSize = `${leaves.reduce((acc, column) => acc + (sizes.get(column.id) ?? 0), 0)}px`
   }
 
   return { totalSize, sizes, starts, afters, allStarts }

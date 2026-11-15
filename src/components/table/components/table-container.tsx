@@ -16,12 +16,12 @@ import type {
 } from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ColumnLayoutContext, computeColumnLayout } from '@/components/table/column-layout'
-import { TableBody } from '@/components/table/components/filters/table-body'
-import { TableBodyVirtualized } from '@/components/table/components/filters/table-body-virtualized'
+import { TableBody } from '@/components/table/components/table-body'
+import { TableBodyVirtualized } from '@/components/table/components/table-body-virtualized'
 import { TableFooterCell } from '@/components/table/components/table-footer-cell'
 import { TableHeaderCell } from '@/components/table/components/table-header-cell'
 import { useTableContext } from '@/components/table/providers/table-provider'
-import { hasFooter } from '@/components/table/utils'
+import { hasFooter, hasHeaderBorderLeft } from '@/components/table/utils'
 import {
   Table as UiTable,
   TableFooter as UiTableFooter,
@@ -29,6 +29,15 @@ import {
   TableRow as UiTableRow,
 } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
+
+const COLUMN_ORDERING_SENSORS = [
+  PointerSensor.configure({
+    activationConstraints: [new PointerActivationConstraints.Distance({ value: 5 })],
+  }),
+  KeyboardSensor,
+]
+// The provider stays mounted so the sortable headers use this table's manager instead of dnd-kit's global one
+const NO_SENSORS: typeof COLUMN_ORDERING_SENSORS = []
 
 export type TableProps<T extends RowData> = {
   /**
@@ -181,7 +190,7 @@ export const TableContainer = <T extends RowData>({
   onSort,
   onShowFilter,
   enableColumnOrdering = false,
-  testId = 'product-table',
+  testId = 'table',
 }: TableProps<T>) => {
   const { ref, scrollRef, sizeRef, sizeRect } = useTableContext()
   const [placeholderOffset, setPlaceholderOffset] = useState<number>()
@@ -261,7 +270,16 @@ export const TableContainer = <T extends RowData>({
 
       const activeLeafIds = activeCol.getLeafColumns().map((c) => c.id)
       const targetLeafIds = overCol.getLeafColumns().map((c) => c.id)
-      const currentOrder: string[] = table.state.columnOrder
+      // Columns missing from the order state keep their definition order after the listed ones, as TanStack Table does
+      const listedOrder: string[] = table.state.columnOrder
+      const listed = new Set(listedOrder)
+      const currentOrder = [
+        ...listedOrder,
+        ...table
+          .getAllLeafColumns()
+          .map((column) => column.id)
+          .filter((id) => !listed.has(id)),
+      ]
       const activeSet = new Set(activeLeafIds)
       const result = currentOrder.filter((id) => !activeSet.has(id))
       const activeIdx = currentOrder.indexOf(activeLeafIds[0])
@@ -285,6 +303,12 @@ export const TableContainer = <T extends RowData>({
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [sizeRect.width, sizeMode])
 
+  // The container element is read when a drag starts, not during render (the ref is still empty on the first render)
+  const modifiers = useMemo(
+    () => [RestrictToHorizontalAxis, RestrictToElement.configure({ element: () => ref.current })],
+    [ref],
+  )
+
   // In `full` and `fixed` modes the table is laid out with flex/grid so the columns follow the computed sizes
   const hasFixedColumns = sizeMode !== 'auto'
 
@@ -292,13 +316,8 @@ export const TableContainer = <T extends RowData>({
     <ColumnLayoutContext.Provider value={layout}>
       <DragDropProvider
         plugins={(defaults) => [...defaults, Feedback.configure({ dropAnimation: null })]}
-        modifiers={[RestrictToHorizontalAxis, RestrictToElement.configure({ element: ref.current })]}
-        sensors={[
-          PointerSensor.configure({
-            activationConstraints: [new PointerActivationConstraints.Distance({ value: 5 })],
-          }),
-          KeyboardSensor,
-        ]}
+        modifiers={modifiers}
+        sensors={enableColumnOrdering ? COLUMN_ORDERING_SENSORS : NO_SENSORS}
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
       >
@@ -306,7 +325,7 @@ export const TableContainer = <T extends RowData>({
           data-testid={`${testId}-container`}
           data-size-mode={sizeMode}
           className={cn(
-            'relative h-full has-[[data-slot=product-table-feedback-state]]:overflow-hidden has-[[data-slot=product-table-loading]]:overflow-hidden',
+            'relative h-full has-[[data-slot=table-feedback-state]]:overflow-hidden has-[[data-slot=table-loading]]:overflow-hidden',
             hasFixedColumns &&
               '[&_table]:flex [&_table]:flex-col [&_tbody]:grid [&_td]:content-center [&_tfoot]:grid [&_thead]:grid [&_th]:flex [&_tr]:flex',
             className,
@@ -339,6 +358,7 @@ export const TableContainer = <T extends RowData>({
                         <TableHeaderCell
                           key={`${header.column.id}-${index}`}
                           header={header}
+                          hasBorderLeft={hasHeaderBorderLeft(header, headerGroup.headers[index - 1])}
                           onSort={onSort}
                           onShowFilter={onShowFilter}
                           enableColumnOrdering={enableColumnOrdering}
@@ -381,10 +401,11 @@ export const TableContainer = <T extends RowData>({
                   >
                     {table.getFooterGroups().map((footerGroup) => (
                       <UiTableRow key={footerGroup.id} className="border-0 hover:bg-transparent">
-                        {footerGroup.headers.map((header) => (
+                        {footerGroup.headers.map((header, index) => (
                           <TableFooterCell
                             key={header.id}
                             footer={header}
+                            hasBorderLeft={hasHeaderBorderLeft(header, footerGroup.headers[index - 1])}
                             testId={`${testId}-footer-cell-${header.id}`}
                           />
                         ))}

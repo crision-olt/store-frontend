@@ -103,7 +103,12 @@ export const TableBodyVirtualized = <T extends RowData>({
 
   const measureElement = useCallback((element: HTMLElement) => element.getBoundingClientRect().height, [])
 
+  // Keep the latest callback without re-creating the observer when the parent passes a new function
   const onChangeRenderedRowsRef = useRef(onChangeRenderedRows)
+  useEffect(() => {
+    onChangeRenderedRowsRef.current = onChangeRenderedRows
+  })
+  const hasOnChangeRenderedRows = Boolean(onChangeRenderedRows)
 
   const rowVirtualizer = useVirtualizer<HTMLDivElement, HTMLTableRowElement>({
     count: flatRows.length,
@@ -125,8 +130,7 @@ export const TableBodyVirtualized = <T extends RowData>({
 
   useEffect(() => {
     // Detect with MutationObserver when tbody child nodes are rendered to trigger onChange
-    const onChange = onChangeRenderedRowsRef.current
-    if (!isMounted || !tbodyRef.current || !onChange) return
+    if (!isMounted || !tbodyRef.current || !hasOnChangeRenderedRows) return
     const observer = new MutationObserver((mutations) => {
       const items: string[] = []
       mutations[0]?.target?.childNodes?.forEach((node) => {
@@ -134,13 +138,13 @@ export const TableBodyVirtualized = <T extends RowData>({
         const item = row.dataset.id
         if (item !== undefined) items.push(item)
       })
-      onChange(items)
+      onChangeRenderedRowsRef.current?.(items)
     })
     observer.observe(tbodyRef.current, { childList: true, attributes: true, attributeFilter: ['data-id'] })
     return () => {
       observer.disconnect()
     }
-  }, [isMounted, tbodyRef])
+  }, [isMounted, tbodyRef, hasOnChangeRenderedRows])
 
   if (!isMounted) return null
 
