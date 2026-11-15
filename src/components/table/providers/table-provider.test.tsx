@@ -10,8 +10,8 @@ import { renderHook } from '@testing-library/react'
 
 import { TableFactory, type Person } from '@/test/factory/table'
 import { AppWrapper } from '@/test/utils'
-import { ProductTable } from '@/components/product-table'
-import { ProductTableProvider, useProductTable } from '@/components/product-table/providers/product-table-provider'
+import { Table } from '@/components/table'
+import { TableProvider, useTableContext } from '@/components/table/providers/table-provider'
 
 const Wrapper = ({
   data,
@@ -36,21 +36,21 @@ const Wrapper = ({
 
   return (
     <AppWrapper>
-      <ProductTable<Person> table={table} feedbackState={children} />
+      <Table<Person> table={table} feedbackState={children} />
     </AppWrapper>
   )
 }
 
-describe('ProductTableProvider', () => {
+describe('TableProvider', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
   test('should provide context values correctly', () => {
-    const { result } = renderHook(() => useProductTable(), {
+    const { result } = renderHook(() => useTableContext(), {
       wrapper: ({ children }) => (
         <AppWrapper>
-          <ProductTableProvider>{children}</ProductTableProvider>
+          <TableProvider>{children}</TableProvider>
         </AppWrapper>
       ),
     })
@@ -72,7 +72,7 @@ describe('ProductTableProvider', () => {
     })
   })
 
-  test('should throw error when useProductTable is called outside ProductTableProvider', () => {
+  test('should throw error when useTableContext is called outside TableProvider', () => {
     // 1. Suppress console.error (React logs)
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => null)
 
@@ -81,8 +81,8 @@ describe('ProductTableProvider', () => {
     globalThis.addEventListener('error', preventDefault)
 
     expect(() => {
-      renderHook(() => useProductTable())
-    }).toThrow('useProductTable must be called inside ProductTableProvider')
+      renderHook(() => useTableContext())
+    }).toThrow('useTableContext must be called inside TableProvider')
 
     // 3. Cleanup
     globalThis.removeEventListener('error', preventDefault)
@@ -93,7 +93,7 @@ describe('ProductTableProvider', () => {
     const data = TableFactory.createData(1)
     const columns = TableFactory.createColumns()
 
-    const { result, rerender } = renderHook(() => useProductTable(), {
+    const { result, rerender } = renderHook(() => useTableContext(), {
       wrapper: ({ children }) => (
         <Wrapper data={data} columns={columns}>
           {children}

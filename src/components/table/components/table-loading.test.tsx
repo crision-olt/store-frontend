@@ -5,13 +5,13 @@ import '@/test/setup-dom'
 import { render, screen } from '@testing-library/react'
 
 import { AppWrapper } from '@/test/utils'
-import { ProductTableLoading } from '@/components/product-table/components/product-table-loading'
+import { TableLoading } from '@/components/table/components/table-loading'
 
-describe('ProductTableLoading', () => {
+describe('TableLoading', () => {
   test('should render correctly', () => {
     render(
       <AppWrapper>
-        <ProductTableLoading testId="my-test-id" />
+        <TableLoading testId="my-test-id" />
       </AppWrapper>,
     )
     expect(screen.getByTestId('my-test-id')).toBeInTheDocument()
@@ -20,7 +20,7 @@ describe('ProductTableLoading', () => {
   test('should render correctly with default testId', () => {
     render(
       <AppWrapper>
-        <ProductTableLoading />
+        <TableLoading />
       </AppWrapper>,
     )
     expect(screen.getByTestId('product-table-loading')).toBeInTheDocument()

@@ -19,8 +19,8 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { TableFactory, type Person } from '@/test/factory/table'
 import { defineBoundingClientRect, defineClientDimensions } from '@/test/dom'
 import { AppWrapper } from '@/test/utils'
-import { ProductTable } from '@/components/product-table'
-import type { ProductTableProps } from '@/components/product-table/components/product-table-container'
+import { Table } from '@/components/table'
+import type { TableProps } from '@/components/table/components/table-container'
 
 defineBoundingClientRect()
 defineClientDimensions()
@@ -58,8 +58,8 @@ const Wrapper = ({
   columns: ColumnDef<Person, ColumnTypes>[]
   state?: Partial<TableState<LegacyFeatures>>
   isVirtualized?: boolean
-  isRowSticky?: ProductTableProps<Person>['isRowSticky']
-  onChangeRenderedRows?: ProductTableProps<Person>['onChangeRenderedRows']
+  isRowSticky?: TableProps<Person>['isRowSticky']
+  onChangeRenderedRows?: TableProps<Person>['onChangeRenderedRows']
   children?: ReactNode
 }) => {
   const table = useLegacyTable({
@@ -78,7 +78,7 @@ const Wrapper = ({
 
   return (
     <AppWrapper>
-      <ProductTable<Person>
+      <Table<Person>
         table={table}
         feedbackState={children}
         isVirtualized={isVirtualized}
@@ -105,12 +105,12 @@ const DndWrapper = ({
   columns: ColumnDef<Person, ColumnTypes>[]
   isVirtualized?: boolean
   enableColumnOrdering?: boolean
-  sizeMode?: ProductTableProps<Person>['sizeMode']
+  sizeMode?: TableProps<Person>['sizeMode']
   startSlot?: ReactNode
   endSlot?: ReactNode
   className?: string
-  onSort?: ProductTableProps<Person>['onSort']
-  onShowFilter?: ProductTableProps<Person>['onShowFilter']
+  onSort?: TableProps<Person>['onSort']
+  onShowFilter?: TableProps<Person>['onShowFilter']
 }) => {
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(
     columns.map((c) => (c as { accessorKey: string }).accessorKey),
@@ -133,7 +133,7 @@ const DndWrapper = ({
 
   return (
     <AppWrapper>
-      <ProductTable<Person>
+      <Table<Person>
         table={table}
         isVirtualized={isVirtualized}
         enableColumnOrdering={enableColumnOrdering}
@@ -178,7 +178,7 @@ const ExpandableWrapper = ({
 
   return (
     <AppWrapper>
-      <ProductTable<Person> table={table} isVirtualized={isVirtualized} renderSubComponent={renderSubComponent} />
+      <Table<Person> table={table} isVirtualized={isVirtualized} renderSubComponent={renderSubComponent} />
     </AppWrapper>
   )
 }
@@ -209,7 +209,7 @@ const NestedRowWrapper = ({
 
   return (
     <AppWrapper>
-      <ProductTable<PersonWithSubRows> table={table} isVirtualized={isVirtualized} />
+      <Table<PersonWithSubRows> table={table} isVirtualized={isVirtualized} />
     </AppWrapper>
   )
 }
@@ -241,12 +241,12 @@ const NestedDndWrapper = ({ data, columns }: { data: Person[]; columns: ColumnDe
 
   return (
     <AppWrapper>
-      <ProductTable<Person> table={table} isVirtualized={false} enableColumnOrdering={true} />
+      <Table<Person> table={table} isVirtualized={false} enableColumnOrdering={true} />
     </AppWrapper>
   )
 }
 
-describe('ProductTable', () => {
+describe('Table', () => {
   test('should render correctly', () => {
     const data = TableFactory.createData(5)
     const columns = TableFactory.createColumns()

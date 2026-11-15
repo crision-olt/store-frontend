@@ -2,11 +2,11 @@ import { useLingui } from '@lingui/react/macro'
 import { Loader2Icon } from 'lucide-react'
 import type { FC } from 'react'
 
-export type ProductTableLoadingProps = {
+export type TableLoadingProps = {
   testId?: string
 }
 
-export const ProductTableLoading: FC<ProductTableLoadingProps> = ({ testId = 'product-table-loading' }) => {
+export const TableLoading: FC<TableLoadingProps> = ({ testId = 'product-table-loading' }) => {
   const { t } = useLingui()
   return (
     <div

@@ -2,11 +2,11 @@ import type { RowData } from '@tanstack/react-table'
 import type { LegacyRow } from '@tanstack/react-table/legacy'
 import type { ForwardedRef, HTMLAttributes, MouseEventHandler, ReactElement } from 'react'
 import { forwardRef } from 'react'
-import { ProductTableRowCell } from '@/components/product-table/components/product-table-row-cell'
-import { TableRow } from '@/components/ui/table'
+import { TableRowCell } from '@/components/table/components/table-row-cell'
+import { TableRow as UiTableRow } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 
-export type ProductTableRowProps<T extends RowData> = Omit<HTMLAttributes<HTMLTableRowElement>, 'onClick'> & {
+export type TableRowProps<T extends RowData> = Omit<HTMLAttributes<HTMLTableRowElement>, 'onClick'> & {
   row: LegacyRow<T>
   testId: string
   getClickRow?: (row: T) => MouseEventHandler | undefined
@@ -16,14 +16,14 @@ export type ProductTableRowProps<T extends RowData> = Omit<HTMLAttributes<HTMLTa
   dataIndex?: number
 }
 
-export const ProductTableRow = forwardRef(function ProductTableRowInner<T extends RowData>(
-  { row, testId, getClickRow, getDblClickRow, className, rowClassName, ...rest }: ProductTableRowProps<T>,
+export const TableRow = forwardRef(function TableRowInner<T extends RowData>(
+  { row, testId, getClickRow, getDblClickRow, className, rowClassName, ...rest }: TableRowProps<T>,
   ref: ForwardedRef<HTMLTableRowElement>,
 ) {
   const isClickable = Boolean(getClickRow) || Boolean(getDblClickRow)
 
   return (
-    <TableRow
+    <UiTableRow
       ref={ref}
       onClick={getClickRow?.(row.original)}
       onDoubleClick={getDblClickRow?.(row.original)}
@@ -40,12 +40,8 @@ export const ProductTableRow = forwardRef(function ProductTableRowInner<T extend
       {...rest}
     >
       {row.getVisibleCells().map((cell, index) => (
-        <ProductTableRowCell
-          key={cell.id}
-          testId={`${testId}-row-cell-${row.index}-${cell.column.id ?? index}`}
-          cell={cell}
-        />
+        <TableRowCell key={cell.id} testId={`${testId}-row-cell-${row.index}-${cell.column.id ?? index}`} cell={cell} />
       ))}
-    </TableRow>
+    </UiTableRow>
   )
-}) as <T extends RowData>(props: ProductTableRowProps<T> & { ref?: ForwardedRef<HTMLTableRowElement> }) => ReactElement
+}) as <T extends RowData>(props: TableRowProps<T> & { ref?: ForwardedRef<HTMLTableRowElement> }) => ReactElement

@@ -1,7 +1,7 @@
 import type { FC, ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
-export type ProductTableFeedbackStateProps = {
+export type TableFeedbackStateProps = {
   header?: ReactNode
   title?: ReactNode
   subtitle?: ReactNode
@@ -10,7 +10,7 @@ export type ProductTableFeedbackStateProps = {
 }
 
 /** Overlay shown over the table to give feedback to the user, such as an empty or error state. */
-export const ProductTableFeedbackState: FC<ProductTableFeedbackStateProps> = ({
+export const TableFeedbackState: FC<TableFeedbackStateProps> = ({
   header,
   title,
   subtitle,

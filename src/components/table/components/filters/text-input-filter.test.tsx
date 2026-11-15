@@ -7,8 +7,8 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { AppWrapper } from '@/test/utils'
-import { TextInputFilter } from '@/components/product-table/components/filters/text-input-filter'
-import type { FilterComponentProps } from '@/components/product-table/filters'
+import { TextInputFilter } from '@/components/table/components/filters/text-input-filter'
+import type { FilterComponentProps } from '@/components/table/filters'
 
 let user: ReturnType<typeof userEvent.setup>
 

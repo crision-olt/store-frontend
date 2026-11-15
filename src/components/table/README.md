@@ -1,4 +1,4 @@
-# product-table
+# table
 
 Virtualized table with sorting, filtering, pinned columns, column reordering (drag and drop), sub-rows and sticky
 header, footer and rows. It is built with the shadcn components in `src/components/ui` (`table`, `button`, `input`,
@@ -6,11 +6,11 @@ header, footer and rows. It is built with the shadcn components in `src/componen
 
 ## Usage
 
-Create the table with TanStack Table's `useLegacyTable` hook and pass it to `ProductTable`:
+Create the table with TanStack Table's `useLegacyTable` hook and pass it to `Table`:
 
 ```tsx
 import { getCoreRowModel, getSortedRowModel, useLegacyTable } from '@tanstack/react-table/legacy'
-import { ProductTable } from '@/components/product-table'
+import { Table } from '@/components/table'
 
 const table = useLegacyTable({
   data,
@@ -21,12 +21,12 @@ const table = useLegacyTable({
 
 return (
   <div className="h-96">
-    <ProductTable table={table} />
+    <Table table={table} />
   </div>
 )
 ```
 
-The table fills the height of its parent. Every prop is documented in `components/product-table-container.tsx`.
+The table fills the height of its parent. Every prop is documented in `components/table-container.tsx`.
 Column options (`align`, `lineClamp`, `width`, `className`, `showFilter`, `Filter`...) go in the column `meta`.
 
 ## Dependencies

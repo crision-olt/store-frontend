@@ -6,11 +6,11 @@ import { render, screen } from '@testing-library/react'
 
 import { SearchXIcon } from 'lucide-react'
 
-import { ProductTableFeedbackState } from '@/components/product-table/components/product-table-feedback-state'
+import { TableFeedbackState } from '@/components/table/components/table-feedback-state'
 
-describe('ProductTableFeedbackState', () => {
+describe('TableFeedbackState', () => {
   it('should render correctly', async () => {
-    render(<ProductTableFeedbackState header={<SearchXIcon />} title="No results" subtitle="No results found." />)
+    render(<TableFeedbackState header={<SearchXIcon />} title="No results" subtitle="No results found." />)
 
     const feedback = screen.getByTestId('product-table-feedback-state')
     expect(feedback).toBeInTheDocument()

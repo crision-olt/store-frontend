@@ -1,9 +1,9 @@
 import type { CellData, RowData, TableFeatures } from '@tanstack/react-table'
 import type { CSSProperties, FC } from 'react'
-import type { ProductTableProps } from '@/components/product-table/components/product-table-container'
-import { ProductTableContainer } from '@/components/product-table/components/product-table-container'
-import type { FilterComponentProps } from '@/components/product-table/filters'
-import { ProductTableProvider } from '@/components/product-table/providers/product-table-provider'
+import type { TableProps } from '@/components/table/components/table-container'
+import { TableContainer } from '@/components/table/components/table-container'
+import type { FilterComponentProps } from '@/components/table/filters'
+import { TableProvider } from '@/components/table/providers/table-provider'
 import { TooltipProvider } from '@/components/ui/tooltip'
 
 declare module '@tanstack/react-table' {
@@ -33,10 +33,10 @@ declare module '@tanstack/react-table' {
   }
 }
 
-export const ProductTable = <T extends RowData>(props: ProductTableProps<T>) => (
+export const Table = <T extends RowData>(props: TableProps<T>) => (
   <TooltipProvider>
-    <ProductTableProvider>
-      <ProductTableContainer<T> {...props} />
-    </ProductTableProvider>
+    <TableProvider>
+      <TableContainer<T> {...props} />
+    </TableProvider>
   </TooltipProvider>
 )

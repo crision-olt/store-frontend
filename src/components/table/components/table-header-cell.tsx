@@ -5,16 +5,16 @@ import { flexRender, type SortDirection } from '@tanstack/react-table'
 import type { LegacyHeader } from '@tanstack/react-table/legacy'
 import { ArrowDownIcon, ArrowUpDownIcon, ArrowUpIcon, SearchIcon, XIcon } from 'lucide-react'
 import { useCallback, useRef, useState } from 'react'
-import { EllipsisTooltip } from '@/components/product-table/components/table-tooltip'
-import { TextInputFilter } from '@/components/product-table/components/filters/text-input-filter'
-import { useCellStyles } from '@/components/product-table/hooks/use-cell-styles'
-import { ALIGN_CLASSES, LINE_CLAMP_CLASSES, hasHeaderBorderLeft } from '@/components/product-table/utils'
+import { EllipsisTooltip } from '@/components/table/components/table-tooltip'
+import { TextInputFilter } from '@/components/table/components/filters/text-input-filter'
+import { useCellStyles } from '@/components/table/hooks/use-cell-styles'
+import { ALIGN_CLASSES, LINE_CLAMP_CLASSES, hasHeaderBorderLeft } from '@/components/table/utils'
 import { Button } from '@/components/ui/button'
-import { TableHead } from '@/components/ui/table'
+import { TableHead as UiTableHead } from '@/components/ui/table'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 
-export type ProductTableHeaderCellProps<T extends RowData, U = unknown> = {
+export type TableHeaderCellProps<T extends RowData, U = unknown> = {
   header: LegacyHeader<T, U>
   testId?: string
   onSort?: (columnId: string, state: SortDirection | false) => void
@@ -28,13 +28,13 @@ const SortedIcon = ({ isSorted }: { isSorted: SortDirection | false }) => {
   return <ArrowUpDownIcon />
 }
 
-export const ProductTableHeaderCell = <T extends RowData>({
+export const TableHeaderCell = <T extends RowData>({
   header,
   testId = 'product-table-header-cell',
   onSort,
   onShowFilter,
   enableColumnOrdering = false,
-}: ProductTableHeaderCellProps<T>) => {
+}: TableHeaderCellProps<T>) => {
   const { t } = useLingui()
   const meta = header.column.columnDef.meta
   const isSorted = header.column.getIsSorted()
@@ -94,7 +94,7 @@ export const ProductTableHeaderCell = <T extends RowData>({
   )
 
   return (
-    <TableHead
+    <UiTableHead
       ref={sortableRef}
       data-testid={testId}
       data-resizing={isResizing}
@@ -204,6 +204,6 @@ export const ProductTableHeaderCell = <T extends RowData>({
           role="none"
         />
       )}
-    </TableHead>
+    </UiTableHead>
   )
 }

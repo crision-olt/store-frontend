@@ -82,11 +82,11 @@ msgstr "Check the email, the password (8 to 72 characters) and the role."
 msgid "Clear filters"
 msgstr "Clear filters"
 
-#: src/components/product-table/components/product-table-header-cell.tsx:68
+#: src/components/table/components/table-header-cell.tsx:71
 msgid "Clear sorting"
 msgstr "Clear sorting"
 
-#: src/components/product-table/components/product-table-header-cell.tsx:125
+#: src/components/table/components/table-header-cell.tsx:128
 msgid "Close filter"
 msgstr "Close filter"
 
@@ -290,8 +290,8 @@ msgstr "Enter a valid price range: the minimum cannot exceed the maximum."
 msgid "Enter your details to get started"
 msgstr "Enter your details to get started"
 
-#: src/components/product-table/components/product-table-header-cell.tsx:158
-#: src/components/product-table/components/product-table-header-cell.tsx:165
+#: src/components/table/components/table-header-cell.tsx:161
+#: src/components/table/components/table-header-cell.tsx:168
 msgid "Filter"
 msgstr "Filter"
 
@@ -307,7 +307,7 @@ msgstr "Invalid email or password"
 msgid "Language"
 msgstr "Language"
 
-#: src/components/product-table/components/product-table-loading.tsx:17
+#: src/components/table/components/table-loading.tsx:17
 msgid "Loading"
 msgstr "Loading"
 
@@ -512,11 +512,11 @@ msgstr "Signing in…"
 msgid "SKU"
 msgstr "SKU"
 
-#: src/components/product-table/components/product-table-header-cell.tsx:68
+#: src/components/table/components/table-header-cell.tsx:71
 msgid "Sort ascending"
 msgstr "Sort ascending"
 
-#: src/components/product-table/components/product-table-header-cell.tsx:68
+#: src/components/table/components/table-header-cell.tsx:71
 msgid "Sort descending"
 msgstr "Sort descending"
 

@@ -2,21 +2,21 @@ import type { RowData } from '@tanstack/react-table'
 import { flexRender } from '@tanstack/react-table'
 import type { LegacyCell } from '@tanstack/react-table/legacy'
 import type { ReactNode } from 'react'
-import { EllipsisTooltip } from '@/components/product-table/components/table-tooltip'
-import { useCellStyles } from '@/components/product-table/hooks/use-cell-styles'
-import { ALIGN_CLASSES, hasCellBorderLeft } from '@/components/product-table/utils'
-import { TableCell } from '@/components/ui/table'
+import { EllipsisTooltip } from '@/components/table/components/table-tooltip'
+import { useCellStyles } from '@/components/table/hooks/use-cell-styles'
+import { ALIGN_CLASSES, hasCellBorderLeft } from '@/components/table/utils'
+import { TableCell as UiTableCell } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 
-export type ProductTableRowCellTooltipProps = {
+export type TableRowCellTooltipProps = {
   testId?: string
   children: ReactNode
 }
 
-export const ProductTableRowCellTooltip = ({
+export const TableRowCellTooltip = ({
   testId = 'product-table-row-cell-tooltip',
   children,
-}: ProductTableRowCellTooltipProps) => (
+}: TableRowCellTooltipProps) => (
   <EllipsisTooltip
     testId={testId}
     content={children ?? ''}
@@ -28,23 +28,23 @@ export const ProductTableRowCellTooltip = ({
   </EllipsisTooltip>
 )
 
-export type ProductTableRowCellProps<T extends RowData> = {
+export type TableRowCellProps<T extends RowData> = {
   cell: LegacyCell<T, unknown>
   testId?: string
   className?: string
 }
 
-export const ProductTableRowCell = <T extends RowData>({
+export const TableRowCell = <T extends RowData>({
   cell,
   testId = 'product-table-row-cell',
   className,
-}: ProductTableRowCellProps<T>) => {
+}: TableRowCellProps<T>) => {
   const meta = cell.column.columnDef.meta
   const styles = useCellStyles(cell.column)
   const content = flexRender(cell.column.columnDef.cell, cell.getContext())
 
   return (
-    <TableCell
+    <UiTableCell
       data-testid={testId}
       className={cn(
         'box-border border-t bg-card whitespace-normal break-words group-first/row:border-t-0 group-hover/row:bg-muted group-data-[state=selected]/row:bg-accent',
@@ -60,10 +60,10 @@ export const ProductTableRowCell = <T extends RowData>({
       }}
     >
       {meta?.enableCellTooltip ? (
-        <ProductTableRowCellTooltip testId={`${testId}-ellipsis-tooltip`}>{content}</ProductTableRowCellTooltip>
+        <TableRowCellTooltip testId={`${testId}-ellipsis-tooltip`}>{content}</TableRowCellTooltip>
       ) : (
         <div className="block">{content}</div>
       )}
-    </TableCell>
+    </UiTableCell>
   )
 }

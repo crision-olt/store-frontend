@@ -1,7 +1,7 @@
 import type { FC, PropsWithChildren } from 'react'
 import { createContext, useMemo, useContext, useRef, useEffect, useState } from 'react'
 
-export interface ProductTableContextType {
+export interface TableContextType {
   ref: React.MutableRefObject<HTMLDivElement | null>
   tbodyRef: React.MutableRefObject<HTMLTableSectionElement | null>
   sizeRef: React.MutableRefObject<HTMLDivElement | null>
@@ -20,9 +20,9 @@ export interface ProductTableContextType {
   }
 }
 
-const ProductTableContext = createContext<ProductTableContextType | undefined>(undefined)
+const TableContext = createContext<TableContextType | undefined>(undefined)
 
-export const ProductTableProvider: FC<PropsWithChildren> = ({ children }) => {
+export const TableProvider: FC<PropsWithChildren> = ({ children }) => {
   const ref = useRef<HTMLDivElement | null>(null)
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const sizeRef = useRef<HTMLDivElement | null>(null)
@@ -81,13 +81,13 @@ export const ProductTableProvider: FC<PropsWithChildren> = ({ children }) => {
     () => ({ ref, scrollRef, sizeRef, tbodyRef, sizeRect, scrollPosition }),
     [ref, scrollRef, sizeRef, tbodyRef, sizeRect, scrollPosition],
   )
-  return <ProductTableContext.Provider value={value}>{children}</ProductTableContext.Provider>
+  return <TableContext.Provider value={value}>{children}</TableContext.Provider>
 }
 
-export const useProductTable = (): ProductTableContextType => {
-  const context = useContext(ProductTableContext)
+export const useTableContext = (): TableContextType => {
+  const context = useContext(TableContext)
   if (!context) {
-    throw new Error('useProductTable must be called inside ProductTableProvider')
+    throw new Error('useTableContext must be called inside TableProvider')
   }
   return context
 }

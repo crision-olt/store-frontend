@@ -1,7 +1,7 @@
 import type { ReactElement, ReactNode } from 'react'
 import { useRef } from 'react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { useHasEllipsis } from '@/components/product-table/hooks/use-has-ellipsis'
+import { useHasEllipsis } from '@/components/table/hooks/use-has-ellipsis'
 
 type Props = {
   content: ReactNode

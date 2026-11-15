@@ -4,14 +4,14 @@ import type { Range } from '@tanstack/react-virtual'
 import { defaultRangeExtractor, useVirtualizer } from '@tanstack/react-virtual'
 import type { ComponentType, MouseEventHandler, PropsWithChildren, ReactElement } from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ProductTableRow } from '@/components/product-table/components/product-table-row'
-import { ProductTableRowExpanded } from '@/components/product-table/components/product-table-row-expanded'
-import { useProductTable } from '@/components/product-table/providers/product-table-provider'
-import { TableBody } from '@/components/ui/table'
+import { TableRow } from '@/components/table/components/table-row'
+import { TableRowExpanded } from '@/components/table/components/table-row-expanded'
+import { useTableContext } from '@/components/table/providers/table-provider'
+import { TableBody as UiTableBody } from '@/components/ui/table'
 
 type FlatRow<T extends RowData> = { type: 'row' | 'sub'; row: LegacyRow<T> }
 
-export type ProductTableBodyVirtualizedProps<T extends RowData> = {
+export type TableBodyVirtualizedProps<T extends RowData> = {
   table: LegacyTable<T>
   testId: string
   getClickRow?: (row: T) => MouseEventHandler | undefined
@@ -31,7 +31,7 @@ const defaultEstimateSize = () => 40 //default row height if not provided
 
 const DefaultRowProvider = ({ children }: PropsWithChildren) => <>{children}</>
 
-export const ProductTableBodyVirtualized = <T extends RowData>({
+export const TableBodyVirtualized = <T extends RowData>({
   table,
   getClickRow,
   getDblClickRow,
@@ -45,8 +45,8 @@ export const ProductTableBodyVirtualized = <T extends RowData>({
   estimateSize = defaultEstimateSize,
   renderSubComponent,
   testId,
-}: ProductTableBodyVirtualizedProps<T>) => {
-  const { scrollRef, tbodyRef, sizeRef } = useProductTable()
+}: TableBodyVirtualizedProps<T>) => {
+  const { scrollRef, tbodyRef, sizeRef } = useTableContext()
   const [isMounted, setIsMounted] = useState(false)
 
   const rows = table.getRowModel().rows
@@ -145,13 +145,13 @@ export const ProductTableBodyVirtualized = <T extends RowData>({
   if (!isMounted) return null
 
   return (
-    <TableBody ref={tbodyRef} className="relative" style={{ height: `${rowVirtualizer.getTotalSize()}px` }}>
+    <UiTableBody ref={tbodyRef} className="relative" style={{ height: `${rowVirtualizer.getTotalSize()}px` }}>
       {rowVirtualizer.getVirtualItems().map((virtualRow) => {
         const item = flatRows[virtualRow.index]
 
         if (item.type === 'sub') {
           return (
-            <ProductTableRowExpanded
+            <TableRowExpanded
               key={`${item.row.id}-sub`}
               ref={rowVirtualizer.measureElement}
               row={item.row}
@@ -169,7 +169,7 @@ export const ProductTableBodyVirtualized = <T extends RowData>({
 
         return (
           <RowProvider key={item.row.id} row={item.row}>
-            <ProductTableRow
+            <TableRow
               ref={rowVirtualizer.measureElement}
               row={item.row}
               getClickRow={getClickRow}
@@ -200,6 +200,6 @@ export const ProductTableBodyVirtualized = <T extends RowData>({
           </RowProvider>
         )
       })}
-    </TableBody>
+    </UiTableBody>
   )
 }

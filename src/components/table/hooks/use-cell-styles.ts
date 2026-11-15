@@ -1,15 +1,15 @@
 import type { RowData } from '@tanstack/react-table'
 import type { CSSProperties } from 'react'
 import type { LegacyColumn } from '@tanstack/react-table/legacy'
-import { useColumnLayout } from '@/components/product-table/column-layout'
-import { useProductTable } from '@/components/product-table/providers/product-table-provider'
+import { useColumnLayout } from '@/components/table/column-layout'
+import { useTableContext } from '@/components/table/providers/table-provider'
 
 // These are the important styles to make sticky column pinning work!
 // CSS will should apply to head cells, data cells and footer cells.
 export const useCellStyles = <T extends RowData>(column: LegacyColumn<T>): CSSProperties | undefined => {
   const override = column.columnDef.meta?.style
   const isPinned = column.getIsPinned()
-  const { scrollPosition } = useProductTable()
+  const { scrollPosition } = useTableContext()
   const layout = useColumnLayout()
 
   if (!isPinned) {

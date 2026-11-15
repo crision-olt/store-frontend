@@ -15,17 +15,22 @@ import type {
   ReactNode,
 } from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { ColumnLayoutContext, computeColumnLayout } from '@/components/product-table/column-layout'
-import { ProductTableBody } from '@/components/product-table/components/filters/product-table-body'
-import { ProductTableBodyVirtualized } from '@/components/product-table/components/filters/product-table-body-virtualized'
-import { ProductTableFooterCell } from '@/components/product-table/components/product-table-footer-cell'
-import { ProductTableHeaderCell } from '@/components/product-table/components/product-table-header-cell'
-import { useProductTable } from '@/components/product-table/providers/product-table-provider'
-import { hasFooter } from '@/components/product-table/utils'
-import { Table, TableFooter, TableHeader, TableRow } from '@/components/ui/table'
+import { ColumnLayoutContext, computeColumnLayout } from '@/components/table/column-layout'
+import { TableBody } from '@/components/table/components/filters/table-body'
+import { TableBodyVirtualized } from '@/components/table/components/filters/table-body-virtualized'
+import { TableFooterCell } from '@/components/table/components/table-footer-cell'
+import { TableHeaderCell } from '@/components/table/components/table-header-cell'
+import { useTableContext } from '@/components/table/providers/table-provider'
+import { hasFooter } from '@/components/table/utils'
+import {
+  Table as UiTable,
+  TableFooter as UiTableFooter,
+  TableHeader as UiTableHeader,
+  TableRow as UiTableRow,
+} from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 
-export type ProductTableProps<T extends RowData> = {
+export type TableProps<T extends RowData> = {
   /**
    * The TanStack Table instance to be rendered. The table instance should be created with the `useLegacyTable` hook
    * (`@tanstack/react-table/legacy`) and passed all necessary options (data, columns, getCoreRowModel at least) in the
@@ -65,11 +70,11 @@ export type ProductTableProps<T extends RowData> = {
    */
   sizeMode?: 'auto' | 'fixed' | 'full'
   /**
-   * Additional props to be passed to the underlying Table component. Can be used to customize the table. Note that some props
+   * Additional props to be passed to the underlying shadcn `Table` component. Can be used to customize the table. Note that some props
    * are already handled by this component (e.g., className, testId) and will be merged with the ones passed in `tableProps`,
    * so they should not be included in `tableProps` to avoid unexpected behavior.
    */
-  tableProps?: ComponentProps<typeof Table> & { testId?: string }
+  tableProps?: ComponentProps<typeof UiTable> & { testId?: string }
   /**
    * Optional ReactNode to be rendered at the start of the scroll container, before the table.
    */
@@ -151,7 +156,7 @@ export type ProductTableProps<T extends RowData> = {
   RowProvider?: ComponentType<PropsWithChildren & { row: LegacyRow<T> }>
 }
 
-export const ProductTableContainer = <T extends RowData>({
+export const TableContainer = <T extends RowData>({
   table,
   startSlot,
   endSlot,
@@ -177,8 +182,8 @@ export const ProductTableContainer = <T extends RowData>({
   onShowFilter,
   enableColumnOrdering = false,
   testId = 'product-table',
-}: ProductTableProps<T>) => {
-  const { ref, scrollRef, sizeRef, sizeRect } = useProductTable()
+}: TableProps<T>) => {
+  const { ref, scrollRef, sizeRef, sizeRect } = useTableContext()
   const [placeholderOffset, setPlaceholderOffset] = useState<number>()
 
   const flatHeaders = table.getFlatHeaders()
@@ -316,22 +321,22 @@ export const ProductTableContainer = <T extends RowData>({
           >
             {startSlot}
             <div className="relative w-(--total-size)" data-testid={`${testId}-size-container`} ref={sizeRef}>
-              <Table
+              <UiTable
                 {...tableProps}
                 containerClassName="overflow-visible"
                 data-testid={tableProps?.testId ?? testId}
                 className={cn('border-separate border-spacing-0', tableProps?.className)}
               >
-                <TableHeader
+                <UiTableHeader
                   className={cn(
                     'bg-card [&_th]:border-b [&_th]:bg-card [&_tr:not(:last-child)_th]:border-b-0',
                     isHeaderSticky && 'sticky top-0 z-3',
                   )}
                 >
                   {table.getHeaderGroups().map((headerGroup, indexGroup) => (
-                    <TableRow key={`${headerGroup.id}-${indexGroup}`} className="border-0 hover:bg-transparent">
+                    <UiTableRow key={`${headerGroup.id}-${indexGroup}`} className="border-0 hover:bg-transparent">
                       {headerGroup.headers.map((header, index) => (
-                        <ProductTableHeaderCell
+                        <TableHeaderCell
                           key={`${header.column.id}-${index}`}
                           header={header}
                           onSort={onSort}
@@ -340,11 +345,11 @@ export const ProductTableContainer = <T extends RowData>({
                           testId={`${testId}-header-cell-${header.column.id}`}
                         />
                       ))}
-                    </TableRow>
+                    </UiTableRow>
                   ))}
-                </TableHeader>
+                </UiTableHeader>
                 {isVirtualized ? (
-                  <ProductTableBodyVirtualized
+                  <TableBodyVirtualized
                     table={table}
                     getClickRow={getClickRow}
                     getDblClickRow={getDblClickRow}
@@ -360,7 +365,7 @@ export const ProductTableContainer = <T extends RowData>({
                     testId={testId}
                   />
                 ) : (
-                  <ProductTableBody
+                  <TableBody
                     table={table}
                     getClickRow={getClickRow}
                     getDblClickRow={getDblClickRow}
@@ -371,21 +376,23 @@ export const ProductTableContainer = <T extends RowData>({
                   />
                 )}
                 {showFooter && hasFooter<T>(table) && (
-                  <TableFooter className={cn('border-t-0 bg-card font-bold', isFooterSticky && 'sticky bottom-0 z-3')}>
+                  <UiTableFooter
+                    className={cn('border-t-0 bg-card font-bold', isFooterSticky && 'sticky bottom-0 z-3')}
+                  >
                     {table.getFooterGroups().map((footerGroup) => (
-                      <TableRow key={footerGroup.id} className="border-0 hover:bg-transparent">
+                      <UiTableRow key={footerGroup.id} className="border-0 hover:bg-transparent">
                         {footerGroup.headers.map((header) => (
-                          <ProductTableFooterCell
+                          <TableFooterCell
                             key={header.id}
                             footer={header}
                             testId={`${testId}-footer-cell-${header.id}`}
                           />
                         ))}
-                      </TableRow>
+                      </UiTableRow>
                     ))}
-                  </TableFooter>
+                  </UiTableFooter>
                 )}
-              </Table>
+              </UiTable>
               {placeholderOffset !== undefined ? (
                 <div
                   className="absolute top-0 z-4 h-full w-0.5 bg-foreground"

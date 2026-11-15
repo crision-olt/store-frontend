@@ -2,12 +2,12 @@ import type { RowData } from '@tanstack/react-table'
 import type { LegacyRow, LegacyTable } from '@tanstack/react-table/legacy'
 import type { ComponentType, MouseEventHandler, PropsWithChildren, ReactElement } from 'react'
 import { Fragment } from 'react'
-import { ProductTableRow } from '@/components/product-table/components/product-table-row'
-import { ProductTableRowExpanded } from '@/components/product-table/components/product-table-row-expanded'
-import { useProductTable } from '@/components/product-table/providers/product-table-provider'
-import { TableBody } from '@/components/ui/table'
+import { TableRow } from '@/components/table/components/table-row'
+import { TableRowExpanded } from '@/components/table/components/table-row-expanded'
+import { useTableContext } from '@/components/table/providers/table-provider'
+import { TableBody as UiTableBody } from '@/components/ui/table'
 
-export type ProductTableBodyProps<T extends RowData> = {
+export type TableBodyProps<T extends RowData> = {
   table: LegacyTable<T>
   testId: string
   getClickRow?: (row: T) => MouseEventHandler | undefined
@@ -19,7 +19,7 @@ export type ProductTableBodyProps<T extends RowData> = {
 
 const DefaultRowProvider = ({ children }: PropsWithChildren) => <>{children}</>
 
-export const ProductTableBody = <T extends RowData>({
+export const TableBody = <T extends RowData>({
   table,
   getClickRow,
   getDblClickRow,
@@ -27,14 +27,14 @@ export const ProductTableBody = <T extends RowData>({
   renderSubComponent,
   RowProvider = DefaultRowProvider,
   testId,
-}: ProductTableBodyProps<T>) => {
-  const { tbodyRef } = useProductTable()
+}: TableBodyProps<T>) => {
+  const { tbodyRef } = useTableContext()
   return (
-    <TableBody ref={tbodyRef}>
+    <UiTableBody ref={tbodyRef}>
       {table.getRowModel().rows.map((row) => (
         <Fragment key={row.id}>
           <RowProvider row={row}>
-            <ProductTableRow
+            <TableRow
               row={row}
               getClickRow={getClickRow}
               getDblClickRow={getDblClickRow}
@@ -43,10 +43,10 @@ export const ProductTableBody = <T extends RowData>({
             />
           </RowProvider>
           {row.getIsExpanded() && renderSubComponent && (
-            <ProductTableRowExpanded row={row} testId={testId} renderSubComponent={renderSubComponent} />
+            <TableRowExpanded row={row} testId={testId} renderSubComponent={renderSubComponent} />
           )}
         </Fragment>
       ))}
-    </TableBody>
+    </UiTableBody>
   )
 }

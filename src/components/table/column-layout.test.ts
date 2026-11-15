@@ -2,7 +2,7 @@
 import { getCoreRowModel, useLegacyTable } from '@tanstack/react-table/legacy'
 import { renderHook } from '@testing-library/react'
 import { describe, expect, test } from 'vitest'
-import { computeColumnLayout } from '@/components/product-table/column-layout'
+import { computeColumnLayout } from '@/components/table/column-layout'
 import { TableFactory } from '@/test/factory/table'
 import '@/test/setup-dom'
 
