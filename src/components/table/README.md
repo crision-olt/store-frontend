@@ -6,18 +6,18 @@ header, footer and rows. It is built with the shadcn components in `src/componen
 
 ## Usage
 
-Create the table with TanStack Table's `useLegacyTable` hook and pass it to `Table`:
+Create the table with TanStack Table's `useTable` hook and the table's feature set, then pass it to `Table`:
 
 ```tsx
-import { getCoreRowModel, getSortedRowModel, useLegacyTable } from '@tanstack/react-table/legacy'
+import { useTable } from '@tanstack/react-table'
 import { Table } from '@/components/table'
+import { tableFeatureSet, type DataColumnDef } from '@/components/table/features'
 
-const table = useLegacyTable({
-  data,
-  columns,
-  getCoreRowModel: getCoreRowModel(),
-  getSortedRowModel: getSortedRowModel(),
-})
+const columns: DataColumnDef<Product>[] = [
+  // ...
+]
+
+const table = useTable({ features: tableFeatureSet, columns, data })
 
 return (
   <div className="h-96">
@@ -25,6 +25,11 @@ return (
   </div>
 )
 ```
+
+`tableFeatureSet` registers the features the table uses (sorting, filtering, ordering, pinning, sizing, resizing,
+visibility, expanding, selection) and the client side filtered, sorted and expanded row models. For server side data
+pass `manualSorting` / `manualFiltering` as usual. Do not pass a state selector to `useTable`: the table reads the
+full state. `features.ts` also exports the matching types (`DataTable`, `DataRow`, `DataColumnDef`...).
 
 The table fills the height of its parent. Every prop is documented in `components/table-container.tsx`.
 Column options (`align`, `lineClamp`, `width`, `className`, `showFilter`, `Filter`...) go in the column `meta`.
@@ -48,7 +53,7 @@ initial state) opens with its filter input visible and filled.
 
 ## Dependencies
 
-- `@tanstack/react-table` (v9, the `/legacy` entry keeps the v8 style `getCoreRowModel()` options)
+- `@tanstack/react-table` v9 (native `useTable` API; the deprecated `/legacy` v8 compatibility layer is not used)
 - `@tanstack/react-virtual` for row virtualization
 - `@dnd-kit/react`, `@dnd-kit/dom` and `@dnd-kit/abstract` for column reordering
 

@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
-import { getCoreRowModel, useLegacyTable } from '@tanstack/react-table/legacy'
+import { useTable } from '@tanstack/react-table'
+import { tableFeatureSet } from '@/components/table/features'
 import { renderHook } from '@testing-library/react'
 import { describe, expect, test } from 'vitest'
 import { computeColumnLayout } from '@/components/table/column-layout'
@@ -7,10 +8,10 @@ import { TableFactory } from '@/test/factory/table'
 import '@/test/setup-dom'
 
 const useTestTable = (meta?: { width?: string }, columnPinning?: { start: string[]; end: string[] }) =>
-  useLegacyTable({
+  useTable({
+    features: tableFeatureSet,
     data: TableFactory.createData(1),
     columns: TableFactory.createColumns(false, meta),
-    getCoreRowModel: getCoreRowModel(),
     state: columnPinning ? { columnPinning } : undefined,
   })
 

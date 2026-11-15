@@ -1,5 +1,5 @@
 import type { RowData } from '@tanstack/react-table'
-import type { LegacyRow, LegacyTable } from '@tanstack/react-table/legacy'
+import type { DataRow, DataTable } from '@/components/table/features'
 import type { ComponentType, MouseEventHandler, PropsWithChildren, ReactElement } from 'react'
 import { Fragment } from 'react'
 import { TableRow } from '@/components/table/components/table-row'
@@ -8,13 +8,13 @@ import { useTableContext } from '@/components/table/providers/table-provider'
 import { TableBody as UiTableBody } from '@/components/ui/table'
 
 export type TableBodyProps<T extends RowData> = {
-  table: LegacyTable<T>
+  table: DataTable<T>
   testId: string
   getClickRow?: (row: T) => MouseEventHandler | undefined
   getDblClickRow?: (row: T) => MouseEventHandler | undefined
-  rowClassName?: (row: LegacyRow<T>) => string | undefined
-  RowProvider?: ComponentType<PropsWithChildren & { row: LegacyRow<T> }>
-  renderSubComponent?: (props: { row: LegacyRow<T> }) => ReactElement
+  rowClassName?: (row: DataRow<T>) => string | undefined
+  RowProvider?: ComponentType<PropsWithChildren & { row: DataRow<T> }>
+  renderSubComponent?: (props: { row: DataRow<T> }) => ReactElement
 }
 
 const DefaultRowProvider = ({ children }: PropsWithChildren) => <>{children}</>

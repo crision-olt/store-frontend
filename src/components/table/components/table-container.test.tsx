@@ -6,14 +6,9 @@ import { type ReactNode, useState } from 'react'
 
 import type { DragDropProvider, DragDropManager } from '@dnd-kit/react'
 import type { ColumnOrderState, TableState } from '@tanstack/react-table'
-import type { LegacyColumnDef as ColumnDef, LegacyFeatures, LegacyRow as Row } from '@tanstack/react-table/legacy'
-import {
-  getCoreRowModel,
-  getExpandedRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
-  useLegacyTable,
-} from '@tanstack/react-table/legacy'
+import type { DataColumnDef as ColumnDef, DataRow as Row, TableFeatureSet } from '@/components/table/features'
+import { useTable } from '@tanstack/react-table'
+import { tableFeatureSet } from '@/components/table/features'
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 
 import { TableFactory, type Person } from '@/test/factory/table'
@@ -56,19 +51,17 @@ const Wrapper = ({
 }: {
   data: Person[]
   columns: ColumnDef<Person, ColumnTypes>[]
-  state?: Partial<TableState<LegacyFeatures>>
+  state?: Partial<TableState<TableFeatureSet>>
   isVirtualized?: boolean
   isRowSticky?: TableProps<Person>['isRowSticky']
   onChangeRenderedRows?: TableProps<Person>['onChangeRenderedRows']
   children?: ReactNode
 }) => {
-  const table = useLegacyTable({
+  const table = useTable({
+    features: tableFeatureSet,
     data,
     columns,
     state,
-    getCoreRowModel: getCoreRowModel<Person>(),
-    getSortedRowModel: getSortedRowModel<Person>(),
-    getFilteredRowModel: getFilteredRowModel<Person>(),
     columnResizeMode: 'onChange',
     enableColumnResizing: false,
     defaultColumn: {
@@ -116,14 +109,12 @@ const DndWrapper = ({
     columns.map((c) => (c as { accessorKey: string }).accessorKey),
   )
 
-  const table = useLegacyTable({
+  const table = useTable({
+    features: tableFeatureSet,
     data,
     columns,
     state: { columnOrder },
     onColumnOrderChange: setColumnOrder,
-    getCoreRowModel: getCoreRowModel<Person>(),
-    getSortedRowModel: getSortedRowModel<Person>(),
-    getFilteredRowModel: getFilteredRowModel<Person>(),
     columnResizeMode: 'onChange',
     enableColumnResizing: false,
     defaultColumn: {
@@ -161,14 +152,11 @@ const ExpandableWrapper = ({
   isVirtualized?: boolean
   renderSubComponent: (props: { row: Row<Person> }) => React.ReactElement
 }) => {
-  const table = useLegacyTable({
+  const table = useTable({
+    features: tableFeatureSet,
     data,
     columns,
     initialState: { expanded: { '0': true } },
-    getCoreRowModel: getCoreRowModel<Person>(),
-    getSortedRowModel: getSortedRowModel<Person>(),
-    getFilteredRowModel: getFilteredRowModel<Person>(),
-    getExpandedRowModel: getExpandedRowModel<Person>(),
     columnResizeMode: 'onChange',
     enableColumnResizing: false,
     defaultColumn: {
@@ -192,13 +180,11 @@ const NestedRowWrapper = ({
   columns: ColumnDef<PersonWithSubRows, ColumnTypes>[]
   isVirtualized?: boolean
 }) => {
-  const table = useLegacyTable({
+  const table = useTable({
+    features: tableFeatureSet,
     data,
     columns,
     initialState: { expanded: { '0': true } },
-    getCoreRowModel: getCoreRowModel<PersonWithSubRows>(),
-    getSortedRowModel: getSortedRowModel<PersonWithSubRows>(),
-    getExpandedRowModel: getExpandedRowModel<PersonWithSubRows>(),
     getSubRows: (row) => row.subRows,
     columnResizeMode: 'onChange',
     enableColumnResizing: false,
@@ -224,14 +210,12 @@ const NestedDndWrapper = ({ data, columns }: { data: Person[]; columns: ColumnDe
     'createdAt',
   ])
 
-  const table = useLegacyTable({
+  const table = useTable({
+    features: tableFeatureSet,
     data,
     columns,
     state: { columnOrder },
     onColumnOrderChange: setColumnOrder,
-    getCoreRowModel: getCoreRowModel<Person>(),
-    getSortedRowModel: getSortedRowModel<Person>(),
-    getFilteredRowModel: getFilteredRowModel<Person>(),
     columnResizeMode: 'onChange',
     enableColumnResizing: false,
     defaultColumn: {
@@ -438,7 +422,7 @@ describe('Table', () => {
       test('should render correctly with pinned columns', () => {
         const data = TableFactory.createData(1)
         const columns = TableFactory.createColumns(true)
-        const state: Partial<TableState<LegacyFeatures>> = {
+        const state: Partial<TableState<TableFeatureSet>> = {
           columnPinning: {
             start: ['id', 'firstName', 'lastName'],
             end: ['status', 'createdAt'],
@@ -1168,12 +1152,12 @@ describe('Table', () => {
   describe('Column ordering without an initial column order', () => {
     const EmptyOrderWrapper = ({ data, columns }: { data: Person[]; columns: ColumnDef<Person, ColumnTypes>[] }) => {
       const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([])
-      const table = useLegacyTable({
+      const table = useTable({
+        features: tableFeatureSet,
         data,
         columns,
         state: { columnOrder },
         onColumnOrderChange: setColumnOrder,
-        getCoreRowModel: getCoreRowModel<Person>(),
       })
       return (
         <AppWrapper>

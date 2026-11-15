@@ -1,14 +1,14 @@
 import type { RowData } from '@tanstack/react-table'
-import type { LegacyRow } from '@tanstack/react-table/legacy'
+import type { DataRow } from '@/components/table/features'
 import type { HTMLAttributes, ReactElement, Ref } from 'react'
 import { TableCell as UiTableCell, TableRow as UiTableRow } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 
 export type TableRowExpandedProps<T extends RowData> = HTMLAttributes<HTMLTableRowElement> & {
   ref?: Ref<HTMLTableRowElement>
-  row: LegacyRow<T>
+  row: DataRow<T>
   testId: string
-  renderSubComponent: (props: { row: LegacyRow<T> }) => ReactElement
+  renderSubComponent: (props: { row: DataRow<T> }) => ReactElement
 }
 
 export const TableRowExpanded = <T extends RowData>({

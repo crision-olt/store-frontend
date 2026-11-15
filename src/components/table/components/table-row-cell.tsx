@@ -1,6 +1,6 @@
 import type { RowData } from '@tanstack/react-table'
 import { flexRender } from '@tanstack/react-table'
-import type { LegacyCell } from '@tanstack/react-table/legacy'
+import type { DataCell } from '@/components/table/features'
 import type { ReactNode } from 'react'
 import { EllipsisTooltip } from '@/components/table/components/table-tooltip'
 import { useCellStyles } from '@/components/table/hooks/use-cell-styles'
@@ -26,7 +26,7 @@ export const TableRowCellTooltip = ({ testId = 'table-row-cell-tooltip', childre
 )
 
 export type TableRowCellProps<T extends RowData> = {
-  cell: LegacyCell<T, unknown>
+  cell: DataCell<T, unknown>
   /** Whether the cell starts a new column group (see `hasCellBorderLeft`). */
   hasBorderLeft?: boolean
   testId?: string

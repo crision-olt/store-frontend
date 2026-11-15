@@ -5,7 +5,7 @@ import { RestrictToElement } from '@dnd-kit/dom/modifiers'
 import type { DragEndEvent, DragOverEvent } from '@dnd-kit/react'
 import { DragDropProvider } from '@dnd-kit/react'
 import type { SortDirection } from '@tanstack/react-table'
-import type { LegacyReactTable, LegacyRow } from '@tanstack/react-table/legacy'
+import type { DataRow, DataTable } from '@/components/table/features'
 import type {
   ComponentProps,
   ComponentType,
@@ -41,12 +41,11 @@ const NO_SENSORS: typeof COLUMN_ORDERING_SENSORS = []
 
 export type TableProps<T extends RowData> = {
   /**
-   * The TanStack Table instance to be rendered. The table instance should be created with the `useLegacyTable` hook
-   * (`@tanstack/react-table/legacy`) and passed all necessary options (data, columns, getCoreRowModel at least) in the
-   * parent component. This component will take care of rendering the table based on the state of the table instance
-   * (sorting, filtering, pagination...)
+   * The TanStack Table instance to be rendered, created in the parent component with
+   * `useTable({ features: tableFeatureSet, columns, data })` and without a state selector (the table reads the full
+   * state). This component renders it based on its state (sorting, filtering, ordering, sizing...).
    */
-  table: LegacyReactTable<T>
+  table: DataTable<T>
   /**
    * Optional className to be applied to the root container of the table.
    */
@@ -134,17 +133,17 @@ export type TableProps<T extends RowData> = {
   /**
    * Optional callback function that will be called to render a sub-component for a row. The function will receive the row data as a parameter.
    */
-  renderSubComponent?: (props: { row: LegacyRow<T> }) => ReactElement
+  renderSubComponent?: (props: { row: DataRow<T> }) => ReactElement
   /**
    * Whether column ordering (drag & drop) is enabled or not. Default is `false`. Note that this feature requires additional
-   * configuration in the table instance (see `onColumnOrderChange` callback in `useLegacyTable`).
+   * configuration in the table instance (see the `columnOrder` state and `onColumnOrderChange` option of `useTable`).
    */
   enableColumnOrdering?: boolean
   /**
    * Optional callback function that will be called to determine if a row is sticky. The function will receive the row data as a parameter.
    * Note that sticky rows will only work if the table is virtualized.
    */
-  isRowSticky?: (row: LegacyRow<T>) => boolean
+  isRowSticky?: (row: DataRow<T>) => boolean
   /**
    * Optional offset for sticky rows. Default is `0`.
    * For example, if you have a sticky toolbar above the table header, you can set the offset to the height of the toolbar to avoid overlapping.
@@ -154,7 +153,7 @@ export type TableProps<T extends RowData> = {
    * Optional callback function that will be called to determine the className of a row. The function will receive the row data as a parameter.
    * This can be used to apply custom styles to specific rows based on their data.
    */
-  rowClassName?: (row: LegacyRow<T>) => string | undefined
+  rowClassName?: (row: DataRow<T>) => string | undefined
   /**
    * Optional component to be used as a provider for the row context.
    * This can be used to provide additional context or functionality to the rows,
@@ -162,7 +161,7 @@ export type TableProps<T extends RowData> = {
    * markup structure, as the component will be rendered inside the <tr> element of each row.
    * The component will receive the row data as a prop and should render its children.
    */
-  RowProvider?: ComponentType<PropsWithChildren & { row: LegacyRow<T> }>
+  RowProvider?: ComponentType<PropsWithChildren & { row: DataRow<T> }>
 }
 
 export const TableContainer = <T extends RowData>({

@@ -1,4 +1,4 @@
-import type { LegacyColumnDef } from '@tanstack/react-table/legacy'
+import type { DataColumnDef } from '@/components/table/features'
 
 export type Person = {
   id: number
@@ -10,8 +10,8 @@ export type Person = {
 }
 
 type ColumnTypes = unknown
-type ColumnMeta = NonNullable<LegacyColumnDef<Person, ColumnTypes>['meta']>
-export type PersonColumn = LegacyColumnDef<Person, ColumnTypes> & { accessorKey: keyof Person }
+type ColumnMeta = NonNullable<DataColumnDef<Person, ColumnTypes>['meta']>
+export type PersonColumn = DataColumnDef<Person, ColumnTypes> & { accessorKey: keyof Person }
 
 const STATUSES = ['active', 'inactive', 'pending']
 const HEADERS: Record<keyof Person, string> = {

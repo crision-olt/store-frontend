@@ -1,13 +1,13 @@
 import type { RowData } from '@tanstack/react-table'
 import { flexRender } from '@tanstack/react-table'
-import type { LegacyHeader } from '@tanstack/react-table/legacy'
+import type { DataHeader } from '@/components/table/features'
 import { useCellStyles } from '@/components/table/hooks/use-cell-styles'
 import { ALIGN_CLASSES, LINE_CLAMP_CLASSES } from '@/components/table/utils'
 import { TableCell as UiTableCell } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 
 export type TableFooterCellProps<T extends RowData, U = unknown> = {
-  footer: LegacyHeader<T, U>
+  footer: DataHeader<T, U>
   /** Whether the cell starts a new column group (see `hasHeaderBorderLeft`). */
   hasBorderLeft?: boolean
   testId?: string

@@ -1,5 +1,5 @@
 import type { RowData } from '@tanstack/react-table'
-import type { LegacyColumn, LegacyReactTable } from '@tanstack/react-table/legacy'
+import type { DataColumn, DataTable } from '@/components/table/features'
 import { createContext, useContext } from 'react'
 
 // Same defaults as TanStack Table's column sizing
@@ -31,7 +31,7 @@ export const useColumnLayout = () => useContext(ColumnLayoutContext)
  * the single source of truth for the CSS variables, the pinned offsets and the drag placeholder.
  */
 export const computeColumnLayout = <T extends RowData>(
-  table: LegacyReactTable<T>,
+  table: DataTable<T>,
   sizeMode: 'auto' | 'fixed' | 'full',
   width: number,
 ): ColumnLayout => {
@@ -77,7 +77,7 @@ export const computeColumnLayout = <T extends RowData>(
     }
   }
 
-  const leafSize = (column: LegacyColumn<T>) => {
+  const leafSize = (column: DataColumn<T>) => {
     const size = columnSizing[column.id] ?? computed.get(column.id) ?? column.columnDef.size ?? DEFAULT_SIZE
     return Math.min(
       Math.max(column.columnDef.minSize ?? DEFAULT_MIN_SIZE, size),

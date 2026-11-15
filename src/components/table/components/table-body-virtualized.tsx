@@ -1,5 +1,5 @@
 import type { RowData } from '@tanstack/react-table'
-import type { LegacyRow, LegacyTable } from '@tanstack/react-table/legacy'
+import type { DataRow, DataTable } from '@/components/table/features'
 import type { Range } from '@tanstack/react-virtual'
 import { defaultRangeExtractor, useVirtualizer } from '@tanstack/react-virtual'
 import type { ComponentType, MouseEventHandler, PropsWithChildren, ReactElement } from 'react'
@@ -9,20 +9,20 @@ import { TableRowExpanded } from '@/components/table/components/table-row-expand
 import { useTableContext } from '@/components/table/providers/table-provider'
 import { TableBody as UiTableBody } from '@/components/ui/table'
 
-type FlatRow<T extends RowData> = { type: 'row' | 'sub'; row: LegacyRow<T> }
+type FlatRow<T extends RowData> = { type: 'row' | 'sub'; row: DataRow<T> }
 
 export type TableBodyVirtualizedProps<T extends RowData> = {
-  table: LegacyTable<T>
+  table: DataTable<T>
   testId: string
   getClickRow?: (row: T) => MouseEventHandler | undefined
   getDblClickRow?: (row: T) => MouseEventHandler | undefined
-  renderSubComponent?: (props: { row: LegacyRow<T> }) => ReactElement
+  renderSubComponent?: (props: { row: DataRow<T> }) => ReactElement
   onChangeRenderedRows?: (rowIds: string[]) => void
   isHeaderSticky?: boolean
-  isRowSticky?: (row: LegacyRow<T>) => boolean
+  isRowSticky?: (row: DataRow<T>) => boolean
   rowStickyOffset?: number
-  rowClassName?: (row: LegacyRow<T>) => string | undefined
-  RowProvider?: ComponentType<PropsWithChildren & { row: LegacyRow<T> }>
+  rowClassName?: (row: DataRow<T>) => string | undefined
+  RowProvider?: ComponentType<PropsWithChildren & { row: DataRow<T> }>
   overscan?: number
   estimateSize?: (index: number) => number
 }

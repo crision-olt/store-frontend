@@ -1,5 +1,5 @@
 import type { RowData } from '@tanstack/react-table'
-import type { LegacyRow } from '@tanstack/react-table/legacy'
+import type { DataRow } from '@/components/table/features'
 import type { HTMLAttributes, MouseEventHandler, Ref } from 'react'
 import { TableRowCell } from '@/components/table/components/table-row-cell'
 import { hasCellBorderLeft } from '@/components/table/utils'
@@ -8,11 +8,11 @@ import { cn } from '@/lib/utils'
 
 export type TableRowProps<T extends RowData> = Omit<HTMLAttributes<HTMLTableRowElement>, 'onClick'> & {
   ref?: Ref<HTMLTableRowElement>
-  row: LegacyRow<T>
+  row: DataRow<T>
   testId: string
   getClickRow?: (row: T) => MouseEventHandler | undefined
   getDblClickRow?: (row: T) => MouseEventHandler | undefined
-  rowClassName?: (row: LegacyRow<T>) => string | undefined
+  rowClassName?: (row: DataRow<T>) => string | undefined
   dataId?: string
   dataIndex?: number
 }

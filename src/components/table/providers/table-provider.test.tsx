@@ -4,8 +4,8 @@ import { beforeEach, describe, expect, test, vi } from 'vitest'
 import '@/test/setup-dom'
 import type { ReactNode } from 'react'
 
-import type { LegacyColumnDef as ColumnDef } from '@tanstack/react-table/legacy'
-import { getCoreRowModel, getSortedRowModel, useLegacyTable } from '@tanstack/react-table/legacy'
+import { useTable } from '@tanstack/react-table'
+import { tableFeatureSet, type DataColumnDef as ColumnDef } from '@/components/table/features'
 import { renderHook } from '@testing-library/react'
 
 import { TableFactory, type Person } from '@/test/factory/table'
@@ -22,11 +22,10 @@ const Wrapper = ({
   columns: ColumnDef<Person, unknown>[]
   children: ReactNode
 }) => {
-  const table = useLegacyTable({
+  const table = useTable({
+    features: tableFeatureSet,
     data,
     columns,
-    getCoreRowModel: getCoreRowModel<Person>(),
-    getSortedRowModel: getSortedRowModel<Person>(),
     columnResizeMode: 'onChange',
     enableColumnResizing: false,
     defaultColumn: {

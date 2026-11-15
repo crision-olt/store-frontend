@@ -2,7 +2,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import '@/test/setup-dom'
-import type { LegacyHeader as Header } from '@tanstack/react-table/legacy'
+import type { DataHeader as Header } from '@/components/table/features'
 import { render, screen, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 

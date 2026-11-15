@@ -2,7 +2,7 @@ import type { RowData } from '@tanstack/react-table'
 import { useLingui } from '@lingui/react/macro'
 import { useSortable } from '@dnd-kit/react/sortable'
 import { flexRender, type SortDirection } from '@tanstack/react-table'
-import type { LegacyHeader } from '@tanstack/react-table/legacy'
+import type { DataHeader } from '@/components/table/features'
 import { ArrowDownIcon, ArrowUpDownIcon, ArrowUpIcon, SearchIcon, XIcon } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { EllipsisTooltip } from '@/components/table/components/table-tooltip'
@@ -15,7 +15,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { cn } from '@/lib/utils'
 
 export type TableHeaderCellProps<T extends RowData, U = unknown> = {
-  header: LegacyHeader<T, U>
+  header: DataHeader<T, U>
   /** Whether the cell starts a new column group (see `hasHeaderBorderLeft`). */
   hasBorderLeft?: boolean
   testId?: string
