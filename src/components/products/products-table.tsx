@@ -1,16 +1,14 @@
-import { Trans, useLingui } from '@lingui/react/macro'
+import { useLingui } from '@lingui/react/macro'
 import {
-  createColumnHelper,
-  rowPaginationFeature,
-  rowSortingFeature,
-  tableFeatures,
   useTable,
   type OnChangeFn,
   type PaginationState,
   type SortingState,
 } from '@tanstack/react-table'
-import { ArrowDownIcon, ArrowUpDownIcon, ArrowUpIcon } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
+import { Table } from '@/components/table'
+import { tableFeatureSet } from '@/components/table/features'
+import { TableFeedbackState } from '@/components/table/components/table-feedback-state'
+import { TableLoading } from '@/components/table/components/table-loading'
 import { Button } from '@/components/ui/button'
 import {
   Select,
@@ -19,79 +17,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import type { Product } from '@/lib/products-api'
+import { productColumns } from '@/components/products/products-table-columns'
 
-const features = tableFeatures({ rowSortingFeature, rowPaginationFeature })
-const columnHelper = createColumnHelper<typeof features, Product>()
 const emptyProducts: Product[] = []
 
 const PAGE_SIZES = [10, 25, 50]
-const NUMERIC_COLUMNS = new Set(['price', 'stock'])
-
-const columns = columnHelper.columns([
-  columnHelper.accessor('name', {
-    header: () => <Trans>Name</Trans>,
-    cell: ({ cell, row }) => (
-      <div className="flex min-w-48 flex-col">
-        <span className="font-medium">{cell.getValue()}</span>
-        {row.original.description && (
-          <span className="line-clamp-1 text-xs text-muted-foreground">{row.original.description}</span>
-        )}
-      </div>
-    ),
-  }),
-  columnHelper.accessor('sku', {
-    header: () => <Trans>SKU</Trans>,
-    cell: ({ cell }) => <span className="font-mono text-xs">{cell.getValue()}</span>,
-  }),
-  columnHelper.accessor('categoryName', {
-    id: 'category',
-    header: () => <Trans>Category</Trans>,
-    cell: ({ cell }) => <Badge variant="secondary">{cell.getValue()}</Badge>,
-  }),
-  columnHelper.accessor('subcategoryName', {
-    id: 'subcategory',
-    header: () => <Trans>Subcategory</Trans>,
-    cell: ({ cell }) => cell.getValue() ?? <span className="text-muted-foreground">—</span>,
-  }),
-  columnHelper.accessor('price', {
-    header: () => <Trans>Price</Trans>,
-    cell: ({ cell }) => <PriceCell value={cell.getValue()} />,
-  }),
-  columnHelper.accessor('stock', {
-    header: () => <Trans>Stock</Trans>,
-    cell: ({ cell }) => <StockCell value={cell.getValue()} />,
-  }),
-  columnHelper.accessor('created_at', {
-    header: () => <Trans>Created</Trans>,
-    cell: ({ cell }) => <DateCell value={cell.getValue()} />,
-  }),
-])
-
-function PriceCell({ value }: { value: number }) {
-  const { i18n } = useLingui()
-  return new Intl.NumberFormat(i18n.locale, { style: 'currency', currency: 'USD' }).format(value)
-}
-
-function DateCell({ value }: { value: string }) {
-  const { i18n } = useLingui()
-  return new Intl.DateTimeFormat(i18n.locale, { dateStyle: 'medium' }).format(new Date(value))
-}
-
-function StockCell({ value }: { value: number }) {
-  const { t } = useLingui()
-  return value === 0 ? <Badge variant="destructive">{t`Out of stock`}</Badge> : value
-}
 
 type Props = {
   products: Product[] | undefined
@@ -117,94 +49,36 @@ export function ProductsTable({
   const { t } = useLingui()
 
   const table = useTable({
-    features,
-    columns,
+    features: tableFeatureSet,
+    columns: productColumns,
     data: products ?? emptyProducts,
-    rowCount: total,
-    manualPagination: true,
     manualSorting: true,
     enableMultiSort: false,
     enableSortingRemoval: false,
-    state: { sorting, pagination },
+    state: { sorting },
     onSortingChange,
-    onPaginationChange,
   })
 
-  const { pageIndex, pageSize } = table.state.pagination
+  const { pageIndex, pageSize } = pagination
   const firstRow = total === 0 ? 0 : pageIndex * pageSize + 1
   const lastRow = Math.min((pageIndex + 1) * pageSize, total)
   const page = pageIndex + 1
-  const pageCount = Math.max(table.getPageCount(), 1)
+  const pageCount = Math.max(Math.ceil(total / pageSize), 1)
   const rows = table.getRowModel().rows
+  const feedbackState = isLoading ? (
+    <TableLoading />
+  ) : rows.length === 0 ? (
+    <TableFeedbackState title={t`No products found.`} />
+  ) : undefined
 
   return (
     <div className="flex flex-col gap-4">
-      <div className={cn('rounded-lg border bg-card transition-opacity', isFetching && !isLoading && 'opacity-60')}>
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((group) => (
-              <TableRow key={group.id}>
-                {group.headers.map((header) => {
-                  const sorted = header.column.getIsSorted()
-                  const numeric = NUMERIC_COLUMNS.has(header.column.id)
-                  return (
-                    <TableHead
-                      key={header.id}
-                      className={numeric ? 'text-right' : undefined}
-                      aria-sort={sorted === 'asc' ? 'ascending' : sorted === 'desc' ? 'descending' : 'none'}
-                    >
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className={cn('-mx-2', numeric && 'flex-row-reverse')}
-                        onClick={header.column.getToggleSortingHandler()}
-                      >
-                        <table.FlexRender header={header} />
-                        {sorted === 'asc' ? (
-                          <ArrowUpIcon />
-                        ) : sorted === 'desc' ? (
-                          <ArrowDownIcon />
-                        ) : (
-                          <ArrowUpDownIcon className="opacity-40" />
-                        )}
-                      </Button>
-                    </TableHead>
-                  )
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              Array.from({ length: Math.min(pageSize, 5) }, (_, index) => (
-                <TableRow key={index}>
-                  {columns.map((_column, cellIndex) => (
-                    <TableCell key={cellIndex}>
-                      <Skeleton className="h-5 w-full" />
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : rows.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
-                  {t`No products found.`}
-                </TableCell>
-              </TableRow>
-            ) : (
-              rows.map((row) => (
-                <TableRow key={row.id}>
-                  {row.getAllCells().map((cell) => (
-                    <TableCell key={cell.id} className={NUMERIC_COLUMNS.has(cell.column.id) ? 'text-right' : undefined}>
-                      <table.FlexRender cell={cell} />
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+      <Table
+        table={table}
+        isVirtualized={false}
+        className={cn('h-96 rounded-lg border bg-card transition-opacity', isFetching && !isLoading && 'opacity-60')}
+        feedbackState={feedbackState}
+      />
 
       <div className="flex flex-wrap items-center justify-between gap-4 text-sm">
         <p className="text-muted-foreground" aria-live="polite">
@@ -215,7 +89,13 @@ export function ProductsTable({
             <span className="text-muted-foreground">{t`Rows per page`}</span>
             <Select
               value={String(pageSize)}
-              onValueChange={(value) => table.setPageSize(Number(value))}
+              onValueChange={(value) => {
+                const nextPageSize = Number(value)
+                onPaginationChange((current) => ({
+                  pageIndex: Math.floor((current.pageIndex * current.pageSize) / nextPageSize),
+                  pageSize: nextPageSize,
+                }))
+              }}
             >
               <SelectTrigger size="sm" aria-label={t`Rows per page`} className="w-20">
                 <SelectValue>{pageSize}</SelectValue>
@@ -234,16 +114,16 @@ export function ProductsTable({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
+              onClick={() => onPaginationChange((current) => ({ ...current, pageIndex: current.pageIndex - 1 }))}
+              disabled={pageIndex === 0}
             >
               {t`Previous`}
             </Button>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
+              onClick={() => onPaginationChange((current) => ({ ...current, pageIndex: current.pageIndex + 1 }))}
+              disabled={page >= pageCount}
             >
               {t`Next`}
             </Button>
