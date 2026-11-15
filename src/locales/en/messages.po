@@ -379,6 +379,7 @@ msgstr "Passwords do not match"
 msgid "Permission name"
 msgstr "Permission name"
 
+#: src/components/access/permission-multiselect.tsx:22
 #: src/components/access/role-list.tsx:67
 #: src/pages/access.tsx:86
 #: src/pages/access.tsx:104
@@ -438,6 +439,10 @@ msgstr "Select a category"
 #: src/components/users/user-form.tsx:51
 msgid "Select a role"
 msgstr "Select a role"
+
+#: src/components/access/permission-multiselect.tsx:25
+msgid "Select permissions"
+msgstr "Select permissions"
 
 #: src/components/products/products-table.tsx:211
 msgid "Showing {firstRow}–{lastRow} of {total}"

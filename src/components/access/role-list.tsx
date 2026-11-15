@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState, type FormEvent } from 'react'
-import { PermissionChecklist } from '@/components/access/permission-checklist'
+import { PermissionMultiSelect } from '@/components/access/permission-multiselect'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -65,7 +65,7 @@ function RoleRow({ role, permissions }: { role: Role; permissions: Permission[] 
             onChange={(event) => setDraft({ ...draft, name: event.target.value })} />
           <fieldset className="flex flex-col gap-2">
             <legend className="mb-2 text-sm font-medium">{t`Permissions`}</legend>
-            <PermissionChecklist permissions={permissions} selected={draft.permissionIds}
+            <PermissionMultiSelect permissions={permissions} selected={draft.permissionIds}
               onChange={(permissionIds) => setDraft({ ...draft, permissionIds })} />
           </fieldset>
           <div className="flex gap-2">

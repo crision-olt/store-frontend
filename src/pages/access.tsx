@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState, type FormEvent } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
-import { PermissionChecklist } from '@/components/access/permission-checklist'
+import { PermissionMultiSelect } from '@/components/access/permission-multiselect'
 import { PermissionList } from '@/components/access/permission-list'
 import { RoleList } from '@/components/access/role-list'
 import { RequireAuth } from '@/components/auth/require-auth'
@@ -88,7 +88,7 @@ function AccessContent() {
                 {permissions.isError && <p role="alert" className="text-sm text-destructive">{t`Could not load permissions. Please try again.`}</p>}
                 {permissions.isError && <Button type="button" variant="outline" size="sm" onClick={() => permissions.refetch()}>{t`Try again`}</Button>}
                 {permissions.isSuccess && permissions.data.length === 0 && <p className="text-sm text-muted-foreground">{t`No permissions yet.`}</p>}
-                {permissions.data && <PermissionChecklist permissions={permissions.data} selected={permissionIds} onChange={setPermissionIds} />}
+                {permissions.data && <PermissionMultiSelect permissions={permissions.data} selected={permissionIds} onChange={setPermissionIds} />}
               </fieldset>
               {roleMutation.isError && <p role="alert" className="text-sm text-destructive">
                 {roleMutation.error instanceof AccessApiError && roleMutation.error.status === 409
