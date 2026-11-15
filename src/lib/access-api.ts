@@ -11,12 +11,14 @@ const roleSchema = z.object({
 const userSchema = z.object({
   id: z.number().int().positive(),
   email: z.string(),
+  created_at: z.string(),
   role: z.object({ id: z.number().int().positive(), name: z.string() }),
 })
 
 export type Permission = z.infer<typeof permissionSchema>
 export type Role = z.infer<typeof roleSchema>
 export type AccessUser = z.infer<typeof userSchema>
+export type UserInput = { email: string; roleId: number; password?: string }
 
 export class AccessApiError extends Error {
   readonly status: number
@@ -72,13 +74,16 @@ export function createAccessApi(serviceUrl: string) {
     async listUsers() {
       return z.array(userSchema).parse(await request('/users'))
     },
-    async updateUserRole(id: number, roleId: number) {
-      return userSchema.parse(await request(`/users/${id}/role`, { roleId }, 'PUT'))
+    async createUser(input: UserInput & { password: string }) {
+      return userSchema.parse(await request('/users', input))
+    },
+    async updateUser(id: number, input: UserInput) {
+      return userSchema.parse(await request(`/users/${id}`, input, 'PUT'))
     },
   }
 }
 
 export const {
   listPermissions, listRoles, createPermission, createRole, updatePermission, deletePermission,
-  updateRole, deleteRole, listUsers, updateUserRole,
+  updateRole, deleteRole, listUsers, createUser, updateUser,
 } = createAccessApi(import.meta.env.AUTH_SERVICE_URL)

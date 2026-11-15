@@ -5,7 +5,6 @@ import { Navigate, useLocation } from 'react-router-dom'
 import { PermissionChecklist } from '@/components/access/permission-checklist'
 import { PermissionList } from '@/components/access/permission-list'
 import { RoleList } from '@/components/access/role-list'
-import { UserRolesCard } from '@/components/access/user-roles-card'
 import { RequireAuth } from '@/components/auth/require-auth'
 import { StoreLayout } from '@/components/store-layout'
 import { Button } from '@/components/ui/button'
@@ -60,7 +59,7 @@ function AccessContent() {
     <div className="mx-auto flex max-w-6xl flex-col gap-6 p-4 sm:p-6">
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-semibold tracking-tight">{t`Roles and permissions`}</h1>
-        <p className="text-sm text-muted-foreground">{t`Create, edit and delete roles and permissions, and assign roles to users.`}</p>
+        <p className="text-sm text-muted-foreground">{t`Create, edit and delete roles and permissions.`}</p>
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
@@ -127,7 +126,6 @@ function AccessContent() {
           </CardContent>
         </Card>
       </div>
-      {roles.isSuccess && <UserRolesCard roles={roles.data} />}
     </div>
   )
 }

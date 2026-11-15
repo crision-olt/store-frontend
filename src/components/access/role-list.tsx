@@ -15,7 +15,7 @@ function RoleRow({ role, permissions }: { role: Role; permissions: Permission[] 
   const [draft, setDraft] = useState<Draft | null>(null)
   const refresh = () => Promise.all([
     queryClient.invalidateQueries({ queryKey: ['roles'] }),
-    queryClient.invalidateQueries({ queryKey: ['access-users'] }),
+    queryClient.invalidateQueries({ queryKey: ['users'] }),
   ])
   const update = useMutation({
     mutationFn: (value: Draft) => updateRole(role.id, value.name, value.permissionIds),

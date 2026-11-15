@@ -36,15 +36,13 @@ describe('access API', () => {
     })
   })
 
-  it('updates and deletes permissions and roles, and changes user roles', async () => {
+  it('updates and deletes permissions and roles', async () => {
     const role = { id: 3, name: 'viewer', permissions: [] }
     const fetch = vi.fn()
       .mockResolvedValueOnce(new Response(JSON.stringify({ id: 2, name: 'products:edit' })))
       .mockResolvedValueOnce(new Response(null, { status: 204 }))
       .mockResolvedValueOnce(new Response(JSON.stringify(role)))
       .mockResolvedValueOnce(new Response(null, { status: 204 }))
-      .mockResolvedValueOnce(new Response(JSON.stringify([{ id: 5, email: 'a@b.co', role: { id: 3, name: 'viewer' } }])))
-      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 5, email: 'a@b.co', role: { id: 3, name: 'viewer' } })))
     vi.stubGlobal('fetch', fetch)
     const api = createAccessApi('https://api.example.com')
     const json = { 'Content-Type': 'application/json' }
@@ -53,15 +51,31 @@ describe('access API', () => {
     await expect(api.deletePermission(2)).resolves.toBeUndefined()
     await expect(api.updateRole(3, 'viewer', [])).resolves.toEqual(role)
     await expect(api.deleteRole(3)).resolves.toBeUndefined()
-    await expect(api.listUsers()).resolves.toHaveLength(1)
-    await expect(api.updateUserRole(5, 3)).resolves.toMatchObject({ id: 5 })
     expect(fetch.mock.calls).toEqual([
       ['https://api.example.com/permissions/2', { method: 'PUT', credentials: 'include', headers: json, body: JSON.stringify({ name: 'products:edit' }) }],
       ['https://api.example.com/permissions/2', { method: 'DELETE', credentials: 'include' }],
       ['https://api.example.com/roles/3', { method: 'PUT', credentials: 'include', headers: json, body: JSON.stringify({ name: 'viewer', permissionIds: [] }) }],
       ['https://api.example.com/roles/3', { method: 'DELETE', credentials: 'include' }],
+    ])
+  })
+
+  it('lists, creates and updates users', async () => {
+    const user = { id: 5, email: 'a@b.co', created_at: '2026-01-01T00:00:00.000Z', role: { id: 3, name: 'viewer' } }
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify([user])))
+      .mockResolvedValueOnce(new Response(JSON.stringify(user), { status: 201 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify(user)))
+    vi.stubGlobal('fetch', fetch)
+    const api = createAccessApi('https://api.example.com')
+    const json = { 'Content-Type': 'application/json' }
+
+    await expect(api.listUsers()).resolves.toEqual([user])
+    await expect(api.createUser({ email: 'a@b.co', password: 'secret-pass', roleId: 3 })).resolves.toEqual(user)
+    await expect(api.updateUser(5, { email: 'a@b.co', roleId: 3 })).resolves.toEqual(user)
+    expect(fetch.mock.calls).toEqual([
       ['https://api.example.com/users', { credentials: 'include' }],
-      ['https://api.example.com/users/5/role', { method: 'PUT', credentials: 'include', headers: json, body: JSON.stringify({ roleId: 3 }) }],
+      ['https://api.example.com/users', { method: 'POST', credentials: 'include', headers: json, body: JSON.stringify({ email: 'a@b.co', password: 'secret-pass', roleId: 3 }) }],
+      ['https://api.example.com/users/5', { method: 'PUT', credentials: 'include', headers: json, body: JSON.stringify({ email: 'a@b.co', roleId: 3 }) }],
     ])
   })
 

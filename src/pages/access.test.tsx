@@ -28,7 +28,6 @@ describe('access page', () => {
     const client = new QueryClient()
     client.setQueryData(['permissions'], [{ id: 2, name: 'products:read' }])
     client.setQueryData(['roles'], [{ id: 3, name: 'reader', permissions: [{ id: 2, name: 'products:read' }] }])
-    client.setQueryData(['access-users'], [{ id: 7, email: 'member@example.com', role: { id: 3, name: 'reader' } }])
     const markup = renderAccess(client)
 
     expect(markup).toContain('Create permission')
@@ -38,7 +37,6 @@ describe('access page', () => {
     expect(markup).toContain('type="checkbox"')
     expect(markup).toContain('Edit role reader')
     expect(markup).toContain('Delete permission products:read')
-    expect(markup).toContain('member@example.com')
-    expect(markup).toContain('Role for member@example.com')
+    expect(markup).not.toContain('Role for')
   })
 })
