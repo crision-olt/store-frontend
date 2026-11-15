@@ -12,6 +12,7 @@ const userSchema = z.object({
   id: z.number().int().positive(),
   email: z.string(),
   created_at: z.string(),
+  blocked: z.boolean(),
   role: z.object({ id: z.number().int().positive(), name: z.string() }),
 })
 
@@ -77,6 +78,12 @@ export function createAccessApi(serviceUrl: string) {
     async createUser(input: UserInput & { password: string }) {
       return userSchema.parse(await request('/users', input))
     },
+    async blockUser(id: number) {
+      return userSchema.parse(await request(`/users/${id}/block`, undefined, 'PUT'))
+    },
+    async unblockUser(id: number) {
+      return userSchema.parse(await request(`/users/${id}/block`, undefined, 'DELETE'))
+    },
     async updateUser(id: number, input: UserInput) {
       return userSchema.parse(await request(`/users/${id}`, input, 'PUT'))
     },
@@ -85,5 +92,5 @@ export function createAccessApi(serviceUrl: string) {
 
 export const {
   listPermissions, listRoles, createPermission, createRole, updatePermission, deletePermission,
-  updateRole, deleteRole, listUsers, createUser, updateUser,
+  updateRole, deleteRole, listUsers, createUser, updateUser, blockUser, unblockUser,
 } = createAccessApi(import.meta.env.AUTH_SERVICE_URL)

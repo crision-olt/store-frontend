@@ -33,6 +33,8 @@ export function LoginPage() {
     } catch (error) {
       if (error instanceof AuthApiError && error.status === 401) {
         setError('root', { type: 'invalid-credentials' })
+      } else if (error instanceof AuthApiError && error.status === 403) {
+        setError('root', { type: 'blocked' })
       } else {
         console.error('Sign-in request failed', error)
         setError('root', { type: 'server' })
@@ -52,11 +54,16 @@ export function LoginPage() {
         <FieldGroup>
           <TextField control={control} name="email" label={t`Email`} type="email" autoComplete="email" />
           <TextField control={control} name="password" label={t`Password`} type="password" autoComplete="current-password" />
+          {location.state?.blocked && !formState.errors.root && (
+            <FieldError>{t`Your account has been blocked. Contact an administrator.`}</FieldError>
+          )}
           {formState.errors.root && (
             <FieldError>
               {formState.errors.root.type === 'invalid-credentials'
                 ? t`Invalid email or password`
-                : t`Could not sign in. Please try again.`}
+                : formState.errors.root.type === 'blocked'
+                  ? t`This account is blocked. Contact an administrator.`
+                  : t`Could not sign in. Please try again.`}
             </FieldError>
           )}
           <Button type="submit" disabled={formState.isSubmitting}>

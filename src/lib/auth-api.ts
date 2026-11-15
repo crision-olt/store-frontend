@@ -40,6 +40,15 @@ export function createAuthApi(serviceUrl: string) {
       if (!response.ok) throw new AuthApiError(response.status)
       return userSchema.parse(await response.json())
     },
+    // The server pushes a "blocked" event when an administrator blocks this account.
+    watchSession(onBlocked: () => void) {
+      const source = new EventSource(resolveServiceUrl(serviceUrl, '/auth/events'), { withCredentials: true })
+      source.addEventListener('blocked', () => {
+        source.close()
+        onBlocked()
+      })
+      return () => source.close()
+    },
     async logout() {
       const response = await fetch(resolveServiceUrl(serviceUrl, '/auth/logout'), {
         method: 'POST',
@@ -50,4 +59,4 @@ export function createAuthApi(serviceUrl: string) {
   }
 }
 
-export const { login, registerUser, getCurrentUser, logout } = createAuthApi(import.meta.env.AUTH_SERVICE_URL)
+export const { login, registerUser, getCurrentUser, watchSession, logout } = createAuthApi(import.meta.env.AUTH_SERVICE_URL)

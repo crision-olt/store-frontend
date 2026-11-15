@@ -31,6 +31,24 @@ msgstr "Already have an account?"
 msgid "Availability"
 msgstr "Availability"
 
+#: src/components/users/user-list.tsx:58
+msgid "Block"
+msgstr "Block"
+
+#. placeholder {0}: user.email
+#: src/components/users/user-list.tsx:26
+msgid "Block {0}? Their session will be closed immediately and they will not be able to sign in."
+msgstr "Block {0}? Their session will be closed immediately and they will not be able to sign in."
+
+#. placeholder {0}: user.email
+#: src/components/users/user-list.tsx:56
+msgid "Block user {0}"
+msgstr "Block user {0}"
+
+#: src/components/users/user-list.tsx:49
+msgid "Blocked"
+msgstr "Blocked"
+
 #: src/pages/products.tsx:71
 msgid "Browse and filter the product catalog."
 msgstr "Browse and filter the product catalog."
@@ -41,7 +59,7 @@ msgstr "Browse and filter the product catalog."
 msgid "Cancel"
 msgstr "Cancel"
 
-#: src/components/store-layout.tsx:26
+#: src/components/store-layout.tsx:28
 #: src/pages/categories.tsx:104
 msgid "Categories"
 msgstr "Categories"
@@ -71,6 +89,10 @@ msgstr "Confirm password"
 #: src/lib/auth-schemas.ts:17
 msgid "Confirm your password"
 msgstr "Confirm your password"
+
+#: src/components/users/user-list.tsx:66
+msgid "Could not change the user status. Please try again."
+msgstr "Could not change the user status. Please try again."
 
 #: src/pages/categories.tsx:73
 msgid "Could not create category. Please try again."
@@ -118,11 +140,11 @@ msgstr "Could not load users. Please try again."
 msgid "Could not save the user. Please try again."
 msgstr "Could not save the user. Please try again."
 
-#: src/pages/login.tsx:59
+#: src/pages/login.tsx:66
 msgid "Could not sign in. Please try again."
 msgstr "Could not sign in. Please try again."
 
-#: src/components/store-layout.tsx:72
+#: src/components/store-layout.tsx:74
 msgid "Could not sign out. Please try again."
 msgstr "Could not sign out. Please try again."
 
@@ -216,13 +238,13 @@ msgstr "Delete role {0}"
 msgid "Delete role {0}?"
 msgstr "Delete role {0}?"
 
-#: src/pages/login.tsx:47
+#: src/pages/login.tsx:49
 msgid "Don't have an account?"
 msgstr "Don't have an account?"
 
 #: src/components/access/permission-list.tsx:41
 #: src/components/access/role-list.tsx:47
-#: src/components/users/user-list.tsx:41
+#: src/components/users/user-list.tsx:53
 msgid "Edit"
 msgstr "Edit"
 
@@ -237,12 +259,12 @@ msgid "Edit role {0}"
 msgstr "Edit role {0}"
 
 #. placeholder {0}: user.email
-#: src/components/users/user-list.tsx:39
+#: src/components/users/user-list.tsx:51
 msgid "Edit user {0}"
 msgstr "Edit user {0}"
 
 #: src/components/users/user-form.tsx:37
-#: src/pages/login.tsx:53
+#: src/pages/login.tsx:55
 #: src/pages/register.tsx:52
 msgid "Email"
 msgstr "Email"
@@ -264,7 +286,7 @@ msgstr "Enter your details to get started"
 msgid "In stock"
 msgstr "In stock"
 
-#: src/pages/login.tsx:58
+#: src/pages/login.tsx:63
 msgid "Invalid email or password"
 msgstr "Invalid email or password"
 
@@ -357,7 +379,7 @@ msgid "Page {page} of {pageCount}"
 msgstr "Page {page} of {pageCount}"
 
 #: src/components/users/user-form.tsx:42
-#: src/pages/login.tsx:54
+#: src/pages/login.tsx:56
 #: src/pages/register.tsx:53
 msgid "Password"
 msgstr "Password"
@@ -394,7 +416,7 @@ msgstr "Previous"
 msgid "Price"
 msgstr "Price"
 
-#: src/components/store-layout.tsx:25
+#: src/components/store-layout.tsx:27
 #: src/pages/products.tsx:70
 msgid "Products"
 msgstr "Products"
@@ -412,7 +434,7 @@ msgstr "Role name"
 msgid "Roles"
 msgstr "Roles"
 
-#: src/components/store-layout.tsx:28
+#: src/components/store-layout.tsx:30
 #: src/pages/access.tsx:61
 msgid "Roles and permissions"
 msgstr "Roles and permissions"
@@ -424,7 +446,7 @@ msgstr "Rows per page"
 
 #: src/components/access/permission-list.tsx:54
 #: src/components/access/role-list.tsx:72
-#: src/components/users/user-list.tsx:25
+#: src/components/users/user-list.tsx:35
 msgid "Save"
 msgstr "Save"
 
@@ -448,24 +470,24 @@ msgstr "Select permissions"
 msgid "Showing {firstRow}–{lastRow} of {total}"
 msgstr "Showing {firstRow}–{lastRow} of {total}"
 
-#: src/pages/login.tsx:63
+#: src/pages/login.tsx:70
 #: src/pages/register.tsx:48
 msgid "Sign in"
 msgstr "Sign in"
 
-#: src/pages/login.tsx:46
+#: src/pages/login.tsx:48
 msgid "Sign in to your account"
 msgstr "Sign in to your account"
 
-#: src/components/store-layout.tsx:68
+#: src/components/store-layout.tsx:70
 msgid "Sign out"
 msgstr "Sign out"
 
-#: src/pages/login.tsx:49
+#: src/pages/login.tsx:51
 msgid "Sign up"
 msgstr "Sign up"
 
-#: src/pages/login.tsx:63
+#: src/pages/login.tsx:70
 msgid "Signing in…"
 msgstr "Signing in…"
 
@@ -477,8 +499,8 @@ msgstr "SKU"
 msgid "Stock"
 msgstr "Stock"
 
-#: src/components/store-layout.tsx:38
 #: src/components/store-layout.tsx:40
+#: src/components/store-layout.tsx:42
 msgid "Store"
 msgstr "Store"
 
@@ -490,6 +512,10 @@ msgstr "Subcategory"
 #: src/pages/categories.tsx:92
 msgid "Subcategory name"
 msgstr "Subcategory name"
+
+#: src/pages/login.tsx:65
+msgid "This account is blocked. Contact an administrator."
+msgstr "This account is blocked. Contact an administrator."
 
 #: src/pages/categories.tsx:73
 msgid "This category already exists."
@@ -524,11 +550,28 @@ msgstr "This subcategory already exists in the selected category."
 msgid "Try again"
 msgstr "Try again"
 
-#: src/components/store-layout.tsx:27
+#: src/components/users/user-list.tsx:58
+msgid "Unblock"
+msgstr "Unblock"
+
+#. placeholder {0}: user.email
+#: src/components/users/user-list.tsx:56
+msgid "Unblock user {0}"
+msgstr "Unblock user {0}"
+
+#: src/components/store-layout.tsx:29
 #: src/pages/users.tsx:36
 msgid "Users"
 msgstr "Users"
 
-#: src/pages/login.tsx:45
+#: src/pages/login.tsx:47
 msgid "Welcome back"
 msgstr "Welcome back"
+
+#: src/components/users/user-list.tsx:65
+msgid "You cannot block your own account."
+msgstr "You cannot block your own account."
+
+#: src/pages/login.tsx:58
+msgid "Your account has been blocked. Contact an administrator."
+msgstr "Your account has been blocked. Contact an administrator."

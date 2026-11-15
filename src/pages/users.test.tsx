@@ -13,7 +13,8 @@ describe('users page', () => {
     const client = new QueryClient()
     client.setQueryData(['current-user'], { id: 1, email: 'admin@example.com', created_at: '2026-01-01' })
     client.setQueryData(['roles'], [{ id: 3, name: 'reader', permissions: [] }])
-    client.setQueryData(['users'], [{ id: 7, email: 'member@example.com', created_at: '2026-01-01T00:00:00.000Z', role: { id: 3, name: 'reader' } }])
+    client.setQueryData(['users'], [{ id: 7, email: 'member@example.com', created_at: '2026-01-01T00:00:00.000Z', blocked: false, role: { id: 3, name: 'reader' } },
+      { id: 8, email: 'fired@example.com', created_at: '2026-01-01T00:00:00.000Z', blocked: true, role: { id: 3, name: 'reader' } }])
     const markup = renderToStaticMarkup(
       <I18nProvider i18n={i18n}>
         <ThemeContext.Provider value={{ theme: 'dark', toggleTheme: () => {} }}>
@@ -31,5 +32,8 @@ describe('users page', () => {
     expect(markup).toContain('member@example.com')
     expect(markup).toContain('Edit user member@example.com')
     expect(markup).toContain('reader')
+    expect(markup).toContain('Block user member@example.com')
+    expect(markup).toContain('Unblock user fired@example.com')
+    expect(markup).toContain('Blocked')
   })
 })

@@ -62,4 +62,22 @@ describe('auth API', () => {
       expect(fetch).not.toHaveBeenCalled()
     },
   )
+
+  it('calls back once when the server announces the account was blocked', () => {
+    const listeners: Record<string, () => void> = {}
+    const close = vi.fn()
+    const EventSource = vi.fn(function () {
+      return { addEventListener: (name: string, handler: () => void) => { listeners[name] = handler }, close }
+    })
+    vi.stubGlobal('EventSource', EventSource)
+    const onBlocked = vi.fn()
+
+    const stop = createAuthApi('https://auth.example.com').watchSession(onBlocked)
+    expect(EventSource).toHaveBeenCalledWith('https://auth.example.com/auth/events', { withCredentials: true })
+    listeners.blocked()
+
+    expect(onBlocked).toHaveBeenCalledOnce()
+    expect(close).toHaveBeenCalled()
+    stop()
+  })
 })

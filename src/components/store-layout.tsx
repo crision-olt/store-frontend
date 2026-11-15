@@ -5,6 +5,7 @@ import type { ReactNode } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { useSessionGuard } from '@/hooks/use-session-guard'
 import { Button } from '@/components/ui/button'
 import { logout } from '@/lib/auth-api'
 import { cn } from '@/lib/utils'
@@ -13,6 +14,7 @@ export function StoreLayout({ children }: { children: ReactNode }) {
   const { t } = useLingui()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  useSessionGuard()
   const logoutMutation = useMutation({
     mutationFn: logout,
     onSuccess: () => {

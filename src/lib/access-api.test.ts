@@ -60,7 +60,7 @@ describe('access API', () => {
   })
 
   it('lists, creates and updates users', async () => {
-    const user = { id: 5, email: 'a@b.co', created_at: '2026-01-01T00:00:00.000Z', role: { id: 3, name: 'viewer' } }
+    const user = { id: 5, email: 'a@b.co', created_at: '2026-01-01T00:00:00.000Z', blocked: false, role: { id: 3, name: 'viewer' } }
     const fetch = vi.fn()
       .mockResolvedValueOnce(new Response(JSON.stringify([user])))
       .mockResolvedValueOnce(new Response(JSON.stringify(user), { status: 201 }))
@@ -76,6 +76,22 @@ describe('access API', () => {
       ['https://api.example.com/users', { credentials: 'include' }],
       ['https://api.example.com/users', { method: 'POST', credentials: 'include', headers: json, body: JSON.stringify({ email: 'a@b.co', password: 'secret-pass', roleId: 3 }) }],
       ['https://api.example.com/users/5', { method: 'PUT', credentials: 'include', headers: json, body: JSON.stringify({ email: 'a@b.co', roleId: 3 }) }],
+    ])
+  })
+
+  it('blocks and unblocks users', async () => {
+    const user = { id: 5, email: 'a@b.co', created_at: '2026-01-01T00:00:00.000Z', blocked: true, role: { id: 3, name: 'viewer' } }
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify(user)))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ ...user, blocked: false })))
+    vi.stubGlobal('fetch', fetch)
+    const api = createAccessApi('https://api.example.com')
+
+    await expect(api.blockUser(5)).resolves.toMatchObject({ blocked: true })
+    await expect(api.unblockUser(5)).resolves.toMatchObject({ blocked: false })
+    expect(fetch.mock.calls).toEqual([
+      ['https://api.example.com/users/5/block', { method: 'PUT', credentials: 'include' }],
+      ['https://api.example.com/users/5/block', { method: 'DELETE', credentials: 'include' }],
     ])
   })
 
