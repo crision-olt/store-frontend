@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge'
 
 export function PriceCell({ value }: { value: number }) {
   const { i18n } = useLingui()
-  return new Intl.NumberFormat(i18n.locale, { style: 'currency', currency: 'USD' }).format(value)
+  return new Intl.NumberFormat(i18n.locale, { style: 'currency', currency: 'EUR' }).format(value)
 }
 
 export function DateCell({ value }: { value: string }) {

@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import { i18n } from '@lingui/core'
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/vitest'
 import '@/test/setup-dom'
@@ -82,6 +83,16 @@ describe('ProductsTable', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(updateProduct).mockReset()
+  })
+
+  test('formats prices in euros using the selected language', () => {
+    renderProductsTable()
+    expect(screen.getByRole('cell', { name: '€12.50' })).toBeInTheDocument()
+
+    act(() => {
+      i18n.loadAndActivate({ locale: 'es', messages: {} })
+    })
+    expect(screen.getByRole('cell', { name: /12,50\s€/ })).toBeInTheDocument()
   })
 
   test('updates column widths while dragging and keeps the final width after release', async () => {

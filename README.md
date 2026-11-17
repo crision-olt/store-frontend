@@ -37,6 +37,8 @@ visible when controls are hidden; remove a chip to clear that filter or use **Cl
 filters** to reset all filters. Removing or changing a category also clears the
 subcategory selection.
 
+Product prices are displayed in euros using the selected language's number format.
+The table fits its rows and scrolls vertically when its content exceeds 24rem.
 The product-name column stays pinned on the left when the table scrolls horizontally.
 Drag a column's right header edge to resize it live as you move the pointer.
 Use **Columns** to show, hide, or reorder other columns by their drag handles.

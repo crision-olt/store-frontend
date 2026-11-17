@@ -92,7 +92,7 @@ export function ProductsTable({
     current.filter((filter) => filter.id !== id && !(id === 'category' && filter.id === 'subcategory')),
   )
   const emptyState = !isLoading && !isNotEmptyArray(rows) ? (
-    <TableFeedbackState className="static h-80" title={t`No products found.`} />
+    <TableFeedbackState className="static h-24" title={t`No products found.`} />
   ) : undefined
 
   return (
@@ -103,7 +103,11 @@ export function ProductsTable({
       </div>
       <Table
         table={table}
-        className={cn('h-96 rounded-lg border bg-card transition-opacity', isFetching && !isLoading && 'opacity-60')}
+        className={cn(
+          'h-auto rounded-lg border bg-card transition-opacity [&>div]:max-h-96',
+          isLoading && pending.length === 0 && 'h-40',
+          isFetching && !isLoading && 'opacity-60',
+        )}
         feedbackState={isLoading && pending.length === 0 ? <TableLoading /> : undefined}
         endSlot={emptyState}
         rowClassName={(row) => row.original.isPending ? 'bg-muted/40' : undefined}

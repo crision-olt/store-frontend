@@ -105,7 +105,7 @@ it('shows a pending product inside the table without changing the cache and keep
   expect(within(pendingRow).getByRole('status')).toHaveTextContent('Creating product…')
   expect(within(pendingRow).getByRole('cell', { name: 'MUG-1' })).toBeInTheDocument()
   expect(within(pendingRow).getByRole('cell', { name: 'Kitchen' })).toBeInTheDocument()
-  expect(within(pendingRow).getByRole('cell', { name: '$9.99' })).toBeInTheDocument()
+  expect(within(pendingRow).getByRole('cell', { name: '€9.99' })).toBeInTheDocument()
   expect(within(pendingRow).getByRole('button', { name: 'Edit product Blue Mug' })).toBeDisabled()
   expect(client.getQueryData(queryKey)).toEqual([existingProduct])
   expect(refetch).not.toHaveBeenCalled()
