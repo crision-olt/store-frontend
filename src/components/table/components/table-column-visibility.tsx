@@ -3,7 +3,7 @@ import { Popover } from '@base-ui/react/popover'
 import { RestrictToVerticalAxis } from '@dnd-kit/abstract/modifiers'
 import { Feedback, KeyboardSensor, PointerActivationConstraints, PointerSensor } from '@dnd-kit/dom'
 import { DragDropProvider, type DragEndEvent } from '@dnd-kit/react'
-import { useSortable } from '@dnd-kit/react/sortable'
+import { isSortableOperation, useSortable } from '@dnd-kit/react/sortable'
 import { useLingui } from '@lingui/react/macro'
 import type { RowData } from '@tanstack/react-table'
 import { CheckIcon, ChevronDownIcon, Columns3Icon, GripVerticalIcon, LockIcon, XIcon } from 'lucide-react'
@@ -48,13 +48,13 @@ function ColumnOption<T extends RowData>({ column, index, label }: {
       ref={ref}
       role="listitem"
       className={cn(
-        'flex min-w-0 items-center rounded-md pl-2.5 pr-0.5 text-sm',
+        'flex min-w-0 items-center rounded-md pr-0.5 text-sm',
         isDragSource && 'opacity-50',
         isDropTarget && !isDragSource && 'bg-muted ring-1 ring-inset ring-ring',
       )}
     >
       <label className={cn(
-        'flex min-w-0 flex-1 items-center gap-3 self-stretch rounded-md',
+        'flex min-w-0 flex-1 items-center gap-3 self-stretch rounded-md pl-2.5',
         locked ? 'text-muted-foreground' : 'cursor-pointer hover:bg-muted',
       )}>
         <Checkbox.Root
@@ -98,17 +98,21 @@ export function TableColumnVisibility<T extends RowData>({ table, columnLabels }
     ...leafColumns.filter((column) => !column.getIsPinned()),
     ...pinnedColumns('end'),
   ]
+  const groupIndexes = new Map<string | undefined, number>()
 
   function handleDragEnd(event: DragEndEvent) {
     event.suspend().abort()
-    if (event.canceled) return
+    if (event.canceled || !isSortableOperation(event.operation)) return
     const { source, target } = event.operation
-    if (!source || !target || source.id === target.id) return
+    if (!source || !target) return
     const activeColumn = leafColumns.find((column) => column.id === String(source.id))
-    const targetColumn = leafColumns.find((column) => column.id === String(target.id))
-    if (!activeColumn || !targetColumn) return
-    if (activeColumn.getIsPinned() || targetColumn.getIsPinned()) return
-    if (activeColumn.parent?.id !== targetColumn.parent?.id) return
+    const overColumn = leafColumns.find((column) => column.id === String(target.id))
+    if (!activeColumn || !overColumn) return
+    if (activeColumn.getIsPinned() || overColumn.getIsPinned()) return
+    if (activeColumn.parent?.id !== overColumn.parent?.id) return
+    const siblings = columns.filter((column) => column.parent?.id === activeColumn.parent?.id)
+    const targetColumn = siblings[source.index]
+    if (!targetColumn || targetColumn === activeColumn || targetColumn.getIsPinned()) return
     reorderTableColumns(table, activeColumn, targetColumn)
   }
 
@@ -132,19 +136,23 @@ export function TableColumnVisibility<T extends RowData>({ table, columnLabels }
               sensors={SENSORS}
               modifiers={MODIFIERS}
               plugins={(defaults) => [...defaults, Feedback.configure({ dropAnimation: null })]}
-              onDragOver={(event) => event.preventDefault()}
               onDragEnd={handleDragEnd}
             >
               <div role="list" data-testid="column-visibility-list" className="flex flex-col gap-0.5 p-1.5">
-                {columns.map((column, index) => (
-                  <ColumnOption
-                    key={column.id}
-                    column={column}
-                    index={index}
-                    label={columnLabels?.[column.id]
-                      ?? (typeof column.columnDef.header === 'string' ? column.columnDef.header : column.id)}
-                  />
-                ))}
+                {columns.map((column) => {
+                  const group = column.parent?.id
+                  const index = groupIndexes.get(group) ?? 0
+                  groupIndexes.set(group, index + 1)
+                  return (
+                    <ColumnOption
+                      key={column.id}
+                      column={column}
+                      index={index}
+                      label={columnLabels?.[column.id]
+                        ?? (typeof column.columnDef.header === 'string' ? column.columnDef.header : column.id)}
+                    />
+                  )
+                })}
               </div>
             </DragDropProvider>
             <Popover.Description className="border-t px-4 py-3 text-xs text-muted-foreground">

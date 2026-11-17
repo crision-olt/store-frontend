@@ -114,8 +114,9 @@ Visibility updates the table's existing state directly, without maintaining anot
 Drag a row's handle to reorder columns, including hidden ones. With the keyboard, focus a handle, press Space,
 use the arrow keys, and press Space to drop or Escape to cancel. Pinned columns stay at their respective edges
 and cannot be dragged; required but unpinned columns can still move. Grouped columns can only move among siblings.
-The popover and header dragging share the same ordering helper. Table order changes only on drop, not on
-pointer movement, and is not persisted across page reloads.
+The popover previews the new order as you drag: other options shift aside without changing the table's order.
+The popover and header dragging share the same ordering helper. Table order changes only on drop and is not
+persisted across page reloads. Canceling a drag restores the original option order.
 
 ## Dependencies
 

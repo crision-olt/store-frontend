@@ -3,6 +3,7 @@ import '@/test/setup-dom'
 import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DragDropManager } from '@dnd-kit/dom'
+import { Sortable } from '@dnd-kit/dom/sortable'
 import type { DragDropProvider } from '@dnd-kit/react'
 import { isValidElement, type ComponentProps } from 'react'
 import { useTable, type ColumnOrderState } from '@tanstack/react-table'
@@ -33,12 +34,16 @@ vi.mock('@dnd-kit/react', async (importActual) => {
   }
 })
 
-function dropColumn(source: string, target: string, canceled = false) {
+function dropColumn(source: string, target: string, { index, canceled = false }: { index: number; canceled?: boolean }) {
   expect(onColumnDragEnd).toBeDefined()
+  const active = new Sortable({ id: source, index, register: false, plugins: [] }, manager)
+  const over = source === target
+    ? active
+    : new Sortable({ id: target, index: 0, register: false, plugins: [] }, manager)
   act(() => onColumnDragEnd?.({
     canceled,
     suspend: () => ({ abort: vi.fn(), resume: vi.fn() }),
-    operation: { source: { id: source }, target: { id: target } } as Operation,
+    operation: { source: active.draggable, target: over.droppable } as Operation,
   }, manager))
 }
 
@@ -120,11 +125,11 @@ describe('TableColumnVisibility', () => {
     expect(screen.getByRole('button', { name: 'Reorder Reference' })).toBeEnabled()
     expect(optionOrder()).toEqual(['Contact name', 'Reference', 'Email', 'City'])
 
-    dropColumn('email', 'code')
+    dropColumn('email', 'code', { index: 1 })
     expect(optionOrder()).toEqual(['Contact name', 'Email', 'Reference', 'City'])
     expect(headerOrder()).toEqual(['table-header-cell-name', 'table-header-cell-email', 'table-header-cell-code'])
 
-    dropColumn('city', 'email')
+    dropColumn('city', 'email', { index: 1 })
     expect(optionOrder()).toEqual(['Contact name', 'City', 'Email', 'Reference'])
     expect(screen.getByRole('checkbox', { name: 'City' })).not.toBeChecked()
     await user.click(screen.getByRole('checkbox', { name: 'City' }))
@@ -135,24 +140,39 @@ describe('TableColumnVisibility', () => {
       'Ana', 'Paris', 'ana@example.com', 'A1',
     ])
 
-    dropColumn('code', 'city')
+    dropColumn('code', 'city', { index: 1 })
     expect(optionOrder()).toEqual(['Contact name', 'Reference', 'City', 'Email'])
     expect(screen.getAllByRole('cell').map((cell) => cell.textContent)).toEqual([
       'Ana', 'A1', 'Paris', 'ana@example.com',
     ])
   })
 
+  test('commits the preview position when the dragged item becomes its own drop target', async () => {
+    const user = userEvent.setup()
+    render(<AppWrapper><ReorderableContacts /></AppWrapper>)
+    await user.click(screen.getByRole('button', { name: 'Columns' }))
+
+    dropColumn('email', 'email', { index: 3 })
+
+    expect(screen.getAllByRole('checkbox').map((checkbox) => checkbox.getAttribute('aria-label'))).toEqual([
+      'Contact name', 'City', 'Reference', 'Email',
+    ])
+    expect(screen.getAllByRole('cell').map((cell) => cell.textContent)).toEqual([
+      'Ana', 'A1', 'ana@example.com',
+    ])
+  })
+
   test.each([
-    ['name', 'code', false],
-    ['code', 'name', false],
-    ['email', 'code', true],
-  ])('does not move fixed columns or apply canceled drops (%s to %s)', async (source, target, canceled) => {
+    ['name', 'code', 3, false],
+    ['code', 'name', 0, false],
+    ['email', 'code', 3, true],
+  ])('does not move fixed columns or apply canceled drops (%s to %s)', async (source, target, index, canceled) => {
     const user = userEvent.setup()
     render(<AppWrapper><ReorderableContacts /></AppWrapper>)
     await user.click(screen.getByRole('button', { name: 'Columns' }))
     const before = screen.getAllByRole('checkbox').map((checkbox) => checkbox.getAttribute('aria-label'))
 
-    dropColumn(source, target, canceled)
+    dropColumn(source, target, { index, canceled })
 
     expect(screen.getAllByRole('checkbox').map((checkbox) => checkbox.getAttribute('aria-label'))).toEqual(before)
   })
@@ -163,7 +183,7 @@ describe('TableColumnVisibility', () => {
     await user.click(screen.getByRole('button', { name: 'Columns' }))
     const before = screen.getAllByRole('checkbox').map((checkbox) => checkbox.getAttribute('aria-label'))
 
-    dropColumn('code', 'city')
+    dropColumn('code', 'city', { index: 0 })
 
     expect(screen.getAllByRole('checkbox').map((checkbox) => checkbox.getAttribute('aria-label'))).toEqual(before)
   })
@@ -173,7 +193,7 @@ describe('TableColumnVisibility', () => {
     render(<AppWrapper><Contacts pinEmail={false} /></AppWrapper>)
     await user.click(screen.getByRole('button', { name: 'Columns' }))
 
-    dropColumn('city', 'email')
+    dropColumn('city', 'email', { index: 0 })
     await user.click(screen.getByRole('checkbox', { name: 'City' }))
 
     expect(screen.getAllByRole('checkbox').map((checkbox) => checkbox.getAttribute('aria-label'))).toEqual([
