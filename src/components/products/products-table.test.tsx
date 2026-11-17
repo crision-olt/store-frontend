@@ -4,7 +4,7 @@ import '@testing-library/jest-dom/vitest'
 import '@/test/setup-dom'
 
 import type { ColumnFiltersState, SortingState, Updater } from '@tanstack/react-table'
-import type { Product } from '@/lib/products-api'
+import type { Category, Product, Subcategory } from '@/lib/products-api'
 import { defineBoundingClientRect, defineClientDimensions } from '@/test/dom'
 import { AppWrapper } from '@/test/utils'
 import { ProductsTable } from '@/components/products/products-table'
@@ -28,6 +28,14 @@ const product: Product = {
 
 const onSortingChange = vi.fn<(updater: Updater<SortingState>) => void>()
 const onColumnFiltersChange = vi.fn<(updater: Updater<ColumnFiltersState>) => void>()
+const categories = [
+  { id: 1, name: 'Accessories' },
+  { id: 3, name: 'Hardware' },
+]
+const subcategories = [
+  { id: 2, name: 'Cases', categoryId: 1 },
+  { id: 4, name: 'Tools', categoryId: 3 },
+]
 
 const defaultProps = {
   products: [product],
@@ -37,8 +45,8 @@ const defaultProps = {
   onSortingChange,
   columnFilters: [] as ColumnFiltersState,
   onColumnFiltersChange,
-  categories: [],
-  subcategories: [],
+  categories: [] as Category[],
+  subcategories: [] as Subcategory[],
   onCategoryChange: vi.fn(),
 }
 
@@ -83,6 +91,22 @@ describe('ProductsTable', () => {
       'placeholder',
       'Name, SKU or description',
     )
+  })
+
+  test.each([
+    ['category', 'Filter by category', ['1', '3'], ['Accessories', 'Hardware']],
+    ['subcategory', 'Filter by subcategory', ['2', '4'], ['Cases (Accessories)', 'Tools (Hardware)']],
+    ['stock', 'Filter by availability', ['in', 'out'], ['All']],
+  ])('displays multiple selected values for the %s filter', (columnId, label, selected, labels) => {
+    renderProductsTable({
+      columnFilters: [{ id: String(columnId), value: selected }],
+      categories,
+      subcategories,
+    })
+
+    const header = screen.getByTestId(`table-header-cell-${String(columnId)}`)
+    const trigger = within(header).getByRole('combobox', { name: String(label) })
+    for (const value of labels) expect(trigger).toHaveTextContent(String(value))
   })
 
   test('shows the shared loading state', () => {

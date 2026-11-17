@@ -1,6 +1,8 @@
 import { Trans } from '@lingui/react/macro'
 import { useLingui } from '@lingui/react/macro'
+import { msg } from '@lingui/core/macro'
 import { createColumnHelper } from '@tanstack/react-table'
+import { useMemo } from 'react'
 import { tableFeatureSet } from '@/components/table/features'
 import { DateCell, PriceCell, StockCell } from '@/components/products/products-table-cells'
 import { Badge } from '@/components/ui/badge'
@@ -13,14 +15,19 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import type { Category, Product, Subcategory } from '@/lib/products-api'
+import type { StockFilter } from '@/lib/product-filters'
 
 const columnHelper = createColumnHelper<typeof tableFeatureSet, Product>()
-const ALL = '__all__'
 
 type PriceRange = { minPrice: string; maxPrice: string }
 
 function getTextFilterValue(value: unknown): string {
   return typeof value === 'string' ? value : ''
+}
+
+function getTextFilterValues(value: unknown): string[] {
+  if (typeof value === 'string') return [value]
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : []
 }
 
 function getPriceRange(value: unknown): PriceRange {
@@ -40,9 +47,9 @@ type ProductColumnOptions = {
 }
 
 export function useProductColumns({ categories, subcategories, onCategoryChange }: ProductColumnOptions) {
-  const { t } = useLingui()
+  const { i18n } = useLingui()
 
-  return columnHelper.columns([
+  return useMemo(() => columnHelper.columns([
     columnHelper.accessor('name', {
       header: () => <Trans>Name</Trans>,
       cell: ({ cell, row }) => (
@@ -59,8 +66,8 @@ export function useProductColumns({ categories, subcategories, onCategoryChange 
           <Input
             ref={inputRef}
             type="search"
-            placeholder={t`Name, SKU or description`}
-            aria-label={t`Search products`}
+            placeholder={i18n._(msg`Name, SKU or description`)}
+            aria-label={i18n._(msg`Search products`)}
             value={getTextFilterValue(header.column.getFilterValue())}
             onChange={(event) => header.column.setFilterValue(event.currentTarget.value || undefined)}
           />
@@ -78,20 +85,27 @@ export function useProductColumns({ categories, subcategories, onCategoryChange 
       meta: {
         showFilter: true,
         Filter: ({ header }) => {
-          const value = getTextFilterValue(header.column.getFilterValue())
+          const selected = getTextFilterValues(header.column.getFilterValue())
+          const chosen = categories.filter((category) => selected.includes(String(category.id)))
           return (
             <Select
-              value={value || ALL}
-              onValueChange={(nextValue) => {
-                header.column.setFilterValue(nextValue === ALL || nextValue === null ? undefined : nextValue)
+              multiple
+              value={selected}
+              onValueChange={(values) => {
+                header.column.setFilterValue(values.length > 0 ? values : undefined)
                 onCategoryChange()
               }}
             >
-              <SelectTrigger className="w-full" aria-label={t`Filter by category`}>
-                <SelectValue>{categories.find((category) => String(category.id) === value)?.name ?? t`All`}</SelectValue>
+              <SelectTrigger className="w-full" aria-label={i18n._(msg`Filter by category`)}>
+                <SelectValue>
+                  {chosen.length === 0
+                    ? <span className="text-muted-foreground">{i18n._(msg`All`)}</span>
+                    : <span className="flex flex-wrap gap-1">
+                        {chosen.map((category) => <Badge key={category.id} variant="secondary">{category.name}</Badge>)}
+                      </span>}
+                </SelectValue>
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={ALL}>{t`All`}</SelectItem>
+              <SelectContent alignItemWithTrigger={false}>
                 {categories.map((category) => (
                   <SelectItem key={category.id} value={String(category.id)}>
                     {category.name}
@@ -110,27 +124,41 @@ export function useProductColumns({ categories, subcategories, onCategoryChange 
       meta: {
         showFilter: true,
         Filter: ({ header }) => {
-          const value = getTextFilterValue(header.column.getFilterValue())
-          const selectedSubcategory = subcategories.find((subcategory) => String(subcategory.id) === value)
+          const selected = getTextFilterValues(header.column.getFilterValue())
+          const selectedCategories = getTextFilterValues(
+            header.column.table.getColumn('category')?.getFilterValue(),
+          )
+          const availableSubcategories =
+            selectedCategories.length === 0
+              ? subcategories
+              : subcategories.filter((subcategory) => selectedCategories.includes(String(subcategory.categoryId)))
+          const chosen = availableSubcategories.filter((subcategory) => selected.includes(String(subcategory.id)))
           const subcategoryLabel = (subcategory: Subcategory) => {
             const category = categories.find((item) => item.id === subcategory.categoryId)
-            const categoryFilter = header.column.table.getColumn('category')?.getFilterValue()
-            return !categoryFilter && category ? `${subcategory.name} (${category.name})` : subcategory.name
+            return selectedCategories.length === 0 && category
+              ? `${subcategory.name} (${category.name})`
+              : subcategory.name
           }
 
           return (
             <Select
-              value={value || ALL}
-              onValueChange={(nextValue) =>
-                header.column.setFilterValue(nextValue === ALL || nextValue === null ? undefined : nextValue)
-              }
+              multiple
+              value={selected}
+              onValueChange={(values) => header.column.setFilterValue(values.length > 0 ? values : undefined)}
             >
-              <SelectTrigger className="w-full" aria-label={t`Filter by subcategory`}>
-                <SelectValue>{selectedSubcategory ? subcategoryLabel(selectedSubcategory) : t`All`}</SelectValue>
+              <SelectTrigger className="w-full" aria-label={i18n._(msg`Filter by subcategory`)}>
+                <SelectValue>
+                  {chosen.length === 0
+                    ? <span className="text-muted-foreground">{i18n._(msg`All`)}</span>
+                    : <span className="flex flex-wrap gap-1">
+                        {chosen.map((subcategory) => (
+                          <Badge key={subcategory.id} variant="secondary">{subcategoryLabel(subcategory)}</Badge>
+                        ))}
+                      </span>}
+                </SelectValue>
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={ALL}>{t`All`}</SelectItem>
-                {subcategories.map((subcategory) => (
+              <SelectContent alignItemWithTrigger={false}>
+                {availableSubcategories.map((subcategory) => (
                   <SelectItem key={subcategory.id} value={String(subcategory.id)}>
                     {subcategoryLabel(subcategory)}
                   </SelectItem>
@@ -161,8 +189,8 @@ export function useProductColumns({ categories, subcategories, onCategoryChange 
                 min={0}
                 step="0.01"
                 inputMode="decimal"
-                placeholder={t`Min`}
-                aria-label={t`Minimum price`}
+                placeholder={i18n._(msg`Min`)}
+                aria-label={i18n._(msg`Minimum price`)}
                 value={range.minPrice ?? ''}
                 onChange={(event) => update('minPrice', event.currentTarget.value)}
               />
@@ -171,8 +199,8 @@ export function useProductColumns({ categories, subcategories, onCategoryChange 
                 min={0}
                 step="0.01"
                 inputMode="decimal"
-                placeholder={t`Max`}
-                aria-label={t`Maximum price`}
+                placeholder={i18n._(msg`Max`)}
+                aria-label={i18n._(msg`Maximum price`)}
                 value={range.maxPrice ?? ''}
                 onChange={(event) => update('maxPrice', event.currentTarget.value)}
               />
@@ -189,23 +217,30 @@ export function useProductColumns({ categories, subcategories, onCategoryChange 
         showFilter: true,
         Filter: ({ header }) => {
           const value = header.column.getFilterValue()
-          const stock = value === 'in' || value === 'out' ? value : 'all'
-          const labels = {
-            all: t`All`,
-            in: t`In stock`,
-            out: t`Out of stock`,
+          const selected = getTextFilterValues(value).filter(
+            (item): item is StockFilter => item === 'in' || item === 'out',
+          )
+          const labels: Record<StockFilter, string> = {
+            in: i18n._(msg`In stock`),
+            out: i18n._(msg`Out of stock`),
           }
 
           return (
             <Select
-              value={stock}
-              onValueChange={(nextValue) => header.column.setFilterValue(nextValue === 'all' ? undefined : nextValue)}
+              multiple
+              value={selected}
+              onValueChange={(values) => header.column.setFilterValue(values.length > 0 ? values : undefined)}
             >
-              <SelectTrigger className="w-full" aria-label={t`Filter by availability`}>
-                <SelectValue>{labels[stock]}</SelectValue>
+              <SelectTrigger className="w-full" aria-label={i18n._(msg`Filter by availability`)}>
+                <SelectValue>
+                  {selected.length === 0 || selected.length === 2
+                    ? <span className="text-muted-foreground">{i18n._(msg`All`)}</span>
+                    : <span className="flex flex-wrap gap-1">
+                        {selected.map((item) => <Badge key={item} variant="secondary">{labels[item]}</Badge>)}
+                      </span>}
+                </SelectValue>
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{labels.all}</SelectItem>
+              <SelectContent alignItemWithTrigger={false}>
                 <SelectItem value="in">{labels.in}</SelectItem>
                 <SelectItem value="out">{labels.out}</SelectItem>
               </SelectContent>
@@ -218,5 +253,5 @@ export function useProductColumns({ categories, subcategories, onCategoryChange 
       header: () => <Trans>Created</Trans>,
       cell: ({ cell }) => <DateCell value={cell.getValue()} />,
     }),
-  ])
+  ]), [categories, subcategories, onCategoryChange, i18n])
 }

@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import type { ColumnFiltersState, SortingState } from '@tanstack/react-table'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { RequireAuth } from '@/components/auth/require-auth'
 import { ProductsTable } from '@/components/products/products-table'
@@ -55,13 +55,20 @@ function ProductsContent() {
     retry: false,
   })
   const subcategories = useQuery({
-    queryKey: ['product-subcategories', filters.category],
-    queryFn: () => listSubcategories(filters.category || undefined),
+    queryKey: ['product-subcategories'],
+    queryFn: () => listSubcategories(),
     retry: false,
   })
   const clearFilters = () => setColumnFilters([])
-  const clearSubcategoryFilter = () =>
-    setColumnFilters((current) => current.filter((filter) => filter.id !== 'subcategory'))
+  const clearSubcategoryFilter = useCallback(
+    () =>
+      setColumnFilters((current) =>
+        current.some((filter) => filter.id === 'subcategory')
+          ? current.filter((filter) => filter.id !== 'subcategory')
+          : current,
+      ),
+    [],
+  )
 
   if (products.error instanceof ProductsApiError && products.error.status === 401) {
     return <Navigate to={buildLinkWithRedirect('/login', location.pathname + location.search)} replace />

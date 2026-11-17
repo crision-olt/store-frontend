@@ -1,28 +1,33 @@
 import type { ColumnFiltersState } from '@tanstack/react-table'
 import type { ProductsQuery } from '@/lib/products-api'
 
-export type StockFilter = 'all' | 'in' | 'out'
+export type StockFilter = 'in' | 'out'
 
 export type ProductFilterValues = {
   search: string
-  category: string
-  subcategory: string
+  category: string[]
+  subcategory: string[]
   minPrice: string
   maxPrice: string
-  stock: StockFilter
+  stock: StockFilter[]
 }
 
 export const emptyFilters: ProductFilterValues = {
   search: '',
-  category: '',
-  subcategory: '',
+  category: [],
+  subcategory: [],
   minPrice: '',
   maxPrice: '',
-  stock: 'all',
+  stock: [],
 }
 
 function getStringValue(value: unknown): string {
   return typeof value === 'string' ? value : ''
+}
+
+function getStringValues(value: unknown): string[] {
+  if (typeof value === 'string') return [value]
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : []
 }
 
 export function columnFiltersToProductFilters(columnFilters: ColumnFiltersState): ProductFilterValues {
@@ -36,11 +41,11 @@ export function columnFiltersToProductFilters(columnFilters: ColumnFiltersState)
 
   return {
     search: getStringValue(getValue('name')),
-    category: getStringValue(getValue('category')),
-    subcategory: getStringValue(getValue('subcategory')),
+    category: getStringValues(getValue('category')),
+    subcategory: getStringValues(getValue('subcategory')),
     minPrice,
     maxPrice,
-    stock: stock === 'in' || stock === 'out' ? stock : 'all',
+    stock: getStringValues(stock).filter((value): value is StockFilter => value === 'in' || value === 'out'),
   }
 }
 
@@ -65,18 +70,23 @@ export function hasInvalidPriceRange(filters: ProductFilterValues): boolean {
 }
 
 export function hasActiveFilters(filters: ProductFilterValues): boolean {
-  return (Object.keys(emptyFilters) as (keyof ProductFilterValues)[]).some(
-    (key) => filters[key] !== emptyFilters[key],
+  return (
+    filters.search !== '' ||
+    filters.category.length > 0 ||
+    filters.subcategory.length > 0 ||
+    filters.minPrice !== '' ||
+    filters.maxPrice !== '' ||
+    filters.stock.length === 1
   )
 }
 
 export function toProductsQuery(filters: ProductFilterValues): ProductsQuery {
   return {
     search: filters.search.trim() || undefined,
-    category: filters.category || undefined,
-    subcategory: filters.subcategory || undefined,
+    category: filters.category.length > 0 ? filters.category : undefined,
+    subcategory: filters.subcategory.length > 0 ? filters.subcategory : undefined,
     minPrice: parsePrice(filters.minPrice),
     maxPrice: parsePrice(filters.maxPrice),
-    inStock: filters.stock === 'all' ? undefined : filters.stock === 'in',
+    inStock: filters.stock.length === 1 ? filters.stock[0] === 'in' : undefined,
   }
 }

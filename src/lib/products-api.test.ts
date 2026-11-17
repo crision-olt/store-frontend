@@ -43,6 +43,21 @@ describe('products API', () => {
     )
   })
 
+  it('sends category and subcategory selections as repeated query params', async () => {
+    const fetch = vi.fn().mockResolvedValue(new Response(JSON.stringify(page)))
+    vi.stubGlobal('fetch', fetch)
+
+    await createProductsApi('https://api.example.com').listProducts({
+      category: ['1', '3'],
+      subcategory: ['2', '4'],
+    })
+
+    expect(fetch).toHaveBeenCalledWith(
+      'https://api.example.com/products?category=1&category=3&subcategory=2&subcategory=4',
+      { credentials: 'include' },
+    )
+  })
+
   it('requests the bare collection when there are no filters', async () => {
     const fetch = vi.fn().mockResolvedValue(new Response(JSON.stringify(page)))
     vi.stubGlobal('fetch', fetch)

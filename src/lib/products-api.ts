@@ -35,8 +35,8 @@ export type SortableColumn = (typeof SORTABLE_COLUMNS)[number]
 
 export type ProductsQuery = {
   search?: string
-  category?: string
-  subcategory?: string
+  category?: string | string[]
+  subcategory?: string | string[]
   minPrice?: number
   maxPrice?: number
   inStock?: boolean
@@ -80,7 +80,11 @@ export function createProductsApi(serviceUrl: string) {
   async function listProducts(query: ProductsQuery = {}, signal?: AbortSignal) {
     const params = new URLSearchParams()
     for (const [key, value] of Object.entries(query)) {
-      if (value !== undefined && value !== '') params.set(key, String(value))
+      if (Array.isArray(value)) {
+        for (const item of value) params.append(key, item)
+      } else if (value !== undefined && value !== '') {
+        params.set(key, String(value))
+      }
     }
     const suffix = params.size ? `?${params}` : ''
     return productsPageSchema.parse(await get(`/products${suffix}`, signal))
