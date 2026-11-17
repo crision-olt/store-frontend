@@ -1,3 +1,4 @@
+import type { ColumnFiltersState } from '@tanstack/react-table'
 import type { ProductsQuery } from '@/lib/products-api'
 
 export type StockFilter = 'all' | 'in' | 'out'
@@ -18,6 +19,29 @@ export const emptyFilters: ProductFilterValues = {
   minPrice: '',
   maxPrice: '',
   stock: 'all',
+}
+
+function getStringValue(value: unknown): string {
+  return typeof value === 'string' ? value : ''
+}
+
+export function columnFiltersToProductFilters(columnFilters: ColumnFiltersState): ProductFilterValues {
+  const getValue = (id: string) => columnFilters.find((filter) => filter.id === id)?.value
+  const price = getValue('price')
+  const minPrice =
+    typeof price === 'object' && price !== null && 'minPrice' in price ? getStringValue(price.minPrice) : ''
+  const maxPrice =
+    typeof price === 'object' && price !== null && 'maxPrice' in price ? getStringValue(price.maxPrice) : ''
+  const stock = getValue('stock')
+
+  return {
+    search: getStringValue(getValue('name')),
+    category: getStringValue(getValue('category')),
+    subcategory: getStringValue(getValue('subcategory')),
+    minPrice,
+    maxPrice,
+    stock: stock === 'in' || stock === 'out' ? stock : 'all',
+  }
 }
 
 function parsePrice(raw: string): number | undefined {

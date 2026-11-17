@@ -16,6 +16,11 @@ msgstr "Ya existe un usuario con este correo."
 #: src/components/products/products-filters.tsx:76
 #: src/components/products/products-filters.tsx:93
 #: src/components/products/products-filters.tsx:96
+#: src/components/products/products-table-columns.tsx:91
+#: src/components/products/products-table-columns.tsx:94
+#: src/components/products/products-table-columns.tsx:129
+#: src/components/products/products-table-columns.tsx:132
+#: src/components/products/products-table-columns.tsx:194
 msgid "All"
 msgstr "Todos"
 
@@ -49,7 +54,7 @@ msgstr "Bloquear usuario {0}"
 msgid "Blocked"
 msgstr "Bloqueado"
 
-#: src/pages/products.tsx:71
+#: src/pages/products.tsx:74
 msgid "Browse and filter the product catalog."
 msgstr "Explora y filtra el catálogo de productos."
 
@@ -65,7 +70,7 @@ msgid "Categories"
 msgstr "Categorías"
 
 #: src/components/products/products-filters.tsx:65
-#: src/components/products/products-table-columns.tsx:28
+#: src/components/products/products-table-columns.tsx:76
 #: src/pages/categories.tsx:83
 msgid "Category"
 msgstr "Categoría"
@@ -79,6 +84,7 @@ msgid "Check the email, the password (8 to 72 characters) and the role."
 msgstr "Revisa el correo, la contraseña (de 8 a 72 caracteres) y el rol."
 
 #: src/components/products/products-filters.tsx:154
+#: src/pages/products.tsx:99
 msgid "Clear filters"
 msgstr "Borrar filtros"
 
@@ -123,7 +129,7 @@ msgid "Could not create the account"
 msgstr "No se pudo crear la cuenta"
 
 #: src/pages/categories.tsx:62
-#: src/pages/products.tsx:89
+#: src/pages/products.tsx:78
 msgid "Could not load categories. Please try again."
 msgstr "No se pudieron cargar las categorías. Inténtalo de nuevo."
 
@@ -131,7 +137,7 @@ msgstr "No se pudieron cargar las categorías. Inténtalo de nuevo."
 msgid "Could not load permissions. Please try again."
 msgstr "No se pudieron cargar los permisos. Inténtalo de nuevo."
 
-#: src/pages/products.tsx:94
+#: src/pages/products.tsx:89
 msgid "Could not load products. Please try again."
 msgstr "No se pudieron cargar los productos. Inténtalo de nuevo."
 
@@ -213,7 +219,7 @@ msgstr "Crea usuarios, cambia su correo o contraseña y asígnales roles."
 msgid "Create, edit and delete roles and permissions."
 msgstr "Crea, edita y elimina roles y permisos."
 
-#: src/components/products/products-table-columns.tsx:47
+#: src/components/products/products-table-columns.tsx:218
 msgid "Created"
 msgstr "Creado"
 
@@ -283,6 +289,7 @@ msgid "Enter a valid email"
 msgstr "Introduce un correo electrónico válido"
 
 #: src/components/products/products-filters.tsx:159
+#: src/pages/products.tsx:83
 msgid "Enter a valid price range: the minimum cannot exceed the maximum."
 msgstr "Introduce un rango de precios válido: el mínimo no puede superar al máximo."
 
@@ -295,7 +302,20 @@ msgstr "Introduce tus datos para empezar"
 msgid "Filter"
 msgstr "Filtrar"
 
+#: src/components/products/products-table-columns.tsx:204
+msgid "Filter by availability"
+msgstr "Filtrar por disponibilidad"
+
+#: src/components/products/products-table-columns.tsx:90
+msgid "Filter by category"
+msgstr "Filtrar por categoría"
+
+#: src/components/products/products-table-columns.tsx:128
+msgid "Filter by subcategory"
+msgstr "Filtrar por subcategoría"
+
 #: src/components/products/products-filters.tsx:46
+#: src/components/products/products-table-columns.tsx:195
 msgid "In stock"
 msgstr "En stock"
 
@@ -333,29 +353,42 @@ msgstr "Cargando usuarios…"
 msgid "Manage categories"
 msgstr "Gestionar categorías"
 
+#: src/components/products/products-table-columns.tsx:174
+msgid "Max"
+msgstr "Máx."
+
 #: src/components/products/products-filters.tsx:121
 msgid "Max price"
 msgstr "Precio máximo"
+
+#: src/components/products/products-table-columns.tsx:175
+msgid "Maximum price"
+msgstr "Precio máximo"
+
+#: src/components/products/products-table-columns.tsx:164
+msgid "Min"
+msgstr "Mín."
 
 #: src/components/products/products-filters.tsx:107
 msgid "Min price"
 msgstr "Precio mínimo"
 
-#: src/components/products/products-table-columns.tsx:12
+#: src/components/products/products-table-columns.tsx:165
+msgid "Minimum price"
+msgstr "Precio mínimo"
+
+#: src/components/products/products-table-columns.tsx:47
 msgid "Name"
 msgstr "Nombre"
 
 #: src/components/products/products-filters.tsx:59
+#: src/components/products/products-table-columns.tsx:62
 msgid "Name, SKU or description"
 msgstr "Nombre, SKU o descripción"
 
 #: src/components/users/user-form.tsx:42
 msgid "New password (optional)"
 msgstr "Nueva contraseña (opcional)"
-
-#: src/components/products/products-table.tsx:128
-msgid "Next"
-msgstr "Siguiente"
 
 #: src/pages/categories.tsx:107
 msgid "No categories yet."
@@ -370,7 +403,7 @@ msgstr "Sin permisos asignados."
 msgid "No permissions yet."
 msgstr "Todavía no hay permisos."
 
-#: src/components/products/products-table.tsx:71
+#: src/components/products/products-table.tsx:60
 msgid "No products found."
 msgstr "No se encontraron productos."
 
@@ -388,12 +421,9 @@ msgstr "Todavía no hay usuarios."
 
 #: src/components/products/products-filters.tsx:47
 #: src/components/products/products-table-cells.tsx:16
+#: src/components/products/products-table-columns.tsx:196
 msgid "Out of stock"
 msgstr "Sin stock"
-
-#: src/components/products/products-table.tsx:112
-msgid "Page {page} of {pageCount}"
-msgstr "Página {page} de {pageCount}"
 
 #: src/components/users/user-form.tsx:42
 #: src/pages/login.tsx:56
@@ -425,16 +455,12 @@ msgstr "Nombre del permiso"
 msgid "Permissions"
 msgstr "Permisos"
 
-#: src/components/products/products-table.tsx:120
-msgid "Previous"
-msgstr "Anterior"
-
-#: src/components/products/products-table-columns.tsx:37
+#: src/components/products/products-table-columns.tsx:145
 msgid "Price"
 msgstr "Precio"
 
 #: src/components/store-layout.tsx:27
-#: src/pages/products.tsx:70
+#: src/pages/products.tsx:73
 msgid "Products"
 msgstr "Productos"
 
@@ -456,11 +482,6 @@ msgstr "Roles"
 msgid "Roles and permissions"
 msgstr "Roles y permisos"
 
-#: src/components/products/products-table.tsx:89
-#: src/components/products/products-table.tsx:100
-msgid "Rows per page"
-msgstr "Filas por página"
-
 #: src/components/access/permission-list.tsx:54
 #: src/components/access/role-list.tsx:72
 #: src/components/users/user-list.tsx:35
@@ -470,6 +491,10 @@ msgstr "Guardar"
 #: src/components/products/products-filters.tsx:54
 msgid "Search"
 msgstr "Buscar"
+
+#: src/components/products/products-table-columns.tsx:63
+msgid "Search products"
+msgstr "Buscar productos"
 
 #: src/pages/categories.tsx:86
 msgid "Select a category"
@@ -482,10 +507,6 @@ msgstr "Selecciona un rol"
 #: src/components/access/permission-multiselect.tsx:25
 msgid "Select permissions"
 msgstr "Selecciona permisos"
-
-#: src/components/products/products-table.tsx:85
-msgid "Showing {firstRow}–{lastRow} of {total}"
-msgstr "Mostrando {firstRow}–{lastRow} de {total}"
 
 #: src/pages/login.tsx:70
 #: src/pages/register.tsx:48
@@ -508,7 +529,7 @@ msgstr "Regístrate"
 msgid "Signing in…"
 msgstr "Iniciando sesión…"
 
-#: src/components/products/products-table-columns.tsx:23
+#: src/components/products/products-table-columns.tsx:71
 msgid "SKU"
 msgstr "SKU"
 
@@ -520,7 +541,7 @@ msgstr "Ordenar ascendente"
 msgid "Sort descending"
 msgstr "Ordenar descendente"
 
-#: src/components/products/products-table-columns.tsx:42
+#: src/components/products/products-table-columns.tsx:185
 msgid "Stock"
 msgstr "Stock"
 
@@ -530,7 +551,7 @@ msgid "Store"
 msgstr "Tienda"
 
 #: src/components/products/products-filters.tsx:87
-#: src/components/products/products-table-columns.tsx:33
+#: src/components/products/products-table-columns.tsx:108
 msgid "Subcategory"
 msgstr "Subcategoría"
 
@@ -569,7 +590,7 @@ msgstr "Esta subcategoría ya existe en la categoría seleccionada."
 #: src/components/auth/require-auth.tsx:29
 #: src/pages/access.tsx:89
 #: src/pages/access.tsx:119
-#: src/pages/products.tsx:96
+#: src/pages/products.tsx:91
 #: src/pages/users.tsx:46
 #: src/pages/users.tsx:61
 msgid "Try again"

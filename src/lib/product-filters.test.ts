@@ -1,4 +1,9 @@
-import { emptyFilters, hasInvalidPriceRange, toProductsQuery } from './product-filters'
+import {
+  columnFiltersToProductFilters,
+  emptyFilters,
+  hasInvalidPriceRange,
+  toProductsQuery,
+} from './product-filters'
 
 describe('product filters', () => {
   it('maps empty filters to an unfiltered query', () => {
@@ -31,6 +36,25 @@ describe('product filters', () => {
       inStock: false,
     })
     expect(toProductsQuery({ ...emptyFilters, stock: 'in' }).inStock).toBe(true)
+  })
+
+  it('maps table column filters to product query filters', () => {
+    expect(
+      columnFiltersToProductFilters([
+        { id: 'name', value: '  mug ' },
+        { id: 'category', value: '1' },
+        { id: 'subcategory', value: '2' },
+        { id: 'price', value: { minPrice: '5', maxPrice: '20' } },
+        { id: 'stock', value: 'out' },
+      ]),
+    ).toEqual({
+      search: '  mug ',
+      category: '1',
+      subcategory: '2',
+      minPrice: '5',
+      maxPrice: '20',
+      stock: 'out',
+    })
   })
 
   it.each([

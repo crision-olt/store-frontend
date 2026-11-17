@@ -1,16 +1,19 @@
 import { useLingui } from '@lingui/react/macro'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import type { SortingState } from '@tanstack/react-table'
+import type { ColumnFiltersState, SortingState } from '@tanstack/react-table'
 import { useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { RequireAuth } from '@/components/auth/require-auth'
-import { ProductsFilters } from '@/components/products/products-filters'
 import { ProductsTable } from '@/components/products/products-table'
 import { StoreLayout } from '@/components/store-layout'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
-import { emptyFilters, hasInvalidPriceRange, toProductsQuery, type ProductFilterValues } from '@/lib/product-filters'
+import {
+  columnFiltersToProductFilters,
+  hasActiveFilters,
+  hasInvalidPriceRange,
+  toProductsQuery,
+} from '@/lib/product-filters'
 import {
   listCategories,
   listAllProducts,
@@ -27,9 +30,10 @@ function ProductsContent() {
   const { t } = useLingui()
   const location = useLocation()
 
-  const [filters, setFilters] = useState<ProductFilterValues>(emptyFilters)
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [sorting, setSorting] = useState<SortingState>([{ id: 'created_at', desc: true }])
 
+  const filters = columnFiltersToProductFilters(columnFilters)
   const appliedFilters = useDebouncedValue(filters, SEARCH_DEBOUNCE_MS)
   const sort = sorting[0]
   const query: Omit<ProductsQuery, 'page' | 'pageSize'> = {
@@ -55,6 +59,9 @@ function ProductsContent() {
     queryFn: () => listSubcategories(filters.category || undefined),
     retry: false,
   })
+  const clearFilters = () => setColumnFilters([])
+  const clearSubcategoryFilter = () =>
+    setColumnFilters((current) => current.filter((filter) => filter.id !== 'subcategory'))
 
   if (products.error instanceof ProductsApiError && products.error.status === 401) {
     return <Navigate to={buildLinkWithRedirect('/login', location.pathname + location.search)} replace />
@@ -67,19 +74,14 @@ function ProductsContent() {
           <p className="text-sm text-muted-foreground">{t`Browse and filter the product catalog.`}</p>
         </div>
 
-        <Card>
-          <CardContent>
-            <ProductsFilters
-              filters={filters}
-              categories={categories.data ?? []}
-              subcategories={subcategories.data ?? []}
-              onChange={setFilters}
-            />
-          </CardContent>
-        </Card>
-
         {(categories.isError || subcategories.isError) && (
           <p role="alert" className="text-sm text-destructive">{t`Could not load categories. Please try again.`}</p>
+        )}
+
+        {hasInvalidPriceRange(filters) && (
+          <p role="alert" className="text-sm text-destructive">
+            {t`Enter a valid price range: the minimum cannot exceed the maximum.`}
+          </p>
         )}
 
         {products.isError && (
@@ -91,13 +93,25 @@ function ProductsContent() {
           </div>
         )}
 
-        <ProductsTable
-          products={products.data}
-          isLoading={products.isPending && !products.isError}
-          isFetching={products.isFetching}
-          sorting={sorting}
-          onSortingChange={setSorting}
-        />
+        <div className="flex flex-col gap-2">
+          <div className="flex justify-end">
+            <Button variant="outline" size="sm" disabled={!hasActiveFilters(filters)} onClick={clearFilters}>
+              {t`Clear filters`}
+            </Button>
+          </div>
+          <ProductsTable
+            products={products.data}
+            isLoading={products.isPending && !products.isError}
+            isFetching={products.isFetching}
+            sorting={sorting}
+            onSortingChange={setSorting}
+            columnFilters={columnFilters}
+            onColumnFiltersChange={setColumnFilters}
+            categories={categories.data ?? []}
+            subcategories={subcategories.data ?? []}
+            onCategoryChange={clearSubcategoryFilter}
+          />
+        </div>
     </div>
   )
 }

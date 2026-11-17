@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro'
 import {
   useTable,
+  type ColumnFiltersState,
   type OnChangeFn,
   type SortingState,
 } from '@tanstack/react-table'
@@ -9,8 +10,8 @@ import { tableFeatureSet } from '@/components/table/features'
 import { TableFeedbackState } from '@/components/table/components/table-feedback-state'
 import { TableLoading } from '@/components/table/components/table-loading'
 import { cn } from '@/lib/utils'
-import type { Product } from '@/lib/products-api'
-import { productColumns } from '@/components/products/products-table-columns'
+import type { Category, Product, Subcategory } from '@/lib/products-api'
+import { useProductColumns } from '@/components/products/products-table-columns'
 
 const emptyProducts: Product[] = []
 
@@ -20,6 +21,11 @@ type Props = {
   isFetching: boolean
   sorting: SortingState
   onSortingChange: OnChangeFn<SortingState>
+  columnFilters: ColumnFiltersState
+  onColumnFiltersChange: OnChangeFn<ColumnFiltersState>
+  categories: Category[]
+  subcategories: Subcategory[]
+  onCategoryChange: () => void
 }
 
 export function ProductsTable({
@@ -28,18 +34,25 @@ export function ProductsTable({
   isFetching,
   sorting,
   onSortingChange,
+  columnFilters,
+  onColumnFiltersChange,
+  categories,
+  subcategories,
+  onCategoryChange,
 }: Props) {
   const { t } = useLingui()
 
   const table = useTable({
     features: tableFeatureSet,
-    columns: productColumns,
+    columns: useProductColumns({ categories, subcategories, onCategoryChange }),
     data: products ?? emptyProducts,
     manualSorting: true,
+    manualFiltering: true,
     enableMultiSort: false,
     enableSortingRemoval: false,
-    state: { sorting },
+    state: { sorting, columnFilters },
     onSortingChange,
+    onColumnFiltersChange,
   })
 
   const rows = table.getRowModel().rows
