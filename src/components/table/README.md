@@ -51,6 +51,44 @@ top level columns and whole groups).
 Columns with `meta.showFilter` show a filter button. A column that already has a filter value (for example from the
 initial state) opens with its filter input visible and filled.
 
+For a dropdown above the table instead, use `TableFilters`. It renders in a portal, so opening it does not move the
+table. Keep `meta.showFilter` off on these columns to avoid duplicate controls in the headers.
+
+```tsx
+import { Table, TableFilters, type TableFilterField } from '@/components/table'
+
+// Use the same table instance as <Table>.
+const name = table.getColumn('name')?.getFilterValue()
+const fields: TableFilterField[] = [
+  {
+    id: 'name',
+    label: 'Name',
+    value: typeof name === 'string' ? name : '',
+    fullWidth: true,
+  },
+]
+
+return (
+  <div className="flex flex-col gap-3">
+    <TableFilters table={table} title="Filters" fields={fields} />
+    <Table table={table} className="h-96" />
+  </div>
+)
+```
+
+Each field's `id` matches a column ID; `label` and `value` are the readable active-filter chip text.
+Use `value: ''` when the filter is inactive, and localize the title, labels and formatted values in the caller.
+`fullWidth` lets a control span both dropdown columns.
+
+Controls reuse the column's `meta.Filter`, or the standard text filter when none is provided.
+The component manages its own dropdown visibility, initially opening when a field is active. Chips stay visible
+when the dropdown closes. Removing a chip clears that column; **Clear filters** sets the table's column filters to
+an empty array. Both controlled and uncontrolled column-filter state work through the table's existing setters.
+
+Pass `onRemoveFilter={(id) => ...}` to override chip removal for dependent filters. The callback must clear the
+requested filter as well as its dependents. For example, the products table clears subcategory when category is
+removed; product labels, selected-value formatting and dependency rules stay outside `TableFilters`.
+
 ## Dependencies
 
 - `@tanstack/react-table` v9 (native `useTable` API; the deprecated `/legacy` v8 compatibility layer is not used)

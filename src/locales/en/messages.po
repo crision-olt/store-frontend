@@ -11,7 +11,7 @@ msgstr ""
 msgid "A user with this email already exists."
 msgstr "A user with this email already exists."
 
-#: src/components/products/products-table.tsx:126
+#: src/components/table/components/table-filters.tsx:83
 msgid "Active filters"
 msgstr "Active filters"
 
@@ -29,7 +29,7 @@ msgstr "All users"
 msgid "Already have an account?"
 msgstr "Already have an account?"
 
-#: src/components/products/products-table.tsx:96
+#: src/components/products/products-table.tsx:89
 msgid "Availability"
 msgstr "Availability"
 
@@ -67,7 +67,7 @@ msgid "Categories"
 msgstr "Categories"
 
 #: src/components/products/products-table-columns.tsx:83
-#: src/components/products/products-table.tsx:72
+#: src/components/products/products-table.tsx:65
 #: src/pages/categories.tsx:83
 msgid "Category"
 msgstr "Category"
@@ -80,7 +80,7 @@ msgstr "Category name"
 msgid "Check the email, the password (8 to 72 characters) and the role."
 msgstr "Check the email, the password (8 to 72 characters) and the role."
 
-#: src/components/products/products-table.tsx:144
+#: src/components/table/components/table-filters.tsx:101
 msgid "Clear filters"
 msgstr "Clear filters"
 
@@ -88,6 +88,7 @@ msgstr "Clear filters"
 msgid "Clear sorting"
 msgstr "Clear sorting"
 
+#: src/components/table/components/table-filters.tsx:55
 #: src/components/table/components/table-header-cell.tsx:142
 msgid "Close filter"
 msgstr "Close filter"
@@ -309,12 +310,12 @@ msgstr "Filter by category"
 msgid "Filter by subcategory"
 msgstr "Filter by subcategory"
 
-#: src/components/products/products-table.tsx:120
+#: src/components/table/components/table-filters.tsx:43
 msgid "Filters"
 msgstr "Filters"
 
 #: src/components/products/products-table-columns.tsx:224
-#: src/components/products/products-table.tsx:97
+#: src/components/products/products-table.tsx:90
 msgid "In stock"
 msgstr "In stock"
 
@@ -353,7 +354,7 @@ msgid "Manage categories"
 msgstr "Manage categories"
 
 #: src/components/products/products-table-columns.tsx:202
-#: src/components/products/products-table.tsx:91
+#: src/components/products/products-table.tsx:84
 msgid "Max"
 msgstr "Max"
 
@@ -362,7 +363,7 @@ msgid "Maximum price"
 msgstr "Maximum price"
 
 #: src/components/products/products-table-columns.tsx:192
-#: src/components/products/products-table.tsx:90
+#: src/components/products/products-table.tsx:83
 msgid "Min"
 msgstr "Min"
 
@@ -395,7 +396,7 @@ msgstr "No permissions assigned."
 msgid "No permissions yet."
 msgstr "No permissions yet."
 
-#: src/components/products/products-table.tsx:105
+#: src/components/products/products-table.tsx:97
 msgid "No products found."
 msgstr "No products found."
 
@@ -413,7 +414,7 @@ msgstr "No users yet."
 
 #: src/components/products/products-table-cells.tsx:16
 #: src/components/products/products-table-columns.tsx:225
-#: src/components/products/products-table.tsx:97
+#: src/components/products/products-table.tsx:90
 msgid "Out of stock"
 msgstr "Out of stock"
 
@@ -448,11 +449,11 @@ msgid "Permissions"
 msgstr "Permissions"
 
 #: src/components/products/products-table-columns.tsx:173
-#: src/components/products/products-table.tsx:88
+#: src/components/products/products-table.tsx:81
 msgid "Price"
 msgstr "Price"
 
-#: src/components/products/products-table.tsx:149
+#: src/components/products/products-table.tsx:102
 msgid "Product filters"
 msgstr "Product filters"
 
@@ -461,7 +462,7 @@ msgstr "Product filters"
 msgid "Products"
 msgstr "Products"
 
-#: src/components/products/products-table.tsx:134
+#: src/components/table/components/table-filters.tsx:91
 msgid "Remove filter: {label}"
 msgstr "Remove filter: {label}"
 
@@ -489,7 +490,7 @@ msgstr "Roles and permissions"
 msgid "Save"
 msgstr "Save"
 
-#: src/components/products/products-table.tsx:69
+#: src/components/products/products-table.tsx:62
 msgid "Search"
 msgstr "Search"
 
@@ -552,7 +553,7 @@ msgid "Store"
 msgstr "Store"
 
 #: src/components/products/products-table-columns.tsx:122
-#: src/components/products/products-table.tsx:77
+#: src/components/products/products-table.tsx:70
 msgid "Subcategory"
 msgstr "Subcategory"
 

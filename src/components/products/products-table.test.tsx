@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/vitest'
 import '@/test/setup-dom'
 import { useState } from 'react'
@@ -79,7 +80,7 @@ describe('ProductsTable', () => {
   })
 
   test('starts with collapsed filters and keeps controls outside column headers', () => {
-    renderProductsTable()
+    const { container } = renderProductsTable()
 
     for (const columnId of ['name', 'category', 'subcategory', 'price', 'stock']) {
       expect(screen.queryByTestId(`table-header-cell-${columnId}-filter-button`)).not.toBeInTheDocument()
@@ -95,8 +96,43 @@ describe('ProductsTable', () => {
       'placeholder',
       'Name, SKU or description',
     )
-    expect(screen.getByRole('region', { name: 'Product filters' })).toContainElement(screen.getByRole('searchbox'))
+    const dropdown = screen.getByRole('dialog', { name: 'Product filters' })
+    expect(dropdown).toContainElement(screen.getByRole('searchbox'))
+    expect(container).not.toContainElement(dropdown)
     expect(screen.getByTestId('table-header-cell-name')).not.toContainElement(screen.getByRole('searchbox'))
+  })
+
+  test('dismisses the dropdown without clearing filters and restores keyboard focus', async () => {
+    const user = userEvent.setup()
+    renderProductsTable({ columnFilters: [{ id: 'name', value: 'Demo' }] })
+
+    await user.keyboard('{Escape}')
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Product filters' })).not.toBeInTheDocument())
+    const toggle = screen.getByRole('button', { name: /Filters/ })
+    await waitFor(() => expect(toggle).toHaveFocus())
+    expect(screen.getByRole('group', { name: 'Active filters' })).toHaveTextContent('Demo')
+
+    await user.click(toggle)
+    await user.click(screen.getByText('Demo product'))
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Product filters' })).not.toBeInTheDocument())
+
+    await user.click(toggle)
+    await user.click(screen.getByRole('button', { name: 'Close filter' }))
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Product filters' })).not.toBeInTheDocument())
+    expect(onColumnFiltersChange).not.toHaveBeenCalled()
+  })
+
+  test('keeps the filter dropdown open when choosing a nested category option', async () => {
+    const user = userEvent.setup()
+    renderProductsTable({ categories })
+
+    await user.click(screen.getByRole('button', { name: 'Filters' }))
+    await user.click(screen.getByRole('combobox', { name: 'Filter by category' }))
+    await user.click(await screen.findByRole('option', { name: 'Accessories' }))
+
+    expect(screen.getByRole('dialog', { name: 'Product filters' })).toBeVisible()
+    expect(defaultProps.onCategoryChange).toHaveBeenCalledOnce()
+    expect(onColumnFiltersChange).toHaveBeenCalledOnce()
   })
 
   test('keeps active filters visible when collapsed and supports removing and clearing them', () => {
@@ -138,13 +174,13 @@ describe('ProductsTable', () => {
   test.each([
     ['price', { minPrice: '', maxPrice: '25' }, 'Price: Max: 25'],
     ['stock', ['out'], 'Availability: Out of stock'],
-  ])('shows a readable summary for an existing %s filter', (id, value, summary) => {
+  ])('shows a readable summary for an existing %s filter', async (id, value, summary) => {
     renderProductsTable({ columnFilters: [{ id, value }] })
 
-    expect(screen.getByRole('region', { name: 'Product filters' })).toBeVisible()
+    await waitFor(() => expect(screen.getByRole('dialog', { name: 'Product filters' })).toBeVisible())
     fireEvent.click(screen.getByRole('button', { name: /Filters/ }))
     expect(screen.getByRole('group', { name: 'Active filters' })).toHaveTextContent(summary)
-    expect(screen.queryByRole('region', { name: 'Product filters' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('dialog', { name: 'Product filters' })).not.toBeInTheDocument()
   })
 
   test('removing a category also clears its dependent subcategory', () => {

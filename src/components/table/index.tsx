@@ -6,6 +6,8 @@ import type { FilterComponentProps } from '@/components/table/filters'
 import { TableProvider } from '@/components/table/providers/table-provider'
 import { TooltipProvider } from '@/components/ui/tooltip'
 
+export { TableFilters, type TableFilterField } from '@/components/table/components/table-filters'
+
 declare module '@tanstack/react-table' {
   interface ColumnMeta<TFeatures extends TableFeatures, TData extends RowData, TValue extends CellData = CellData> {
     // Optional property for text alignment, applies to header, row and footer column cells

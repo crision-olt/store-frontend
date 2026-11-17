@@ -15,7 +15,8 @@ After setting up the service's database, use **Categories** in the navigation
 to create categories and subcategories. Product filters use their IDs
 while displaying their names.
 
-On **Products**, use **Filters** above the table to show or hide the filter controls.
+On **Products**, use **Filters** above the table to open a dropdown without moving
+the table. Close it with Escape, the close button, or a click outside.
 Controls start hidden unless filters are already active. Active filter chips remain
 visible when controls are hidden; remove a chip to clear that filter or use **Clear
 filters** to reset all filters. Removing or changing a category also clears the

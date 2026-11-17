@@ -11,7 +11,7 @@ msgstr ""
 msgid "A user with this email already exists."
 msgstr "Ya existe un usuario con este correo."
 
-#: src/components/products/products-table.tsx:126
+#: src/components/table/components/table-filters.tsx:83
 msgid "Active filters"
 msgstr "Filtros activos"
 
@@ -29,7 +29,7 @@ msgstr "Todos los usuarios"
 msgid "Already have an account?"
 msgstr "¿Ya tienes una cuenta?"
 
-#: src/components/products/products-table.tsx:96
+#: src/components/products/products-table.tsx:89
 msgid "Availability"
 msgstr "Disponibilidad"
 
@@ -67,7 +67,7 @@ msgid "Categories"
 msgstr "Categorías"
 
 #: src/components/products/products-table-columns.tsx:83
-#: src/components/products/products-table.tsx:72
+#: src/components/products/products-table.tsx:65
 #: src/pages/categories.tsx:83
 msgid "Category"
 msgstr "Categoría"
@@ -80,7 +80,7 @@ msgstr "Nombre de la categoría"
 msgid "Check the email, the password (8 to 72 characters) and the role."
 msgstr "Revisa el correo, la contraseña (de 8 a 72 caracteres) y el rol."
 
-#: src/components/products/products-table.tsx:144
+#: src/components/table/components/table-filters.tsx:101
 msgid "Clear filters"
 msgstr "Borrar filtros"
 
@@ -88,6 +88,7 @@ msgstr "Borrar filtros"
 msgid "Clear sorting"
 msgstr "Quitar orden"
 
+#: src/components/table/components/table-filters.tsx:55
 #: src/components/table/components/table-header-cell.tsx:142
 msgid "Close filter"
 msgstr "Cerrar filtro"
@@ -309,12 +310,12 @@ msgstr "Filtrar por categoría"
 msgid "Filter by subcategory"
 msgstr "Filtrar por subcategoría"
 
-#: src/components/products/products-table.tsx:120
+#: src/components/table/components/table-filters.tsx:43
 msgid "Filters"
 msgstr "Filtros"
 
 #: src/components/products/products-table-columns.tsx:224
-#: src/components/products/products-table.tsx:97
+#: src/components/products/products-table.tsx:90
 msgid "In stock"
 msgstr "En stock"
 
@@ -353,7 +354,7 @@ msgid "Manage categories"
 msgstr "Gestionar categorías"
 
 #: src/components/products/products-table-columns.tsx:202
-#: src/components/products/products-table.tsx:91
+#: src/components/products/products-table.tsx:84
 msgid "Max"
 msgstr "Máx."
 
@@ -362,7 +363,7 @@ msgid "Maximum price"
 msgstr "Precio máximo"
 
 #: src/components/products/products-table-columns.tsx:192
-#: src/components/products/products-table.tsx:90
+#: src/components/products/products-table.tsx:83
 msgid "Min"
 msgstr "Mín."
 
@@ -395,7 +396,7 @@ msgstr "Sin permisos asignados."
 msgid "No permissions yet."
 msgstr "Todavía no hay permisos."
 
-#: src/components/products/products-table.tsx:105
+#: src/components/products/products-table.tsx:97
 msgid "No products found."
 msgstr "No se encontraron productos."
 
@@ -413,7 +414,7 @@ msgstr "Todavía no hay usuarios."
 
 #: src/components/products/products-table-cells.tsx:16
 #: src/components/products/products-table-columns.tsx:225
-#: src/components/products/products-table.tsx:97
+#: src/components/products/products-table.tsx:90
 msgid "Out of stock"
 msgstr "Sin stock"
 
@@ -448,11 +449,11 @@ msgid "Permissions"
 msgstr "Permisos"
 
 #: src/components/products/products-table-columns.tsx:173
-#: src/components/products/products-table.tsx:88
+#: src/components/products/products-table.tsx:81
 msgid "Price"
 msgstr "Precio"
 
-#: src/components/products/products-table.tsx:149
+#: src/components/products/products-table.tsx:102
 msgid "Product filters"
 msgstr "Filtros de productos"
 
@@ -461,7 +462,7 @@ msgstr "Filtros de productos"
 msgid "Products"
 msgstr "Productos"
 
-#: src/components/products/products-table.tsx:134
+#: src/components/table/components/table-filters.tsx:91
 msgid "Remove filter: {label}"
 msgstr "Quitar filtro: {label}"
 
@@ -489,7 +490,7 @@ msgstr "Roles y permisos"
 msgid "Save"
 msgstr "Guardar"
 
-#: src/components/products/products-table.tsx:69
+#: src/components/products/products-table.tsx:62
 msgid "Search"
 msgstr "Buscar"
 
@@ -552,7 +553,7 @@ msgid "Store"
 msgstr "Tienda"
 
 #: src/components/products/products-table-columns.tsx:122
-#: src/components/products/products-table.tsx:77
+#: src/components/products/products-table.tsx:70
 msgid "Subcategory"
 msgstr "Subcategoría"
 
