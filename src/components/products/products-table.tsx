@@ -54,6 +54,7 @@ export function ProductsTable({
     data: products ?? emptyProducts,
     manualSorting: true,
     manualFiltering: true,
+    columnResizeMode: 'onChange',
     enableMultiSort: false,
     enableSortingRemoval: false,
     initialState: { columnPinning: { start: ['name'], end: [] } },

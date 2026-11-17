@@ -84,6 +84,25 @@ describe('ProductsTable', () => {
     vi.mocked(updateProduct).mockReset()
   })
 
+  test('updates column widths while dragging and keeps the final width after release', async () => {
+    renderProductsTable()
+    const container = screen.getByTestId('table-container')
+    const resizer = screen.getByTestId('table-header-cell-sku-resizer')
+    const width = () => Number.parseFloat(container.style.getPropertyValue('--col-sku-size'))
+    const initialWidth = width()
+
+    fireEvent.mouseDown(resizer, { clientX: 200, buttons: 1 })
+    fireEvent.mouseMove(document, { clientX: 260, buttons: 1 })
+    expect(width()).toBe(initialWidth + 60)
+    fireEvent.mouseMove(document, { clientX: 180, buttons: 1 })
+    await waitFor(() => expect(width()).toBe(initialWidth - 20))
+    fireEvent.mouseUp(document, { clientX: 180 })
+    expect(width()).toBe(initialWidth - 20)
+
+    expect(onSortingChange).not.toHaveBeenCalled()
+    expect(onColumnFiltersChange).not.toHaveBeenCalled()
+  })
+
   test('opens one prefilled editor and saves the chosen product with compatible category selections', async () => {
     let finish!: () => void
     vi.mocked(updateProduct).mockImplementation((id, input) => new Promise((resolve) => {

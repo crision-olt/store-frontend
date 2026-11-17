@@ -37,6 +37,7 @@ filters** to reset all filters. Removing or changing a category also clears the
 subcategory selection.
 
 The product-name column stays pinned on the left when the table scrolls horizontally.
+Drag a column's right header edge to resize it live as you move the pointer.
 Use **Columns** to show, hide, or reorder other columns by their drag handles.
 The dropdown lists both visible and hidden columns; the pinned product name cannot
 be hidden or moved. To reorder with the keyboard, focus a handle, press Space,
