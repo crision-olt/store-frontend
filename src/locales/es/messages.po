@@ -7,6 +7,10 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 "Language: es\n"
 
+#: src/components/products/create-product-dialog.tsx:99
+msgid "A product with this SKU already exists."
+msgstr "Ya existe un producto con este SKU."
+
 #: src/components/users/user-form.tsx:61
 msgid "A user with this email already exists."
 msgstr "Ya existe un usuario con este correo."
@@ -14,6 +18,10 @@ msgstr "Ya existe un usuario con este correo."
 #: src/components/table/components/table-filters.tsx:83
 msgid "Active filters"
 msgstr "Filtros activos"
+
+#: src/components/products/create-product-dialog.tsx:145
+msgid "Add a new product to your catalog."
+msgstr "Añade un nuevo producto a tu catálogo."
 
 #: src/components/products/products-table-columns.tsx:103
 #: src/components/products/products-table-columns.tsx:153
@@ -51,12 +59,14 @@ msgstr "Bloquear usuario {0}"
 msgid "Blocked"
 msgstr "Bloqueado"
 
-#: src/pages/products.tsx:79
+#: src/pages/products.tsx:81
 msgid "Browse and filter the product catalog."
 msgstr "Explora y filtra el catálogo de productos."
 
 #: src/components/access/permission-list.tsx:55
 #: src/components/access/role-list.tsx:73
+#: src/components/products/create-product-dialog.tsx:105
+#: src/components/products/create-product-dialog.tsx:153
 #: src/components/users/user-form.tsx:69
 msgid "Cancel"
 msgstr "Cancelar"
@@ -66,6 +76,7 @@ msgstr "Cancelar"
 msgid "Categories"
 msgstr "Categorías"
 
+#: src/components/products/create-product-dialog.tsx:58
 #: src/components/products/products-table-columns.config.ts:9
 #: src/components/products/products-table-columns.tsx:84
 #: src/components/products/products-table-filters.config.ts:27
@@ -81,6 +92,10 @@ msgstr "Nombre de la categoría"
 msgid "Check the email, the password (8 to 72 characters) and the role."
 msgstr "Revisa el correo, la contraseña (de 8 a 72 caracteres) y el rol."
 
+#: src/components/products/create-product-dialog.tsx:101
+msgid "Check the product details and selected category, then try again."
+msgstr "Revisa los datos del producto y la categoría seleccionada e inténtalo de nuevo."
+
 #: src/components/table/components/table-filters.tsx:101
 msgid "Clear filters"
 msgstr "Borrar filtros"
@@ -89,7 +104,7 @@ msgstr "Borrar filtros"
 msgid "Clear sorting"
 msgstr "Quitar orden"
 
-#: src/components/table/components/table-column-visibility.tsx:127
+#: src/components/table/components/table-column-visibility.tsx:141
 msgid "Close column settings"
 msgstr "Cerrar configuración de columnas"
 
@@ -98,7 +113,7 @@ msgstr "Cerrar configuración de columnas"
 msgid "Close filter"
 msgstr "Cerrar filtro"
 
-#: src/components/table/components/table-column-visibility.tsx:119
+#: src/components/table/components/table-column-visibility.tsx:133
 msgid "Columns"
 msgstr "Columnas"
 
@@ -134,8 +149,13 @@ msgstr "No se pudo crear la subcategoría. Inténtalo de nuevo."
 msgid "Could not create the account"
 msgstr "No se pudo crear la cuenta"
 
+#: src/components/products/create-product-dialog.tsx:102
+msgid "Could not create the product. Please try again."
+msgstr "No se pudo crear el producto. Inténtalo de nuevo."
+
+#: src/components/products/create-product-dialog.tsx:148
 #: src/pages/categories.tsx:62
-#: src/pages/products.tsx:83
+#: src/pages/products.tsx:87
 msgid "Could not load categories. Please try again."
 msgstr "No se pudieron cargar las categorías. Inténtalo de nuevo."
 
@@ -143,7 +163,7 @@ msgstr "No se pudieron cargar las categorías. Inténtalo de nuevo."
 msgid "Could not load permissions. Please try again."
 msgstr "No se pudieron cargar los permisos. Inténtalo de nuevo."
 
-#: src/pages/products.tsx:94
+#: src/pages/products.tsx:98
 msgid "Could not load products. Please try again."
 msgstr "No se pudieron cargar los productos. Inténtalo de nuevo."
 
@@ -180,6 +200,10 @@ msgstr "No se pudo actualizar el rol. Inténtalo de nuevo."
 msgid "Could not verify your session."
 msgstr "No se pudo verificar tu sesión."
 
+#: src/components/products/create-product-dialog.tsx:96
+msgid "Create a category on the Categories page before adding products."
+msgstr "Crea una categoría en la página Categorías antes de añadir productos."
+
 #: src/pages/register.tsx:57
 msgid "Create account"
 msgstr "Crear cuenta"
@@ -201,6 +225,12 @@ msgstr "Crear categoría"
 #: src/pages/access.tsx:75
 msgid "Create permission"
 msgstr "Crear permiso"
+
+#: src/components/products/create-product-dialog.tsx:107
+#: src/components/products/create-product-dialog.tsx:140
+#: src/components/products/create-product-dialog.tsx:144
+msgid "Create product"
+msgstr "Crear producto"
 
 #: src/pages/access.tsx:80
 #: src/pages/access.tsx:97
@@ -234,6 +264,10 @@ msgstr "Creado"
 msgid "Creating account…"
 msgstr "Creando cuenta…"
 
+#: src/components/products/create-product-dialog.tsx:107
+msgid "Creating product…"
+msgstr "Creando producto…"
+
 #: src/components/access/permission-list.tsx:46
 #: src/components/access/role-list.tsx:52
 msgid "Delete"
@@ -259,11 +293,15 @@ msgstr "Eliminar rol {0}"
 msgid "Delete role {0}?"
 msgstr "¿Eliminar el rol {0}?"
 
+#: src/components/products/create-product-dialog.tsx:52
+msgid "Description (optional)"
+msgstr "Descripción (opcional)"
+
 #: src/pages/login.tsx:49
 msgid "Don't have an account?"
 msgstr "¿No tienes una cuenta?"
 
-#: src/components/table/components/table-column-visibility.tsx:151
+#: src/components/table/components/table-column-visibility.tsx:169
 msgid "Drag handles to reorder columns. Or focus a handle, press Space, then use the arrow keys."
 msgstr "Arrastra los controles para reordenar las columnas. O enfoca un control, pulsa Espacio y usa las flechas."
 
@@ -299,7 +337,7 @@ msgstr "Correo electrónico"
 msgid "Enter a valid email"
 msgstr "Introduce un correo electrónico válido"
 
-#: src/pages/products.tsx:88
+#: src/pages/products.tsx:92
 msgid "Enter a valid price range: the minimum cannot exceed the maximum."
 msgstr "Introduce un rango de precios válido: el mínimo no puede superar al máximo."
 
@@ -345,6 +383,7 @@ msgstr "Idioma"
 msgid "Loading"
 msgstr "Cargando"
 
+#: src/components/products/create-product-dialog.tsx:156
 #: src/pages/categories.tsx:106
 msgid "Loading categories…"
 msgstr "Cargando categorías…"
@@ -385,6 +424,7 @@ msgstr "Mín."
 msgid "Minimum price"
 msgstr "Precio mínimo"
 
+#: src/components/products/create-product-dialog.tsx:44
 #: src/components/products/products-table-columns.config.ts:7
 #: src/components/products/products-table-columns.tsx:54
 msgid "Name"
@@ -427,6 +467,11 @@ msgstr "Todavía no hay subcategorías."
 msgid "No users yet."
 msgstr "Todavía no hay usuarios."
 
+#: src/components/products/create-product-dialog.tsx:77
+#: src/components/products/create-product-dialog.tsx:80
+msgid "None"
+msgstr "Ninguna"
+
 #: src/components/products/products-table-cells.tsx:16
 #: src/components/products/products-table-columns.tsx:226
 #: src/components/products/products-table-filters.config.ts:52
@@ -463,14 +508,15 @@ msgstr "Nombre del permiso"
 msgid "Permissions"
 msgstr "Permisos"
 
-#: src/components/table/components/table-column-visibility.tsx:73
+#: src/components/table/components/table-column-visibility.tsx:83
 msgid "Pinned"
 msgstr "Fijada"
 
-#: src/components/table/components/table-column-visibility.tsx:152
+#: src/components/table/components/table-column-visibility.tsx:170
 msgid "Pinned columns cannot be hidden or moved."
 msgstr "Las columnas fijadas no se pueden ocultar ni mover."
 
+#: src/components/products/create-product-dialog.tsx:88
 #: src/components/products/products-table-columns.config.ts:11
 #: src/components/products/products-table-columns.tsx:174
 #: src/components/products/products-table-filters.config.ts:43
@@ -482,7 +528,7 @@ msgid "Product filters"
 msgstr "Filtros de productos"
 
 #: src/components/store-layout.tsx:27
-#: src/pages/products.tsx:78
+#: src/pages/products.tsx:80
 msgid "Products"
 msgstr "Productos"
 
@@ -490,11 +536,11 @@ msgstr "Productos"
 msgid "Remove filter: {label}"
 msgstr "Quitar filtro: {label}"
 
-#: src/components/table/components/table-column-visibility.tsx:82
+#: src/components/table/components/table-column-visibility.tsx:92
 msgid "Reorder {label}"
 msgstr "Reordenar {label}"
 
-#: src/components/table/components/table-column-visibility.tsx:73
+#: src/components/table/components/table-column-visibility.tsx:83
 msgid "Required"
 msgstr "Obligatoria"
 
@@ -530,6 +576,7 @@ msgstr "Buscar"
 msgid "Search products"
 msgstr "Buscar productos"
 
+#: src/components/products/create-product-dialog.tsx:65
 #: src/pages/categories.tsx:86
 msgid "Select a category"
 msgstr "Selecciona una categoría"
@@ -563,6 +610,7 @@ msgstr "Regístrate"
 msgid "Signing in…"
 msgstr "Iniciando sesión…"
 
+#: src/components/products/create-product-dialog.tsx:48
 #: src/components/products/products-table-columns.config.ts:8
 #: src/components/products/products-table-columns.tsx:79
 msgid "SKU"
@@ -576,6 +624,7 @@ msgstr "Ordenar ascendente"
 msgid "Sort descending"
 msgstr "Ordenar descendente"
 
+#: src/components/products/create-product-dialog.tsx:92
 #: src/components/products/products-table-columns.config.ts:12
 #: src/components/products/products-table-columns.tsx:214
 msgid "Stock"
@@ -591,6 +640,10 @@ msgstr "Tienda"
 #: src/components/products/products-table-filters.config.ts:32
 msgid "Subcategory"
 msgstr "Subcategoría"
+
+#: src/components/products/create-product-dialog.tsx:73
+msgid "Subcategory (optional)"
+msgstr "Subcategoría (opcional)"
 
 #: src/pages/categories.tsx:92
 msgid "Subcategory name"
@@ -625,9 +678,10 @@ msgid "This subcategory already exists in the selected category."
 msgstr "Esta subcategoría ya existe en la categoría seleccionada."
 
 #: src/components/auth/require-auth.tsx:29
+#: src/components/products/create-product-dialog.tsx:152
 #: src/pages/access.tsx:89
 #: src/pages/access.tsx:119
-#: src/pages/products.tsx:96
+#: src/pages/products.tsx:100
 #: src/pages/users.tsx:46
 #: src/pages/users.tsx:61
 msgid "Try again"
@@ -647,7 +701,7 @@ msgstr "Desbloquear usuario {0}"
 msgid "Users"
 msgstr "Usuarios"
 
-#: src/components/table/components/table-column-visibility.tsx:126
+#: src/components/table/components/table-column-visibility.tsx:140
 msgid "Visible columns"
 msgstr "Columnas visibles"
 

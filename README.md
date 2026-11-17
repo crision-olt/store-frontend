@@ -15,6 +15,11 @@ After setting up the service's database, use **Categories** in the navigation
 to create categories and subcategories. Product filters use their IDs
 while displaying their names.
 
+On **Products**, select **Create product** above the table. Enter a name, unique SKU,
+category, price, and stock; description and subcategory are optional. Subcategories
+belong to the selected category. Saving closes the dialog and refreshes the table
+without clearing its filters or sorting. Failed saves keep the form open for correction.
+
 On **Products**, use **Filters** above the table to open a dropdown without moving
 the table. Close it with Escape, the close button, or a click outside.
 Controls start hidden unless filters are already active. Active filter chips remain

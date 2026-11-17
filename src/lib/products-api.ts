@@ -26,6 +26,7 @@ const categorySchema = z.object({ id: z.number().int().positive(), name: z.strin
 const subcategorySchema = categorySchema.extend({ categoryId: z.number().int().positive() })
 
 export type Product = z.infer<typeof productSchema>
+export type ProductInput = Pick<Product, 'name' | 'description' | 'sku' | 'categoryId' | 'subcategoryId' | 'price' | 'stock'>
 export type ProductsPage = z.infer<typeof productsPageSchema>
 export type Category = z.infer<typeof categorySchema>
 export type Subcategory = z.infer<typeof subcategorySchema>
@@ -91,6 +92,9 @@ export function createProductsApi(serviceUrl: string) {
   }
 
   return {
+    async createProduct(input: ProductInput) {
+      return productSchema.parse(await post('/products', input))
+    },
     listProducts,
     async listAllProducts(query: Omit<ProductsQuery, 'page' | 'pageSize'> = {}, signal?: AbortSignal) {
       const products: Product[] = []
@@ -119,5 +123,5 @@ export function createProductsApi(serviceUrl: string) {
   }
 }
 
-export const { listProducts, listAllProducts, listCategories, listSubcategories, createCategory, createSubcategory } =
+export const { createProduct, listProducts, listAllProducts, listCategories, listSubcategories, createCategory, createSubcategory } =
   createProductsApi(import.meta.env.AUTH_SERVICE_URL)

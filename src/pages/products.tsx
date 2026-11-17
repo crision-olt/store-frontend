@@ -5,6 +5,7 @@ import { useCallback, useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { RequireAuth } from '@/components/auth/require-auth'
 import { ProductsTable } from '@/components/products/products-table'
+import { CreateProductDialog } from '@/components/products/create-product-dialog'
 import { StoreLayout } from '@/components/store-layout'
 import { Button } from '@/components/ui/button'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
@@ -74,9 +75,12 @@ function ProductsContent() {
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6 p-4 sm:p-6">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-semibold tracking-tight">{t`Products`}</h1>
-          <p className="text-sm text-muted-foreground">{t`Browse and filter the product catalog.`}</p>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-col gap-1">
+            <h1 className="text-2xl font-semibold tracking-tight">{t`Products`}</h1>
+            <p className="text-sm text-muted-foreground">{t`Browse and filter the product catalog.`}</p>
+          </div>
+          <CreateProductDialog />
         </div>
 
         {(categories.isError || subcategories.isError) && (

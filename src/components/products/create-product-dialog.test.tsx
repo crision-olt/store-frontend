@@ -46,7 +46,9 @@ async function fillRequired(user: ReturnType<typeof userEvent.setup>) {
   await user.click(await screen.findByRole('option', { name: 'Kitchen' }))
 }
 
-beforeEach(() => vi.mocked(createProduct).mockReset())
+beforeEach(() => {
+  vi.mocked(createProduct).mockReset()
+})
 
 it('creates from the dialog, prevents duplicate submissions, and refreshes products', async () => {
   let finish!: () => void
@@ -64,7 +66,8 @@ it('creates from the dialog, prevents duplicate submissions, and refreshes produ
   await fillRequired(user)
   await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Create product' }))
 
-  expect(createProduct).toHaveBeenCalledExactlyOnceWith({
+  expect(createProduct).toHaveBeenCalledOnce()
+  expect(vi.mocked(createProduct).mock.calls[0][0]).toEqual({
     name: 'Blue Mug', sku: 'MUG-1', description: null,
     categoryId: 1, subcategoryId: null, price: 9.99, stock: 0,
   })
