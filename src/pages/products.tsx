@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
 import {
   columnFiltersToProductFilters,
-  hasActiveFilters,
   hasInvalidPriceRange,
   toProductsQuery,
 } from '@/lib/product-filters'
@@ -59,7 +58,6 @@ function ProductsContent() {
     queryFn: () => listSubcategories(),
     retry: false,
   })
-  const clearFilters = () => setColumnFilters([])
   const clearSubcategoryFilter = useCallback(
     () =>
       setColumnFilters((current) =>
@@ -101,11 +99,6 @@ function ProductsContent() {
         )}
 
         <div className="flex flex-col gap-2">
-          <div className="flex justify-end">
-            <Button variant="outline" size="sm" disabled={!hasActiveFilters(filters)} onClick={clearFilters}>
-              {t`Clear filters`}
-            </Button>
-          </div>
           <ProductsTable
             products={products.data}
             isLoading={products.isPending && !products.isError}

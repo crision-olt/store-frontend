@@ -61,7 +61,7 @@ export function useProductColumns({ categories, subcategories, onCategoryChange 
         </div>
       ),
       meta: {
-        showFilter: true,
+        showFilter: false,
         Filter: ({ header, inputRef }) => (
           <Input
             ref={inputRef}
@@ -83,7 +83,7 @@ export function useProductColumns({ categories, subcategories, onCategoryChange 
       header: () => <Trans>Category</Trans>,
       cell: ({ cell }) => <Badge variant="secondary">{cell.getValue()}</Badge>,
       meta: {
-        showFilter: true,
+        showFilter: false,
         Filter: ({ header }) => {
           const selected = getTextFilterValues(header.column.getFilterValue())
           const chosen = categories.filter((category) => selected.includes(String(category.id)))
@@ -122,7 +122,7 @@ export function useProductColumns({ categories, subcategories, onCategoryChange 
       header: () => <Trans>Subcategory</Trans>,
       cell: ({ cell }) => cell.getValue() ?? <span className="text-muted-foreground">—</span>,
       meta: {
-        showFilter: true,
+        showFilter: false,
         Filter: ({ header }) => {
           const selected = getTextFilterValues(header.column.getFilterValue())
           const selectedCategories = getTextFilterValues(
@@ -174,7 +174,7 @@ export function useProductColumns({ categories, subcategories, onCategoryChange 
       cell: ({ cell }) => <PriceCell value={cell.getValue()} />,
       meta: {
         align: 'right',
-        showFilter: true,
+        showFilter: false,
         Filter: ({ header }) => {
           const range = getPriceRange(header.column.getFilterValue())
           const update = (key: 'minPrice' | 'maxPrice', nextValue: string) => {
@@ -214,7 +214,7 @@ export function useProductColumns({ categories, subcategories, onCategoryChange 
       cell: ({ cell }) => <StockCell value={cell.getValue()} />,
       meta: {
         align: 'right',
-        showFilter: true,
+        showFilter: false,
         Filter: ({ header }) => {
           const value = header.column.getFilterValue()
           const selected = getTextFilterValues(value).filter(

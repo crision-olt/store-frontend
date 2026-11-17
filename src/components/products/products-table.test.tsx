@@ -2,6 +2,7 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import '@testing-library/jest-dom/vitest'
 import '@/test/setup-dom'
+import { useState } from 'react'
 
 import type { ColumnFiltersState, SortingState, Updater } from '@tanstack/react-table'
 import type { Category, Product, Subcategory } from '@/lib/products-api'
@@ -77,20 +78,97 @@ describe('ProductsTable', () => {
     }
   })
 
-  test('shows filters in their corresponding product column headers', () => {
+  test('starts with collapsed filters and keeps controls outside column headers', () => {
     renderProductsTable()
 
     for (const columnId of ['name', 'category', 'subcategory', 'price', 'stock']) {
-      expect(screen.getByTestId(`table-header-cell-${columnId}-filter-button`)).toBeInTheDocument()
+      expect(screen.queryByTestId(`table-header-cell-${columnId}-filter-button`)).not.toBeInTheDocument()
     }
 
-    const nameHeader = screen.getByTestId('table-header-cell-name')
-    fireEvent.click(within(nameHeader).getByRole('button', { name: 'Filter' }))
+    const toggle = screen.getByRole('button', { name: 'Filters' })
+    expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.queryByRole('searchbox')).not.toBeInTheDocument()
+    fireEvent.click(toggle)
 
-    expect(within(nameHeader).getByRole('searchbox')).toHaveAttribute(
+    expect(toggle).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByRole('searchbox')).toHaveAttribute(
       'placeholder',
       'Name, SKU or description',
     )
+    expect(screen.getByRole('region', { name: 'Product filters' })).toContainElement(screen.getByRole('searchbox'))
+    expect(screen.getByTestId('table-header-cell-name')).not.toContainElement(screen.getByRole('searchbox'))
+  })
+
+  test('keeps active filters visible when collapsed and supports removing and clearing them', () => {
+    function FilteredTable() {
+      const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+      return (
+        <ProductsTable
+          {...defaultProps}
+          columnFilters={columnFilters}
+          onColumnFiltersChange={setColumnFilters}
+        />
+      )
+    }
+    render(<AppWrapper><FilteredTable /></AppWrapper>)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Filters' }))
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'Demo' } })
+    fireEvent.change(screen.getByRole('spinbutton', { name: 'Minimum price' }), { target: { value: '0' } })
+    fireEvent.click(screen.getByRole('button', { name: /Filters/ }))
+
+    expect(screen.queryByRole('searchbox')).not.toBeInTheDocument()
+    const summary = screen.getByRole('group', { name: 'Active filters' })
+    expect(summary).toHaveTextContent('Demo')
+    expect(summary).toHaveTextContent('0')
+    expect(screen.getByRole('button', { name: /Filters/ })).toHaveTextContent('2')
+
+    fireEvent.click(screen.getByRole('button', { name: /Filters/ }))
+    expect(screen.getByRole('searchbox')).toHaveValue('Demo')
+    expect(screen.getByRole('spinbutton', { name: 'Minimum price' })).toHaveValue(0)
+    fireEvent.click(screen.getByRole('button', { name: /Filters/ }))
+
+    fireEvent.click(screen.getByRole('button', { name: 'Remove filter: Search' }))
+    expect(summary).not.toHaveTextContent('Demo')
+    fireEvent.click(screen.getByRole('button', { name: 'Clear filters' }))
+    expect(screen.queryByRole('group', { name: 'Active filters' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Filters' })).toHaveAttribute('aria-expanded', 'false')
+  })
+
+  test.each([
+    ['price', { minPrice: '', maxPrice: '25' }, 'Price: Max: 25'],
+    ['stock', ['out'], 'Availability: Out of stock'],
+  ])('shows a readable summary for an existing %s filter', (id, value, summary) => {
+    renderProductsTable({ columnFilters: [{ id, value }] })
+
+    expect(screen.getByRole('region', { name: 'Product filters' })).toBeVisible()
+    fireEvent.click(screen.getByRole('button', { name: /Filters/ }))
+    expect(screen.getByRole('group', { name: 'Active filters' })).toHaveTextContent(summary)
+    expect(screen.queryByRole('region', { name: 'Product filters' })).not.toBeInTheDocument()
+  })
+
+  test('removing a category also clears its dependent subcategory', () => {
+    renderProductsTable({
+      columnFilters: [
+        { id: 'category', value: ['1'] },
+        { id: 'subcategory', value: ['2'] },
+      ],
+      categories,
+      subcategories,
+    })
+
+    expect(screen.getByRole('button', { name: /Filters/ })).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByRole('group', { name: 'Active filters' })).toHaveTextContent('Accessories')
+    fireEvent.click(screen.getByRole('button', { name: 'Remove filter: Category' }))
+    const updater = onColumnFiltersChange.mock.calls[0]?.[0]
+    expect(typeof updater).toBe('function')
+    if (typeof updater === 'function') {
+      expect(updater([
+        { id: 'category', value: ['1'] },
+        { id: 'subcategory', value: ['2'] },
+        { id: 'name', value: 'Demo' },
+      ])).toEqual([{ id: 'name', value: 'Demo' }])
+    }
   })
 
   test.each([
@@ -104,8 +182,10 @@ describe('ProductsTable', () => {
       subcategories,
     })
 
-    const header = screen.getByTestId(`table-header-cell-${String(columnId)}`)
-    const trigger = within(header).getByRole('combobox', { name: String(label) })
+    if (selected.length === 2 && columnId === 'stock') {
+      fireEvent.click(screen.getByRole('button', { name: 'Filters' }))
+    }
+    const trigger = screen.getByRole('combobox', { name: String(label) })
     for (const value of labels) expect(trigger).toHaveTextContent(String(value))
   })
 
