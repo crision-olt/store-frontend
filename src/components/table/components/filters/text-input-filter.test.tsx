@@ -1,5 +1,4 @@
 // @vitest-environment jsdom
-import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import '@/test/setup-dom'
 import type { DataHeader as Header } from '@/components/table/features'

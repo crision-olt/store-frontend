@@ -2,7 +2,6 @@
 import { useTable } from '@tanstack/react-table'
 import { tableFeatureSet } from '@/components/table/features'
 import { renderHook } from '@testing-library/react'
-import { describe, expect, test } from 'vitest'
 import { computeColumnLayout } from '@/components/table/column-layout'
 import { TableFactory } from '@/test/factory/table'
 import '@/test/setup-dom'

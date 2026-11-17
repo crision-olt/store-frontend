@@ -22,6 +22,10 @@ setup for bootstrapping an administrator. This page does not assign roles to use
 The existing redirect parameter accepts only paths on this frontend's origin; it does
 not redirect to external applications.
 
+## Tests
+
+Run `pnpm test`. Vitest globals, including `describe`, `it`, `expect`, hooks, and `vi`, are available without imports.
+
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
 Currently, two official plugins are available:

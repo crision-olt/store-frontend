@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest'
 import { emptyFilters, hasInvalidPriceRange, toProductsQuery } from './product-filters'
 
 describe('product filters', () => {

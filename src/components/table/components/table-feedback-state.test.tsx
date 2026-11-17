@@ -1,5 +1,4 @@
 // @vitest-environment jsdom
-import { describe, expect, it } from 'vitest'
 
 import '@/test/setup-dom'
 import { render, screen } from '@testing-library/react'

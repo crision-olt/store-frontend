@@ -3,7 +3,6 @@ import { I18nProvider } from '@lingui/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { MemoryRouter } from 'react-router-dom'
-import { describe, expect, it } from 'vitest'
 import { ThemeContext } from '@/providers/theme-context'
 import { AccessPage } from './access'
 

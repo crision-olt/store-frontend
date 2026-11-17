@@ -1,7 +1,6 @@
 import { i18n } from '@lingui/core'
 import { I18nProvider } from '@lingui/react'
 import { renderToStaticMarkup } from 'react-dom/server'
-import { describe, expect, it } from 'vitest'
 import { emptyFilters } from '@/lib/product-filters'
 import { ProductsFilters } from './products-filters'
 

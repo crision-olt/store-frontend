@@ -1,4 +1,3 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
 import { AuthApiError, createAuthApi } from './auth-api'
 
 const credentials = { email: 'user@example.com', password: 'password123' }

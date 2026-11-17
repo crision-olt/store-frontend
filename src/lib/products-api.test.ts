@@ -1,4 +1,3 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createProductsApi, ProductsApiError } from './products-api'
 
 const product = {

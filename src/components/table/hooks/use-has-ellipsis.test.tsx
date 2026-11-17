@@ -1,7 +1,6 @@
 // @vitest-environment jsdom
 import { render } from '@testing-library/react'
 import { useRef } from 'react'
-import { afterEach, describe, expect, test, vi } from 'vitest'
 import '@/test/setup-dom'
 import { useHasEllipsis } from '@/components/table/hooks/use-has-ellipsis'
 
