@@ -20,6 +20,27 @@ afterEach(() => {
 })
 
 describe('products API', () => {
+  it('updates the chosen product with cookies and validates the server response', async () => {
+    const input = {
+      name: 'New mug', sku: 'MUG-2', description: null,
+      categoryId: 1, subcategoryId: null, price: 0, stock: 0,
+    }
+    const updated = { ...product, ...input, subcategoryName: null }
+    const fetch = vi.fn().mockResolvedValue(new Response(JSON.stringify(updated)))
+    vi.stubGlobal('fetch', fetch)
+    const api = createProductsApi('https://api.example.com')
+    await expect(api.updateProduct(1, input)).resolves.toEqual(updated)
+    expect(fetch).toHaveBeenCalledWith('https://api.example.com/products/1', {
+      method: 'PUT', credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(input),
+    })
+    fetch.mockResolvedValueOnce(new Response(null, { status: 409 }))
+    await expect(api.updateProduct(1, input)).rejects.toMatchObject({ status: 409 })
+    fetch.mockResolvedValueOnce(new Response(JSON.stringify({ id: 1 })))
+    await expect(api.updateProduct(1, input)).rejects.toThrow()
+  })
+
   it('creates a product with cookies and validates the returned product', async () => {
     const input = {
       name: 'Blue Mug', sku: 'MUG-1', description: null,

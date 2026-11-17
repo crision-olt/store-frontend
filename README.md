@@ -24,6 +24,11 @@ then shows the server results using the existing filters and sorting.
 Failed saves remove the preview and reopen the form with your entries and an error
 message. Pending products use TanStack Query mutation state, not the product cache.
 
+Select **Edit** beside a product name to open the same form with its current
+details. **Save** persists your changes and refreshes the catalog without resetting
+filters or sorting. Failed saves keep your edits and display an error; **Cancel**
+discards unsaved changes.
+
 On **Products**, use **Filters** above the table to open a dropdown without moving
 the table. Close it with Escape, the close button, or a click outside.
 Controls start hidden unless filters are already active. Active filter chips remain

@@ -8,13 +8,14 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { createProduct, listCategories, listSubcategories, ProductsApiError, type Category, type ProductInput, type Subcategory } from '@/lib/products-api'
+import { createProduct, updateProduct, listCategories, listSubcategories, ProductsApiError, type Category, type Product, type ProductInput, type Subcategory } from '@/lib/products-api'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 
-function ProductForm({ categories, subcategories, initial, pending, error, onSubmit }: {
+function ProductForm({ categories, subcategories, initial, editing, pending, error, onSubmit }: {
   categories: Category[]
   subcategories: Subcategory[]
   initial: ProductInput | undefined
+  editing: boolean
   pending: boolean
   error: unknown
   onSubmit: (input: ProductInput) => void
@@ -100,12 +101,14 @@ function ProductForm({ categories, subcategories, initial, pending, error, onSub
             ? t`A product with this SKU already exists.`
             : error instanceof ProductsApiError && error.status === 400
               ? t`Check the product details and selected category, then try again.`
-              : t`Could not create the product. Please try again.`}
+              : editing && error instanceof ProductsApiError && error.status === 404
+                ? t`This product no longer exists.`
+                : editing ? t`Could not save the product. Please try again.` : t`Could not create the product. Please try again.`}
         </p> : null}
         <div className="flex justify-end gap-2">
           <Dialog.Close render={<Button type="button" variant="outline" />}>{t`Cancel`}</Dialog.Close>
           <Button type="submit" disabled={pending || categoryId === null}>
-            {pending ? t`Creating product…` : t`Create product`}
+            {editing ? pending ? t`Saving…` : t`Save` : pending ? t`Creating product…` : t`Create product`}
           </Button>
         </div>
       </fieldset>
@@ -113,40 +116,47 @@ function ProductForm({ categories, subcategories, initial, pending, error, onSub
   )
 }
 
-export function CreateProductDialog() {
+function ProductDialog({ product, onClose }: { product?: Product; onClose?: () => void }) {
   const { t } = useLingui()
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(product !== undefined)
   const queryClient = useQueryClient()
   const location = useLocation()
   const categories = useQuery({ queryKey: ['product-categories'], queryFn: listCategories, enabled: open, retry: false })
   const subcategories = useQuery({ queryKey: ['product-subcategories'], queryFn: () => listSubcategories(), enabled: open, retry: false })
-  const create = useMutation({
-    mutationKey: ['create-product'],
-    mutationFn: createProduct,
-    onMutate: () => setOpen(false),
+  const save = useMutation({
+    mutationKey: [product ? 'update-product' : 'create-product'],
+    mutationFn: (input: ProductInput) => product ? updateProduct(product.id, input) : createProduct(input),
+    onMutate: () => { if (!product) setOpen(false) },
+    onSuccess: () => {
+      if (product) {
+        setOpen(false)
+        onClose?.()
+      }
+    },
     onError: () => setOpen(true),
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['products'] }),
   })
 
-  if ([categories.error, subcategories.error, create.error].some((error) => error instanceof ProductsApiError && error.status === 401)) {
+  if ([categories.error, subcategories.error, save.error].some((error) => error instanceof ProductsApiError && error.status === 401)) {
     return <Navigate to={buildLinkWithRedirect('/login', location.pathname + location.search)} replace />
   }
 
   return (
     <Dialog.Root open={open} onOpenChange={(nextOpen) => {
-      if (create.isPending) return
-      if (nextOpen) create.reset()
+      if (save.isPending) return
+      if (nextOpen) save.reset()
       setOpen(nextOpen)
+      if (!nextOpen) onClose?.()
     }}>
-      <Dialog.Trigger aria-disabled={create.isPending} aria-busy={create.isPending}
+      {!product && <Dialog.Trigger aria-disabled={save.isPending} aria-busy={save.isPending}
         render={<Button className="aria-disabled:opacity-50" />}>
-        <PlusIcon aria-hidden="true" />{create.isPending ? t`Creating product…` : t`Create product`}
-      </Dialog.Trigger>
+        <PlusIcon aria-hidden="true" />{save.isPending ? t`Creating product…` : t`Create product`}
+      </Dialog.Trigger>}
       <Dialog.Portal>
         <Dialog.Backdrop className="fixed inset-0 z-40 bg-black/50" />
         <Dialog.Popup className="fixed top-1/2 left-1/2 z-50 max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border bg-background p-6 text-foreground shadow-lg outline-none">
-          <Dialog.Title className="text-lg font-semibold">{t`Create product`}</Dialog.Title>
-          <Dialog.Description className="mt-1 text-sm text-muted-foreground">{t`Add a new product to your catalog.`}</Dialog.Description>
+          <Dialog.Title className="text-lg font-semibold">{product ? t`Edit product` : t`Create product`}</Dialog.Title>
+          <Dialog.Description className="mt-1 text-sm text-muted-foreground">{product ? t`Update the product details.` : t`Add a new product to your catalog.`}</Dialog.Description>
           {categories.isError || subcategories.isError ? (
             <div className="mt-4 flex flex-col items-start gap-3">
               <p role="alert" className="text-sm text-destructive">{t`Could not load categories. Please try again.`}</p>
@@ -159,11 +169,19 @@ export function CreateProductDialog() {
           ) : categories.isPending || subcategories.isPending ? (
             <p role="status" className="mt-4 text-sm text-muted-foreground">{t`Loading categories…`}</p>
           ) : (
-            <ProductForm categories={categories.data} subcategories={subcategories.data} initial={create.variables} pending={create.isPending}
-              error={create.error} onSubmit={(input) => create.mutate(input)} />
+            <ProductForm categories={categories.data} subcategories={subcategories.data} initial={save.variables ?? product}
+              editing={product !== undefined} pending={save.isPending} error={save.error} onSubmit={(input) => save.mutate(input)} />
           )}
         </Dialog.Popup>
       </Dialog.Portal>
     </Dialog.Root>
   )
+}
+
+export function CreateProductDialog() {
+  return <ProductDialog />
+}
+
+export function EditProductDialog({ product, onClose }: { product: Product; onClose: () => void }) {
+  return <ProductDialog product={product} onClose={onClose} />
 }

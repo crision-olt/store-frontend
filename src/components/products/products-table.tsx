@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro'
+import { useState } from 'react'
 import {
   useTable,
   type ColumnFiltersState,
@@ -12,6 +13,7 @@ import { TableLoading } from '@/components/table/components/table-loading'
 import { cn } from '@/lib/utils'
 import type { Category, Product, Subcategory } from '@/lib/products-api'
 import { useProductColumns } from '@/components/products/products-table-columns'
+import { EditProductDialog } from '@/components/products/create-product-dialog'
 import { getProductColumnLabels } from '@/components/products/products-table-columns.config'
 import { getProductFilterFields } from '@/components/products/products-table-filters.config'
 import { isNotEmptyArray } from '@/utils/is-not-empty-array'
@@ -44,10 +46,11 @@ export function ProductsTable({
   onCategoryChange,
 }: Props) {
   const { t, i18n } = useLingui()
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null)
 
   const table = useTable({
     features: tableFeatureSet,
-    columns: useProductColumns({ categories, subcategories, onCategoryChange }),
+    columns: useProductColumns({ categories, subcategories, onCategoryChange, onEditProduct: setEditingProduct }),
     data: products ?? emptyProducts,
     manualSorting: true,
     manualFiltering: true,
@@ -80,6 +83,7 @@ export function ProductsTable({
         feedbackState={isLoading ? <TableLoading /> : undefined}
         endSlot={emptyState}
       />
+      {editingProduct && <EditProductDialog product={editingProduct} onClose={() => setEditingProduct(null)} />}
     </div>
   )
 }

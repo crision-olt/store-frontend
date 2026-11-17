@@ -4,12 +4,22 @@ import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/vitest'
 import '@/test/setup-dom'
 import { useState } from 'react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { MemoryRouter } from 'react-router-dom'
 
 import type { ColumnFiltersState, SortingState, Updater } from '@tanstack/react-table'
 import type { Category, Product, Subcategory } from '@/lib/products-api'
+import { ProductsApiError, updateProduct } from '@/lib/products-api'
 import { defineBoundingClientRect, defineClientDimensions } from '@/test/dom'
 import { AppWrapper } from '@/test/utils'
 import { ProductsTable } from '@/components/products/products-table'
+
+vi.mock('@/lib/products-api', async (importOriginal) => ({
+  ...await importOriginal<typeof import('@/lib/products-api')>(),
+  listCategories: vi.fn(async () => categories),
+  listSubcategories: vi.fn(async () => subcategories),
+  updateProduct: vi.fn(),
+}))
 
 defineBoundingClientRect()
 defineClientDimensions()
@@ -52,16 +62,96 @@ const defaultProps = {
   onCategoryChange: vi.fn(),
 }
 
-const renderProductsTable = (props: Partial<typeof defaultProps> = {}) =>
-  render(
-    <AppWrapper>
-      <ProductsTable {...defaultProps} {...props} />
-    </AppWrapper>,
-  )
+const renderProductsTable = (props: Partial<typeof defaultProps> = {}) => {
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+  return {
+    client,
+    ...render(
+      <AppWrapper>
+        <QueryClientProvider client={client}>
+          <MemoryRouter initialEntries={['/products']}>
+            <ProductsTable {...defaultProps} {...props} />
+          </MemoryRouter>
+        </QueryClientProvider>
+      </AppWrapper>,
+    ),
+  }
+}
 
 describe('ProductsTable', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.mocked(updateProduct).mockReset()
+  })
+
+  test('opens one prefilled editor and saves the chosen product with compatible category selections', async () => {
+    let finish!: () => void
+    vi.mocked(updateProduct).mockImplementation((id, input) => new Promise((resolve) => {
+      finish = () => resolve({ ...product, ...input, id, categoryName: 'Hardware', subcategoryName: 'Tools' })
+    }))
+    const user = userEvent.setup()
+    const { client } = renderProductsTable({
+      products: [product, { ...product, id: 7, name: 'Target product', subcategoryId: 2, subcategoryName: 'Cases' }],
+      categories, subcategories,
+    })
+    const invalidate = vi.spyOn(client, 'invalidateQueries')
+    await user.click(screen.getByRole('button', { name: 'Edit product Target product' }))
+    expect(await screen.findByRole('dialog', { name: 'Edit product' })).toBeVisible()
+    expect(screen.getByLabelText('Name')).toHaveValue('Target product')
+    expect(screen.getByLabelText('SKU')).toHaveValue('DEMO-1')
+    expect(screen.getByLabelText('Description (optional)')).toHaveValue('A sample product')
+    expect(screen.getByLabelText('Price')).toHaveValue(12.5)
+    expect(screen.getByLabelText('Stock')).toHaveValue(4)
+    expect(screen.getByRole('combobox', { name: 'Category' })).toHaveTextContent('Accessories')
+    expect(screen.getByRole('combobox', { name: 'Subcategory (optional)' })).toHaveTextContent('Cases')
+    await user.clear(screen.getByLabelText('Name'))
+    await user.type(screen.getByLabelText('Name'), 'Updated product')
+    await user.clear(screen.getByLabelText('SKU'))
+    await user.type(screen.getByLabelText('SKU'), 'NEW-1')
+    await user.clear(screen.getByLabelText('Description (optional)'))
+    await user.click(screen.getByRole('combobox', { name: 'Category' }))
+    await user.click(await screen.findByRole('option', { name: 'Hardware' }))
+    expect(screen.getByRole('combobox', { name: 'Subcategory (optional)' })).toHaveTextContent('None')
+    await user.click(screen.getByRole('combobox', { name: 'Subcategory (optional)' }))
+    expect(screen.queryByRole('option', { name: 'Cases' })).not.toBeInTheDocument()
+    await user.click(await screen.findByRole('option', { name: 'Tools' }))
+    fireEvent.change(screen.getByLabelText('Price'), { target: { value: '0' } })
+    fireEvent.change(screen.getByLabelText('Stock'), { target: { value: '0' } })
+    await user.click(screen.getByRole('button', { name: 'Save' }))
+    expect(updateProduct).toHaveBeenCalledExactlyOnceWith(7, {
+      name: 'Updated product', sku: 'NEW-1', description: null,
+      categoryId: 3, subcategoryId: 4, price: 0, stock: 0,
+    })
+    expect(screen.getByRole('button', { name: 'Saving…' })).toBeDisabled()
+    await user.keyboard('{Escape}')
+    expect(screen.getByRole('dialog', { name: 'Edit product' })).toBeInTheDocument()
+    finish()
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Edit product' })).not.toBeInTheDocument())
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: ['products'] })
+  })
+
+  test.each([
+    [409, 'A product with this SKU already exists.'],
+    [404, 'This product no longer exists.'],
+  ])('keeps edits on HTTP %s and discards them on cancel', async (status, message) => {
+    vi.mocked(updateProduct).mockRejectedValueOnce(new ProductsApiError(status))
+    const user = userEvent.setup()
+    renderProductsTable({ categories, subcategories })
+    const trigger = screen.getByRole('button', { name: 'Edit product Demo product' })
+    await user.click(trigger)
+    await screen.findByRole('dialog', { name: 'Edit product' })
+    await user.clear(screen.getByLabelText('Name'))
+    await user.type(screen.getByLabelText('Name'), 'Unsaved name')
+    await user.click(screen.getByRole('button', { name: 'Save' }))
+    expect(await screen.findByRole('alert')).toHaveTextContent(message)
+    expect(screen.getByLabelText('Name')).toHaveValue('Unsaved name')
+    expect(screen.getByText('Demo product')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Cancel' }))
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    await user.click(trigger)
+    expect(await screen.findByLabelText('Name')).toHaveValue('Demo product')
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(updateProduct).toHaveBeenCalledOnce()
   })
 
   test('renders products in the shared table and delegates sorting changes', () => {

@@ -67,9 +67,9 @@ export function createProductsApi(serviceUrl: string) {
     return response.json()
   }
 
-  async function post(path: string, body: object) {
+  async function write(method: 'POST' | 'PUT', path: string, body: object) {
     const response = await fetch(resolveServiceUrl(serviceUrl, path), {
-      method: 'POST',
+      method,
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
@@ -93,7 +93,10 @@ export function createProductsApi(serviceUrl: string) {
 
   return {
     async createProduct(input: ProductInput) {
-      return productSchema.parse(await post('/products', input))
+      return productSchema.parse(await write('POST', '/products', input))
+    },
+    async updateProduct(id: number, input: ProductInput) {
+      return productSchema.parse(await write('PUT', `/products/${id}`, input))
     },
     listProducts,
     async listAllProducts(query: Omit<ProductsQuery, 'page' | 'pageSize'> = {}, signal?: AbortSignal) {
@@ -115,13 +118,13 @@ export function createProductsApi(serviceUrl: string) {
       return z.array(subcategorySchema).parse(await get(`/products/subcategories${suffix}`))
     },
     async createCategory(name: string) {
-      return categorySchema.parse(await post('/products/categories', { name }))
+      return categorySchema.parse(await write('POST', '/products/categories', { name }))
     },
     async createSubcategory(name: string, categoryId: number) {
-      return subcategorySchema.parse(await post('/products/subcategories', { name, categoryId }))
+      return subcategorySchema.parse(await write('POST', '/products/subcategories', { name, categoryId }))
     },
   }
 }
 
-export const { createProduct, listProducts, listAllProducts, listCategories, listSubcategories, createCategory, createSubcategory } =
+export const { createProduct, updateProduct, listProducts, listAllProducts, listCategories, listSubcategories, createCategory, createSubcategory } =
   createProductsApi(import.meta.env.AUTH_SERVICE_URL)

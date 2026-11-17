@@ -6,6 +6,7 @@ import { useMemo } from 'react'
 import { tableFeatureSet } from '@/components/table/features'
 import { DateCell, PriceCell, StockCell } from '@/components/products/products-table-cells'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -44,9 +45,10 @@ type ProductColumnOptions = {
   categories: Category[]
   subcategories: Subcategory[]
   onCategoryChange: () => void
+  onEditProduct: (product: Product) => void
 }
 
-export function useProductColumns({ categories, subcategories, onCategoryChange }: ProductColumnOptions) {
+export function useProductColumns({ categories, subcategories, onCategoryChange, onEditProduct }: ProductColumnOptions) {
   const { i18n } = useLingui()
 
   return useMemo(() => columnHelper.columns([
@@ -54,11 +56,17 @@ export function useProductColumns({ categories, subcategories, onCategoryChange 
       header: () => <Trans>Name</Trans>,
       enableHiding: false,
       cell: ({ cell, row }) => (
-        <div className="flex min-w-48 flex-col">
-          <span className="font-medium">{cell.getValue()}</span>
-          {row.original.description && (
-            <span className="line-clamp-1 text-xs text-muted-foreground">{row.original.description}</span>
-          )}
+        <div className="flex min-w-48 items-center justify-between gap-3">
+          <div className="flex min-w-0 flex-col">
+            <span className="font-medium">{cell.getValue()}</span>
+            {row.original.description && (
+              <span className="line-clamp-1 text-xs text-muted-foreground">{row.original.description}</span>
+            )}
+          </div>
+          <Button type="button" variant="outline" size="sm"
+            aria-label={i18n._(msg`Edit product ${row.original.name}`)} onClick={() => onEditProduct(row.original)}>
+            <Trans>Edit</Trans>
+          </Button>
         </div>
       ),
       meta: {
@@ -254,5 +262,5 @@ export function useProductColumns({ categories, subcategories, onCategoryChange 
       header: () => <Trans>Created</Trans>,
       cell: ({ cell }) => <DateCell value={cell.getValue()} />,
     }),
-  ]), [categories, subcategories, onCategoryChange, i18n])
+  ]), [categories, subcategories, onCategoryChange, onEditProduct, i18n])
 }
