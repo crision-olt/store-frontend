@@ -114,6 +114,38 @@ describe('TableColumnVisibility', () => {
     onColumnDragEnd = undefined
   })
 
+  test('toggles visibility without focusing the checkbox when clicking its box or label', async () => {
+    const user = userEvent.setup()
+    render(<AppWrapper><ReorderableContacts /></AppWrapper>)
+    await user.click(screen.getByRole('button', { name: 'Columns' }))
+    const popup = screen.getByRole('dialog', { name: 'Visible columns' })
+    const city = within(popup).getByRole('checkbox', { name: 'City' })
+    const onFocus = vi.fn()
+    city.addEventListener('focus', onFocus)
+
+    await user.click(city)
+    expect(city).toBeChecked()
+    expect(screen.getByRole('cell', { name: 'Paris' })).toBeVisible()
+
+    await user.click(within(popup).getByText('City', { exact: true }))
+    expect(city).not.toBeChecked()
+    expect(screen.queryByRole('cell', { name: 'Paris' })).not.toBeInTheDocument()
+    expect(onFocus).not.toHaveBeenCalled()
+    expect(city).not.toHaveFocus()
+  })
+
+  test('skips checkboxes when tabbing while keeping drag handles focusable', async () => {
+    const user = userEvent.setup()
+    render(<AppWrapper><ReorderableContacts /></AppWrapper>)
+    await user.click(screen.getByRole('button', { name: 'Columns' }))
+    act(() => screen.getByRole('button', { name: 'Close column settings' }).focus())
+
+    for (const name of ['Email', 'City', 'Reference']) {
+      await user.tab()
+      expect(screen.getByRole('button', { name: `Reorder ${name}` })).toHaveFocus()
+    }
+  })
+
   test('reorders table columns and hidden options from a partial initial order', async () => {
     const user = userEvent.setup()
     render(<AppWrapper><ReorderableContacts columnOrder={['code']} /></AppWrapper>)

@@ -106,6 +106,8 @@ The dropdown lists every leaf column, including hidden ones, with its current vi
 Group headers are not separate options. Pinned columns and columns with `enableHiding: false` have disabled
 checkboxes. Set `enableHiding: false` in a column definition when it must also reject the table's individual
 visibility toggle API, as the products table does for its pinned name column.
+Visibility checkboxes are skipped by keyboard navigation and do not receive focus when clicked.
+Reorder handles retain keyboard access.
 
 `columnLabels` is optional: string column headers are used by default, falling back to the column ID for
 function or JSX headers. Supply translated labels for those headers; product labels are defined in

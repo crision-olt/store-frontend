@@ -33,6 +33,7 @@ function ColumnOption<T extends RowData>({ column, index, label }: {
   const { t } = useLingui()
   const pinned = Boolean(column.getIsPinned())
   const locked = pinned || !column.getCanHide()
+  const checked = column.getIsVisible()
   const group = column.parent?.id ?? 'root'
   const { ref, handleRef, isDragSource, isDropTarget } = useSortable({
     id: column.id,
@@ -53,19 +54,28 @@ function ColumnOption<T extends RowData>({ column, index, label }: {
         isDropTarget && !isDragSource && 'bg-muted ring-1 ring-inset ring-ring',
       )}
     >
-      <label className={cn(
-        'flex min-w-0 flex-1 items-center gap-3 self-stretch rounded-md pl-2.5',
-        locked ? 'text-muted-foreground' : 'cursor-pointer hover:bg-muted',
-      )}>
-        <Checkbox.Root
-          checked={column.getIsVisible()}
-          disabled={locked}
-          aria-label={label}
-          onCheckedChange={(checked) => column.toggleVisibility(checked)}
-          className="flex size-4 shrink-0 items-center justify-center rounded border border-input outline-none focus-visible:ring-3 focus-visible:ring-ring/50 data-checked:border-primary data-checked:bg-primary data-checked:text-primary-foreground data-disabled:opacity-60"
+      <Checkbox.Root
+        checked={checked}
+        disabled={locked}
+        tabIndex={-1}
+        aria-label={label}
+        onPointerDown={(event) => event.preventDefault()}
+        onCheckedChange={(visible) => column.toggleVisibility(visible)}
+        className={cn(
+          'flex min-w-0 flex-1 items-center gap-3 self-stretch rounded-md pl-2.5 outline-none',
+          locked ? 'text-muted-foreground' : 'cursor-pointer hover:bg-muted',
+        )}
+      >
+        <span
+          aria-hidden="true"
+          className={cn(
+            'flex size-4 shrink-0 items-center justify-center rounded border border-input',
+            checked && 'border-primary bg-primary text-primary-foreground',
+            locked && 'opacity-60',
+          )}
         >
           <Checkbox.Indicator><CheckIcon className="size-3" aria-hidden="true" /></Checkbox.Indicator>
-        </Checkbox.Root>
+        </span>
         <span className="min-w-0 flex-1 break-words py-2">{label}</span>
         {locked && (
           <span className="flex shrink-0 items-center gap-1 text-xs" aria-hidden="true">
@@ -73,7 +83,7 @@ function ColumnOption<T extends RowData>({ column, index, label }: {
             {pinned ? t`Pinned` : t`Required`}
           </span>
         )}
-      </label>
+      </Checkbox.Root>
       <Button
         ref={handleRef}
         variant="ghost"
