@@ -52,6 +52,7 @@ export function ProductsTable({
     manualFiltering: true,
     enableMultiSort: false,
     enableSortingRemoval: false,
+    initialState: { columnPinning: { start: ['name'], end: [] } },
     state: { sorting, columnFilters },
     onSortingChange,
     onColumnFiltersChange,

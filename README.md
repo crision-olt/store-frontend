@@ -22,6 +22,8 @@ visible when controls are hidden; remove a chip to clear that filter or use **Cl
 filters** to reset all filters. Removing or changing a category also clears the
 subcategory selection.
 
+The product-name column stays pinned on the left when the table scrolls horizontally.
+
 Use **Roles and permissions** to create permissions and new roles with selected
 permissions. The API requires `access:manage`; see the service's roles and permissions
 setup for bootstrapping an administrator. This page does not assign roles to users.

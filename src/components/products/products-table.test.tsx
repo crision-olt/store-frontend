@@ -79,6 +79,18 @@ describe('ProductsTable', () => {
     }
   })
 
+  test('pins the product name header and cells while leaving other columns unpinned', () => {
+    renderProductsTable()
+
+    expect(screen.getByTestId('table-header-cell-name')).toHaveStyle({ position: 'sticky', left: '0px' })
+    expect(screen.getByRole('cell', { name: /Demo product/ })).toHaveStyle({
+      position: 'sticky',
+      left: '0px',
+    })
+    expect(screen.getByTestId('table-header-cell-sku')).not.toHaveStyle({ position: 'sticky' })
+    expect(screen.getByRole('cell', { name: 'DEMO-1' })).not.toHaveStyle({ position: 'sticky' })
+  })
+
   test('starts with collapsed filters and keeps controls outside column headers', () => {
     const { container } = renderProductsTable()
 
