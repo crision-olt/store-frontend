@@ -91,6 +91,29 @@ describe('ProductsTable', () => {
     expect(screen.getByRole('cell', { name: 'DEMO-1' })).not.toHaveStyle({ position: 'sticky' })
   })
 
+  test('lets users configure all product columns while keeping the name visible', async () => {
+    const user = userEvent.setup()
+    renderProductsTable()
+
+    await user.click(screen.getByRole('button', { name: 'Columns' }))
+    const popup = screen.getByRole('dialog', { name: 'Visible columns' })
+    expect(within(popup).getAllByRole('checkbox')).toHaveLength(7)
+    for (const name of ['Name', 'SKU', 'Category', 'Subcategory', 'Price', 'Stock', 'Created']) {
+      expect(within(popup).getByRole('checkbox', { name })).toBeChecked()
+    }
+    expect(within(popup).getByRole('checkbox', { name: 'Name' })).toHaveAttribute('aria-disabled', 'true')
+
+    await user.click(within(popup).getByRole('checkbox', { name: 'SKU' }))
+    expect(screen.queryByTestId('table-header-cell-sku')).not.toBeInTheDocument()
+    expect(screen.queryByRole('cell', { name: 'DEMO-1' })).not.toBeInTheDocument()
+    expect(within(popup).getByRole('checkbox', { name: 'SKU' })).not.toBeChecked()
+    expect(screen.getByTestId('table-header-cell-name')).toHaveStyle({ position: 'sticky', left: '0px' })
+
+    await user.click(within(popup).getByRole('checkbox', { name: 'SKU' }))
+    expect(screen.getByTestId('table-header-cell-sku')).toBeVisible()
+    expect(screen.getByRole('cell', { name: 'DEMO-1' })).toBeVisible()
+  })
+
   test('starts with collapsed filters and keeps controls outside column headers', () => {
     const { container } = renderProductsTable()
 

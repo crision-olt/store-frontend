@@ -15,9 +15,9 @@ msgstr "A user with this email already exists."
 msgid "Active filters"
 msgstr "Active filters"
 
-#: src/components/products/products-table-columns.tsx:102
-#: src/components/products/products-table-columns.tsx:152
-#: src/components/products/products-table-columns.tsx:237
+#: src/components/products/products-table-columns.tsx:103
+#: src/components/products/products-table-columns.tsx:153
+#: src/components/products/products-table-columns.tsx:238
 msgid "All"
 msgstr "All"
 
@@ -66,7 +66,8 @@ msgstr "Cancel"
 msgid "Categories"
 msgstr "Categories"
 
-#: src/components/products/products-table-columns.tsx:83
+#: src/components/products/products-table-columns.config.ts:9
+#: src/components/products/products-table-columns.tsx:84
 #: src/components/products/products-table-filters.config.ts:27
 #: src/pages/categories.tsx:83
 msgid "Category"
@@ -88,10 +89,18 @@ msgstr "Clear filters"
 msgid "Clear sorting"
 msgstr "Clear sorting"
 
+#: src/components/table/components/table-column-visibility.tsx:127
+msgid "Close column settings"
+msgstr "Close column settings"
+
 #: src/components/table/components/table-filters.tsx:55
 #: src/components/table/components/table-header-cell.tsx:142
 msgid "Close filter"
 msgstr "Close filter"
+
+#: src/components/table/components/table-column-visibility.tsx:119
+msgid "Columns"
+msgstr "Columns"
 
 #: src/pages/register.tsx:54
 msgid "Confirm password"
@@ -216,7 +225,8 @@ msgstr "Create users, change their email or password, and assign roles."
 msgid "Create, edit and delete roles and permissions."
 msgstr "Create, edit and delete roles and permissions."
 
-#: src/components/products/products-table-columns.tsx:253
+#: src/components/products/products-table-columns.config.ts:13
+#: src/components/products/products-table-columns.tsx:254
 msgid "Created"
 msgstr "Created"
 
@@ -252,6 +262,10 @@ msgstr "Delete role {0}?"
 #: src/pages/login.tsx:49
 msgid "Don't have an account?"
 msgstr "Don't have an account?"
+
+#: src/components/table/components/table-column-visibility.tsx:151
+msgid "Drag handles to reorder columns. Or focus a handle, press Space, then use the arrow keys."
+msgstr "Drag handles to reorder columns. Or focus a handle, press Space, then use the arrow keys."
 
 #: src/components/access/permission-list.tsx:41
 #: src/components/access/role-list.tsx:47
@@ -298,15 +312,15 @@ msgstr "Enter your details to get started"
 msgid "Filter"
 msgstr "Filter"
 
-#: src/components/products/products-table-columns.tsx:234
+#: src/components/products/products-table-columns.tsx:235
 msgid "Filter by availability"
 msgstr "Filter by availability"
 
-#: src/components/products/products-table-columns.tsx:99
+#: src/components/products/products-table-columns.tsx:100
 msgid "Filter by category"
 msgstr "Filter by category"
 
-#: src/components/products/products-table-columns.tsx:149
+#: src/components/products/products-table-columns.tsx:150
 msgid "Filter by subcategory"
 msgstr "Filter by subcategory"
 
@@ -314,7 +328,7 @@ msgstr "Filter by subcategory"
 msgid "Filters"
 msgstr "Filters"
 
-#: src/components/products/products-table-columns.tsx:224
+#: src/components/products/products-table-columns.tsx:225
 #: src/components/products/products-table-filters.config.ts:52
 msgid "In stock"
 msgstr "In stock"
@@ -353,29 +367,30 @@ msgstr "Loading users…"
 msgid "Manage categories"
 msgstr "Manage categories"
 
-#: src/components/products/products-table-columns.tsx:202
+#: src/components/products/products-table-columns.tsx:203
 #: src/components/products/products-table-filters.config.ts:46
 msgid "Max"
 msgstr "Max"
 
-#: src/components/products/products-table-columns.tsx:203
+#: src/components/products/products-table-columns.tsx:204
 msgid "Maximum price"
 msgstr "Maximum price"
 
-#: src/components/products/products-table-columns.tsx:192
+#: src/components/products/products-table-columns.tsx:193
 #: src/components/products/products-table-filters.config.ts:45
 msgid "Min"
 msgstr "Min"
 
-#: src/components/products/products-table-columns.tsx:193
+#: src/components/products/products-table-columns.tsx:194
 msgid "Minimum price"
 msgstr "Minimum price"
 
+#: src/components/products/products-table-columns.config.ts:7
 #: src/components/products/products-table-columns.tsx:54
 msgid "Name"
 msgstr "Name"
 
-#: src/components/products/products-table-columns.tsx:69
+#: src/components/products/products-table-columns.tsx:70
 msgid "Name, SKU or description"
 msgstr "Name, SKU or description"
 
@@ -396,7 +411,7 @@ msgstr "No permissions assigned."
 msgid "No permissions yet."
 msgstr "No permissions yet."
 
-#: src/components/products/products-table.tsx:66
+#: src/components/products/products-table.tsx:68
 msgid "No products found."
 msgstr "No products found."
 
@@ -413,7 +428,7 @@ msgid "No users yet."
 msgstr "No users yet."
 
 #: src/components/products/products-table-cells.tsx:16
-#: src/components/products/products-table-columns.tsx:225
+#: src/components/products/products-table-columns.tsx:226
 #: src/components/products/products-table-filters.config.ts:52
 msgid "Out of stock"
 msgstr "Out of stock"
@@ -448,12 +463,21 @@ msgstr "Permission name"
 msgid "Permissions"
 msgstr "Permissions"
 
-#: src/components/products/products-table-columns.tsx:173
+#: src/components/table/components/table-column-visibility.tsx:73
+msgid "Pinned"
+msgstr "Pinned"
+
+#: src/components/table/components/table-column-visibility.tsx:152
+msgid "Pinned columns cannot be hidden or moved."
+msgstr "Pinned columns cannot be hidden or moved."
+
+#: src/components/products/products-table-columns.config.ts:11
+#: src/components/products/products-table-columns.tsx:174
 #: src/components/products/products-table-filters.config.ts:43
 msgid "Price"
 msgstr "Price"
 
-#: src/components/products/products-table.tsx:71
+#: src/components/products/products-table.tsx:74
 msgid "Product filters"
 msgstr "Product filters"
 
@@ -465,6 +489,14 @@ msgstr "Products"
 #: src/components/table/components/table-filters.tsx:91
 msgid "Remove filter: {label}"
 msgstr "Remove filter: {label}"
+
+#: src/components/table/components/table-column-visibility.tsx:82
+msgid "Reorder {label}"
+msgstr "Reorder {label}"
+
+#: src/components/table/components/table-column-visibility.tsx:73
+msgid "Required"
+msgstr "Required"
 
 #: src/components/users/user-form.tsx:48
 msgid "Role"
@@ -494,7 +526,7 @@ msgstr "Save"
 msgid "Search"
 msgstr "Search"
 
-#: src/components/products/products-table-columns.tsx:70
+#: src/components/products/products-table-columns.tsx:71
 msgid "Search products"
 msgstr "Search products"
 
@@ -531,7 +563,8 @@ msgstr "Sign up"
 msgid "Signing in…"
 msgstr "Signing in…"
 
-#: src/components/products/products-table-columns.tsx:78
+#: src/components/products/products-table-columns.config.ts:8
+#: src/components/products/products-table-columns.tsx:79
 msgid "SKU"
 msgstr "SKU"
 
@@ -543,7 +576,8 @@ msgstr "Sort ascending"
 msgid "Sort descending"
 msgstr "Sort descending"
 
-#: src/components/products/products-table-columns.tsx:213
+#: src/components/products/products-table-columns.config.ts:12
+#: src/components/products/products-table-columns.tsx:214
 msgid "Stock"
 msgstr "Stock"
 
@@ -552,7 +586,8 @@ msgstr "Stock"
 msgid "Store"
 msgstr "Store"
 
-#: src/components/products/products-table-columns.tsx:122
+#: src/components/products/products-table-columns.config.ts:10
+#: src/components/products/products-table-columns.tsx:123
 #: src/components/products/products-table-filters.config.ts:32
 msgid "Subcategory"
 msgstr "Subcategory"
@@ -611,6 +646,10 @@ msgstr "Unblock user {0}"
 #: src/pages/users.tsx:36
 msgid "Users"
 msgstr "Users"
+
+#: src/components/table/components/table-column-visibility.tsx:126
+msgid "Visible columns"
+msgstr "Visible columns"
 
 #: src/pages/login.tsx:47
 msgid "Welcome back"

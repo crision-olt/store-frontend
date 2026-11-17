@@ -7,6 +7,7 @@ import { TableProvider } from '@/components/table/providers/table-provider'
 import { TooltipProvider } from '@/components/ui/tooltip'
 
 export { TableFilters, type TableFilterField } from '@/components/table/components/table-filters'
+export { TableColumnVisibility } from '@/components/table/components/table-column-visibility'
 
 declare module '@tanstack/react-table' {
   interface ColumnMeta<TFeatures extends TableFeatures, TData extends RowData, TValue extends CellData = CellData> {

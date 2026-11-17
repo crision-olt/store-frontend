@@ -52,6 +52,7 @@ export function useProductColumns({ categories, subcategories, onCategoryChange 
   return useMemo(() => columnHelper.columns([
     columnHelper.accessor('name', {
       header: () => <Trans>Name</Trans>,
+      enableHiding: false,
       cell: ({ cell, row }) => (
         <div className="flex min-w-48 flex-col">
           <span className="font-medium">{cell.getValue()}</span>

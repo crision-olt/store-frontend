@@ -92,6 +92,31 @@ The product field definitions are built by
 [`getProductFilterFields`](../products/products-table-filters.config.ts), a pure function that receives the current
 column filters, category data and Lingui instance. It adds no hooks or render-triggering state.
 
+### Column visibility and order
+
+Use `TableColumnVisibility` next to the filters with the same table instance:
+
+```tsx
+import { TableColumnVisibility } from '@/components/table'
+
+<TableColumnVisibility table={table} columnLabels={{ name: 'Name', created_at: 'Created' }} />
+```
+
+The dropdown lists every leaf column, including hidden ones, with its current visibility checked.
+Group headers are not separate options. Pinned columns and columns with `enableHiding: false` have disabled
+checkboxes. Set `enableHiding: false` in a column definition when it must also reject the table's individual
+visibility toggle API, as the products table does for its pinned name column.
+
+`columnLabels` is optional: string column headers are used by default, falling back to the column ID for
+function or JSX headers. Supply translated labels for those headers; product labels are defined in
+[`products-table-columns.config.ts`](../products/products-table-columns.config.ts).
+Visibility updates the table's existing state directly, without maintaining another copy or persisting it.
+Drag a row's handle to reorder columns, including hidden ones. With the keyboard, focus a handle, press Space,
+use the arrow keys, and press Space to drop or Escape to cancel. Pinned columns stay at their respective edges
+and cannot be dragged; required but unpinned columns can still move. Grouped columns can only move among siblings.
+The popover and header dragging share the same ordering helper. Table order changes only on drop, not on
+pointer movement, and is not persisted across page reloads.
+
 ## Dependencies
 
 - `@tanstack/react-table` v9 (native `useTable` API; the deprecated `/legacy` v8 compatibility layer is not used)

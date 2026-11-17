@@ -1,5 +1,5 @@
 import type { RowData } from '@tanstack/react-table'
-import type { DataCell, DataHeader, DataTable } from '@/components/table/features'
+import type { DataCell, DataColumn, DataHeader, DataTable } from '@/components/table/features'
 import { isNotEmptyArray } from '@/utils/is-not-empty-array'
 import { isNotNil } from '@/utils/is-not-nil'
 
@@ -34,3 +34,29 @@ export const hasCellBorderLeft = <T extends RowData, U = unknown>(
   cell: DataCell<T, U>,
   previous: DataCell<T, unknown> | undefined,
 ) => isNotNil(previous) && previous.column.parent?.id !== cell.column.parent?.id
+
+export function reorderTableColumns<T extends RowData>(
+  table: DataTable<T>,
+  activeColumn: DataColumn<T>,
+  targetColumn: DataColumn<T>,
+) {
+  const activeLeafIds = activeColumn.getLeafColumns().map((column) => column.id)
+  const targetLeafIds = targetColumn.getLeafColumns().map((column) => column.id)
+  // Match TanStack's ordering when the explicit order omits some columns.
+  const listedOrder: string[] = table.state.columnOrder
+  const listed = new Set(listedOrder)
+  const currentOrder = [
+    ...listedOrder,
+    ...table.getAllLeafColumns().map((column) => column.id).filter((id) => !listed.has(id)),
+  ]
+  const activeSet = new Set(activeLeafIds)
+  const result = currentOrder.filter((id) => !activeSet.has(id))
+  const activeIndex = currentOrder.indexOf(activeLeafIds[0])
+  const targetIndex = currentOrder.indexOf(targetLeafIds[0])
+  const insertIndex = activeIndex < targetIndex
+    ? result.indexOf(targetLeafIds[targetLeafIds.length - 1]) + 1
+    : result.indexOf(targetLeafIds[0])
+
+  result.splice(insertIndex >= 0 ? insertIndex : result.length, 0, ...activeLeafIds)
+  table.setColumnOrder(result)
+}

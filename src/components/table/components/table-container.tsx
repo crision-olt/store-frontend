@@ -21,7 +21,7 @@ import { TableBodyVirtualized } from '@/components/table/components/table-body-v
 import { TableFooterCell } from '@/components/table/components/table-footer-cell'
 import { TableHeaderCell } from '@/components/table/components/table-header-cell'
 import { useTableContext } from '@/components/table/providers/table-provider'
-import { hasFooter, hasHeaderBorderLeft } from '@/components/table/utils'
+import { hasFooter, hasHeaderBorderLeft, reorderTableColumns } from '@/components/table/utils'
 import {
   Table as UiTable,
   TableFooter as UiTableFooter,
@@ -267,29 +267,7 @@ export const TableContainer = <T extends RowData>({
       if (!activeCol || !overCol) return
       if (activeCol.depth !== overCol.depth) return
 
-      const activeLeafIds = activeCol.getLeafColumns().map((c) => c.id)
-      const targetLeafIds = overCol.getLeafColumns().map((c) => c.id)
-      // Columns missing from the order state keep their definition order after the listed ones, as TanStack Table does
-      const listedOrder: string[] = table.state.columnOrder
-      const listed = new Set(listedOrder)
-      const currentOrder = [
-        ...listedOrder,
-        ...table
-          .getAllLeafColumns()
-          .map((column) => column.id)
-          .filter((id) => !listed.has(id)),
-      ]
-      const activeSet = new Set(activeLeafIds)
-      const result = currentOrder.filter((id) => !activeSet.has(id))
-      const activeIdx = currentOrder.indexOf(activeLeafIds[0])
-      const overIdx = currentOrder.indexOf(targetLeafIds[0])
-      const insertIdx =
-        activeIdx < overIdx
-          ? result.indexOf(targetLeafIds[targetLeafIds.length - 1]) + 1
-          : result.indexOf(targetLeafIds[0])
-
-      result.splice(insertIdx >= 0 ? insertIdx : result.length, 0, ...activeLeafIds)
-      table.setColumnOrder(result)
+      reorderTableColumns(table, activeCol, overCol)
     },
     [table],
   )

@@ -5,13 +5,14 @@ import {
   type OnChangeFn,
   type SortingState,
 } from '@tanstack/react-table'
-import { Table, TableFilters } from '@/components/table'
+import { Table, TableColumnVisibility, TableFilters } from '@/components/table'
 import { tableFeatureSet } from '@/components/table/features'
 import { TableFeedbackState } from '@/components/table/components/table-feedback-state'
 import { TableLoading } from '@/components/table/components/table-loading'
 import { cn } from '@/lib/utils'
 import type { Category, Product, Subcategory } from '@/lib/products-api'
 import { useProductColumns } from '@/components/products/products-table-columns'
+import { getProductColumnLabels } from '@/components/products/products-table-columns.config'
 import { getProductFilterFields } from '@/components/products/products-table-filters.config'
 import { isNotEmptyArray } from '@/utils/is-not-empty-array'
 
@@ -69,7 +70,10 @@ export function ProductsTable({
 
   return (
     <div className="flex min-w-0 flex-col gap-3">
-      <TableFilters table={table} title={t`Product filters`} fields={filterFields} onRemoveFilter={removeFilter} />
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <TableFilters table={table} title={t`Product filters`} fields={filterFields} onRemoveFilter={removeFilter} />
+        <TableColumnVisibility table={table} columnLabels={getProductColumnLabels(i18n)} />
+      </div>
       <Table
         table={table}
         className={cn('h-96 rounded-lg border bg-card transition-opacity', isFetching && !isLoading && 'opacity-60')}
