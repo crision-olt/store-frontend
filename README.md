@@ -17,8 +17,12 @@ while displaying their names.
 
 On **Products**, select **Create product** above the table. Enter a name, unique SKU,
 category, price, and stock; description and subcategory are optional. Subcategories
-belong to the selected category. Saving closes the dialog and refreshes the table
-without clearing its filters or sorting. Failed saves keep the form open for correction.
+belong to the selected category. Saving immediately closes the dialog and shows a
+pending product above the table, independently of its filters and sorting. This
+preview remains visible until the request and catalog refresh finish; the table
+then shows the server results using the existing filters and sorting.
+Failed saves remove the preview and reopen the form with your entries and an error
+message. Pending products use TanStack Query mutation state, not the product cache.
 
 On **Products**, use **Filters** above the table to open a dropdown without moving
 the table. Close it with Escape, the close button, or a click outside.

@@ -11,16 +11,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { createProduct, listCategories, listSubcategories, ProductsApiError, type Category, type ProductInput, type Subcategory } from '@/lib/products-api'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 
-function ProductForm({ categories, subcategories, pending, error, onSubmit }: {
+function ProductForm({ categories, subcategories, initial, pending, error, onSubmit }: {
   categories: Category[]
   subcategories: Subcategory[]
+  initial: ProductInput | undefined
   pending: boolean
   error: unknown
   onSubmit: (input: ProductInput) => void
 }) {
   const { t } = useLingui()
-  const [categoryId, setCategoryId] = useState<number | null>(null)
-  const [subcategoryId, setSubcategoryId] = useState<number | null>(null)
+  const [categoryId, setCategoryId] = useState<number | null>(initial?.categoryId ?? null)
+  const [subcategoryId, setSubcategoryId] = useState<number | null>(initial?.subcategoryId ?? null)
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -42,15 +43,15 @@ function ProductForm({ categories, subcategories, pending, error, onSubmit }: {
       <fieldset disabled={pending} className="flex flex-col gap-4">
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="product-name">{t`Name`}</Label>
-          <Input id="product-name" name="name" required maxLength={255} pattern={'.*\\S.*'} autoComplete="off" />
+          <Input id="product-name" name="name" defaultValue={initial?.name} required maxLength={255} pattern={'.*\\S.*'} autoComplete="off" />
         </div>
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="product-sku">{t`SKU`}</Label>
-          <Input id="product-sku" name="sku" required maxLength={64} pattern={'.*\\S.*'} autoComplete="off" />
+          <Input id="product-sku" name="sku" defaultValue={initial?.sku} required maxLength={64} pattern={'.*\\S.*'} autoComplete="off" />
         </div>
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="product-description">{t`Description (optional)`}</Label>
-          <textarea id="product-description" name="description" maxLength={2000} rows={3}
+          <textarea id="product-description" name="description" defaultValue={initial?.description ?? ''} maxLength={2000} rows={3}
             className="w-full resize-y rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30" />
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
@@ -86,11 +87,11 @@ function ProductForm({ categories, subcategories, pending, error, onSubmit }: {
           </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="product-price">{t`Price`}</Label>
-            <Input id="product-price" name="price" type="number" min={0} max={99999999.99} step="0.01" required />
+            <Input id="product-price" name="price" type="number" defaultValue={initial?.price} min={0} max={99999999.99} step="0.01" required />
           </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="product-stock">{t`Stock`}</Label>
-            <Input id="product-stock" name="stock" type="number" min={0} max={2147483647} step={1} defaultValue={0} required />
+            <Input id="product-stock" name="stock" type="number" min={0} max={2147483647} step={1} defaultValue={initial?.stock ?? 0} required />
           </div>
         </div>
         {categories.length === 0 && <p role="alert" className="text-sm text-muted-foreground">{t`Create a category on the Categories page before adding products.`}</p>}
@@ -120,11 +121,11 @@ export function CreateProductDialog() {
   const categories = useQuery({ queryKey: ['product-categories'], queryFn: listCategories, enabled: open, retry: false })
   const subcategories = useQuery({ queryKey: ['product-subcategories'], queryFn: () => listSubcategories(), enabled: open, retry: false })
   const create = useMutation({
+    mutationKey: ['create-product'],
     mutationFn: createProduct,
-    onSuccess: () => {
-      setOpen(false)
-      void queryClient.invalidateQueries({ queryKey: ['products'] })
-    },
+    onMutate: () => setOpen(false),
+    onError: () => setOpen(true),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['products'] }),
   })
 
   if ([categories.error, subcategories.error, create.error].some((error) => error instanceof ProductsApiError && error.status === 401)) {
@@ -137,7 +138,10 @@ export function CreateProductDialog() {
       if (nextOpen) create.reset()
       setOpen(nextOpen)
     }}>
-      <Dialog.Trigger render={<Button />}><PlusIcon aria-hidden="true" />{t`Create product`}</Dialog.Trigger>
+      <Dialog.Trigger aria-disabled={create.isPending} aria-busy={create.isPending}
+        render={<Button className="aria-disabled:opacity-50" />}>
+        <PlusIcon aria-hidden="true" />{create.isPending ? t`Creating product…` : t`Create product`}
+      </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Backdrop className="fixed inset-0 z-40 bg-black/50" />
         <Dialog.Popup className="fixed top-1/2 left-1/2 z-50 max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border bg-background p-6 text-foreground shadow-lg outline-none">
@@ -155,7 +159,7 @@ export function CreateProductDialog() {
           ) : categories.isPending || subcategories.isPending ? (
             <p role="status" className="mt-4 text-sm text-muted-foreground">{t`Loading categories…`}</p>
           ) : (
-            <ProductForm categories={categories.data} subcategories={subcategories.data} pending={create.isPending}
+            <ProductForm categories={categories.data} subcategories={subcategories.data} initial={create.variables} pending={create.isPending}
               error={create.error} onSubmit={(input) => create.mutate(input)} />
           )}
         </Dialog.Popup>

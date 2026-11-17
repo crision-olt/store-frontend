@@ -6,6 +6,7 @@ import { Navigate, useLocation } from 'react-router-dom'
 import { RequireAuth } from '@/components/auth/require-auth'
 import { ProductsTable } from '@/components/products/products-table'
 import { CreateProductDialog } from '@/components/products/create-product-dialog'
+import { PendingProducts } from '@/components/products/pending-products'
 import { StoreLayout } from '@/components/store-layout'
 import { Button } from '@/components/ui/button'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
@@ -103,6 +104,7 @@ function ProductsContent() {
         )}
 
         <div className="flex flex-col gap-2">
+          <PendingProducts />
           <ProductsTable
             products={products.data}
             isLoading={products.isPending && !products.isError}
