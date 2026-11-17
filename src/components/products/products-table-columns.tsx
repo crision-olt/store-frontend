@@ -58,18 +58,12 @@ export function useProductColumns({ categories, subcategories, onCategoryChange,
       header: () => <Trans>Name</Trans>,
       enableHiding: false,
       cell: ({ cell, row }) => (
-        <div className="flex min-w-48 items-center justify-between gap-3">
-          <div className="flex min-w-0 flex-col">
-            <span className="font-medium">{cell.getValue()}</span>
-            {row.original.isPending && <span role="status" className="text-xs text-muted-foreground"><Trans>Creating product…</Trans></span>}
-            {row.original.description && (
-              <span className="line-clamp-1 text-xs text-muted-foreground">{row.original.description}</span>
-            )}
-          </div>
-          <Button type="button" variant="outline" size="sm" disabled={row.original.isPending}
-            aria-label={i18n._(msg`Edit product ${row.original.name}`)} onClick={() => onEditProduct(row.original)}>
-            <Trans>Edit</Trans>
-          </Button>
+        <div className="flex min-w-0 flex-col">
+          <span className="font-medium">{cell.getValue()}</span>
+          {row.original.isPending && <span role="status" className="text-xs text-muted-foreground"><Trans>Creating product…</Trans></span>}
+          {row.original.description && (
+            <span className="line-clamp-1 text-xs text-muted-foreground">{row.original.description}</span>
+          )}
         </div>
       ),
       meta: {
@@ -264,6 +258,25 @@ export function useProductColumns({ categories, subcategories, onCategoryChange,
     columnHelper.accessor('created_at', {
       header: () => <Trans>Created</Trans>,
       cell: ({ cell }) => <DateCell value={cell.getValue()} />,
+    }),
+    columnHelper.display({
+      id: 'actions',
+      header: () => null,
+      size: 96,
+      minSize: 96,
+      maxSize: 96,
+      enableHiding: false,
+      enableSorting: false,
+      enableColumnFilter: false,
+      enableResizing: false,
+      cell: ({ row }) => (
+        <div className="flex items-center justify-end gap-2">
+          <Button type="button" variant="outline" size="sm" disabled={row.original.isPending}
+            aria-label={i18n._(msg`Edit product ${row.original.name}`)} onClick={() => onEditProduct(row.original)}>
+            <Trans>Edit</Trans>
+          </Button>
+        </div>
+      ),
     }),
   ]), [categories, subcategories, onCategoryChange, onEditProduct, i18n])
 }

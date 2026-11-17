@@ -199,6 +199,19 @@ describe('ProductsTable', () => {
     }
   })
 
+  test('places row actions in a separate final column with an empty header', () => {
+    renderProductsTable()
+
+    const header = screen.getByTestId('table-header-cell-actions')
+    expect(screen.getAllByRole('columnheader').at(-1)).toBe(header)
+    expect(header).toHaveTextContent(/^$/)
+    expect(within(header).queryByRole('button')).not.toBeInTheDocument()
+    const edit = screen.getByRole('button', { name: 'Edit product Demo product' })
+    const row = screen.getByRole('row', { name: /Demo product/ })
+    expect(within(row).getAllByRole('cell').at(-1)).toContainElement(edit)
+    expect(within(row).getByRole('cell', { name: /Demo product\s*A sample product/ })).not.toContainElement(edit)
+  })
+
   test('pins the product name header and cells while leaving other columns unpinned', () => {
     renderProductsTable()
 
@@ -218,6 +231,8 @@ describe('ProductsTable', () => {
     await user.click(screen.getByRole('button', { name: 'Columns' }))
     const popup = screen.getByRole('dialog', { name: 'Visible columns' })
     expect(within(popup).getAllByRole('checkbox')).toHaveLength(7)
+    expect(within(popup).queryByRole('checkbox', { name: /actions/i })).not.toBeInTheDocument()
+    expect(within(popup).queryByRole('button', { name: /Reorder actions/i })).not.toBeInTheDocument()
     for (const name of ['Name', 'SKU', 'Category', 'Subcategory', 'Price', 'Stock', 'Created']) {
       expect(within(popup).getByRole('checkbox', { name })).toBeChecked()
     }
@@ -225,6 +240,7 @@ describe('ProductsTable', () => {
 
     await user.click(within(popup).getByRole('checkbox', { name: 'SKU' }))
     expect(screen.queryByTestId('table-header-cell-sku')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Edit product Demo product' })).toBeVisible()
     expect(screen.queryByRole('cell', { name: 'DEMO-1' })).not.toBeInTheDocument()
     expect(within(popup).getByRole('checkbox', { name: 'SKU' })).not.toBeChecked()
     expect(screen.getByTestId('table-header-cell-name')).toHaveStyle({ position: 'sticky', left: '0px' })

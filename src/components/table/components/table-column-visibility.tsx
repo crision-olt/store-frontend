@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils'
 type Props<T extends RowData> = {
   table: DataTable<T>
   columnLabels?: Readonly<Record<string, string>>
+  excludedColumnIds?: readonly string[]
 }
 
 const SENSORS = [
@@ -98,7 +99,7 @@ function ColumnOption<T extends RowData>({ column, index, label }: {
   )
 }
 
-export function TableColumnVisibility<T extends RowData>({ table, columnLabels }: Props<T>) {
+export function TableColumnVisibility<T extends RowData>({ table, columnLabels, excludedColumnIds }: Props<T>) {
   const { t } = useLingui()
   const leafColumns = table.getAllLeafColumns()
   const pinnedColumns = (side: 'start' | 'end') => table.state.columnPinning[side]
@@ -107,7 +108,7 @@ export function TableColumnVisibility<T extends RowData>({ table, columnLabels }
     ...pinnedColumns('start'),
     ...leafColumns.filter((column) => !column.getIsPinned()),
     ...pinnedColumns('end'),
-  ]
+  ].filter((column) => !excludedColumnIds?.includes(column.id))
   const groupIndexes = new Map<string | undefined, number>()
 
   function handleDragEnd(event: DragEndEvent) {

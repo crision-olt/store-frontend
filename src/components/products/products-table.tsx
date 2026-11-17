@@ -99,7 +99,7 @@ export function ProductsTable({
     <div className="flex min-w-0 flex-col gap-3">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <TableFilters table={table} title={t`Product filters`} fields={filterFields} onRemoveFilter={removeFilter} />
-        <TableColumnVisibility table={table} columnLabels={getProductColumnLabels(i18n)} />
+        <TableColumnVisibility table={table} columnLabels={getProductColumnLabels(i18n)} excludedColumnIds={['actions']} />
       </div>
       <Table
         table={table}
