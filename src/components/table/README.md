@@ -88,6 +88,9 @@ an empty array. Both controlled and uncontrolled column-filter state work throug
 Pass `onRemoveFilter={(id) => ...}` to override chip removal for dependent filters. The callback must clear the
 requested filter as well as its dependents. For example, the products table clears subcategory when category is
 removed; product labels, selected-value formatting and dependency rules stay outside `TableFilters`.
+The product field definitions are built by
+[`getProductFilterFields`](../products/products-table-filters.config.ts), a pure function that receives the current
+column filters, category data and Lingui instance. It adds no hooks or render-triggering state.
 
 ## Dependencies
 

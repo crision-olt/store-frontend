@@ -29,7 +29,7 @@ msgstr "All users"
 msgid "Already have an account?"
 msgstr "Already have an account?"
 
-#: src/components/products/products-table.tsx:89
+#: src/components/products/products-table-filters.config.ts:51
 msgid "Availability"
 msgstr "Availability"
 
@@ -67,7 +67,7 @@ msgid "Categories"
 msgstr "Categories"
 
 #: src/components/products/products-table-columns.tsx:83
-#: src/components/products/products-table.tsx:65
+#: src/components/products/products-table-filters.config.ts:27
 #: src/pages/categories.tsx:83
 msgid "Category"
 msgstr "Category"
@@ -315,7 +315,7 @@ msgid "Filters"
 msgstr "Filters"
 
 #: src/components/products/products-table-columns.tsx:224
-#: src/components/products/products-table.tsx:90
+#: src/components/products/products-table-filters.config.ts:52
 msgid "In stock"
 msgstr "In stock"
 
@@ -354,7 +354,7 @@ msgid "Manage categories"
 msgstr "Manage categories"
 
 #: src/components/products/products-table-columns.tsx:202
-#: src/components/products/products-table.tsx:84
+#: src/components/products/products-table-filters.config.ts:46
 msgid "Max"
 msgstr "Max"
 
@@ -363,7 +363,7 @@ msgid "Maximum price"
 msgstr "Maximum price"
 
 #: src/components/products/products-table-columns.tsx:192
-#: src/components/products/products-table.tsx:83
+#: src/components/products/products-table-filters.config.ts:45
 msgid "Min"
 msgstr "Min"
 
@@ -396,7 +396,7 @@ msgstr "No permissions assigned."
 msgid "No permissions yet."
 msgstr "No permissions yet."
 
-#: src/components/products/products-table.tsx:97
+#: src/components/products/products-table.tsx:66
 msgid "No products found."
 msgstr "No products found."
 
@@ -414,7 +414,7 @@ msgstr "No users yet."
 
 #: src/components/products/products-table-cells.tsx:16
 #: src/components/products/products-table-columns.tsx:225
-#: src/components/products/products-table.tsx:90
+#: src/components/products/products-table-filters.config.ts:52
 msgid "Out of stock"
 msgstr "Out of stock"
 
@@ -449,11 +449,11 @@ msgid "Permissions"
 msgstr "Permissions"
 
 #: src/components/products/products-table-columns.tsx:173
-#: src/components/products/products-table.tsx:81
+#: src/components/products/products-table-filters.config.ts:43
 msgid "Price"
 msgstr "Price"
 
-#: src/components/products/products-table.tsx:102
+#: src/components/products/products-table.tsx:71
 msgid "Product filters"
 msgstr "Product filters"
 
@@ -490,7 +490,7 @@ msgstr "Roles and permissions"
 msgid "Save"
 msgstr "Save"
 
-#: src/components/products/products-table.tsx:62
+#: src/components/products/products-table-filters.config.ts:24
 msgid "Search"
 msgstr "Search"
 
@@ -553,7 +553,7 @@ msgid "Store"
 msgstr "Store"
 
 #: src/components/products/products-table-columns.tsx:122
-#: src/components/products/products-table.tsx:70
+#: src/components/products/products-table-filters.config.ts:32
 msgid "Subcategory"
 msgstr "Subcategory"
 

@@ -9,10 +9,10 @@ import { Table, TableFilters } from '@/components/table'
 import { tableFeatureSet } from '@/components/table/features'
 import { TableFeedbackState } from '@/components/table/components/table-feedback-state'
 import { TableLoading } from '@/components/table/components/table-loading'
-import { columnFiltersToProductFilters } from '@/lib/product-filters'
 import { cn } from '@/lib/utils'
 import type { Category, Product, Subcategory } from '@/lib/products-api'
 import { useProductColumns } from '@/components/products/products-table-columns'
+import { getProductFilterFields } from '@/components/products/products-table-filters.config'
 import { isNotEmptyArray } from '@/utils/is-not-empty-array'
 
 const emptyProducts: Product[] = []
@@ -42,8 +42,7 @@ export function ProductsTable({
   subcategories,
   onCategoryChange,
 }: Props) {
-  const { t } = useLingui()
-  const filters = columnFiltersToProductFilters(columnFilters)
+  const { t, i18n } = useLingui()
 
   const table = useTable({
     features: tableFeatureSet,
@@ -59,38 +58,7 @@ export function ProductsTable({
   })
 
   const rows = table.getRowModel().rows
-  const filterFields = [
-    { id: 'name', label: t`Search`, value: filters.search, fullWidth: true },
-    {
-      id: 'category',
-      label: t`Category`,
-      value: filters.category.map((id) => categories.find((category) => String(category.id) === id)?.name ?? id).join(', '),
-    },
-    {
-      id: 'subcategory',
-      label: t`Subcategory`,
-      value: filters.subcategory.map((id) => {
-        const subcategory = subcategories.find((item) => String(item.id) === id)
-        const category = categories.find((item) => item.id === subcategory?.categoryId)
-        return subcategory
-          ? `${subcategory.name}${category ? ` (${category.name})` : ''}`
-          : id
-      }).join(', '),
-    },
-    {
-      id: 'price',
-      label: t`Price`,
-      value: [
-        filters.minPrice !== '' ? `${t`Min`}: ${filters.minPrice}` : '',
-        filters.maxPrice !== '' ? `${t`Max`}: ${filters.maxPrice}` : '',
-      ].filter(Boolean).join(' · '),
-    },
-    {
-      id: 'stock',
-      label: t`Availability`,
-      value: filters.stock.length === 1 ? (filters.stock[0] === 'in' ? t`In stock` : t`Out of stock`) : '',
-    },
-  ]
+  const filterFields = getProductFilterFields({ columnFilters, categories, subcategories, i18n })
   const removeFilter = (id: string) => onColumnFiltersChange((current) =>
     current.filter((filter) => filter.id !== id && !(id === 'category' && filter.id === 'subcategory')),
   )
