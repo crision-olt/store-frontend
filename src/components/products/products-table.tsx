@@ -43,17 +43,16 @@ export function ProductsTable({
   })
 
   const rows = table.getRowModel().rows
-  const feedbackState = isLoading ? (
-    <TableLoading />
-  ) : rows.length === 0 ? (
-    <TableFeedbackState title={t`No products found.`} />
+  const emptyState = !isLoading && rows.length === 0 ? (
+    <TableFeedbackState className="static h-80" title={t`No products found.`} />
   ) : undefined
 
   return (
     <Table
       table={table}
       className={cn('h-96 rounded-lg border bg-card transition-opacity', isFetching && !isLoading && 'opacity-60')}
-      feedbackState={feedbackState}
+      feedbackState={isLoading ? <TableLoading /> : undefined}
+      endSlot={emptyState}
     />
   )
 }

@@ -69,10 +69,19 @@ describe('ProductsTable', () => {
     expect(screen.getByRole('status', { name: 'Loading' })).toBeInTheDocument()
   })
 
-  test('shows the shared empty state', () => {
+  test('shows the empty state below the sortable column headers', () => {
     renderProductsTable({ products: [] })
 
-    expect(screen.getByTestId('table-feedback-state')).toHaveTextContent('No products found.')
+    const feedback = screen.getByTestId('table-feedback-state')
+    const header = screen.getByTestId('table-header-cell-name')
+    const scrollContainer = screen.getByTestId('table-scroll-container')
+
+    expect(feedback).toHaveTextContent('No products found.')
+    expect(feedback).toHaveClass('static')
+    expect(scrollContainer).toContainElement(feedback)
+    expect(header).toBeVisible()
+    fireEvent.click(within(header).getByRole('button'))
+    expect(onSortingChange).toHaveBeenCalledOnce()
   })
 
   test('does not show pagination controls', () => {
