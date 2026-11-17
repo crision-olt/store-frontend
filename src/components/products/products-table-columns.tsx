@@ -18,7 +18,9 @@ import {
 import type { Category, Product, Subcategory } from '@/lib/products-api'
 import type { StockFilter } from '@/lib/product-filters'
 
-const columnHelper = createColumnHelper<typeof tableFeatureSet, Product>()
+export type ProductTableRow = Product & { isPending?: boolean }
+
+const columnHelper = createColumnHelper<typeof tableFeatureSet, ProductTableRow>()
 
 type PriceRange = { minPrice: string; maxPrice: string }
 
@@ -59,11 +61,12 @@ export function useProductColumns({ categories, subcategories, onCategoryChange,
         <div className="flex min-w-48 items-center justify-between gap-3">
           <div className="flex min-w-0 flex-col">
             <span className="font-medium">{cell.getValue()}</span>
+            {row.original.isPending && <span role="status" className="text-xs text-muted-foreground"><Trans>Creating product…</Trans></span>}
             {row.original.description && (
               <span className="line-clamp-1 text-xs text-muted-foreground">{row.original.description}</span>
             )}
           </div>
-          <Button type="button" variant="outline" size="sm"
+          <Button type="button" variant="outline" size="sm" disabled={row.original.isPending}
             aria-label={i18n._(msg`Edit product ${row.original.name}`)} onClick={() => onEditProduct(row.original)}>
             <Trans>Edit</Trans>
           </Button>

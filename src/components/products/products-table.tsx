@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react/macro'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import { useMutationState, type Mutation } from '@tanstack/react-query'
 import {
   useTable,
   type ColumnFiltersState,
@@ -11,8 +12,8 @@ import { tableFeatureSet } from '@/components/table/features'
 import { TableFeedbackState } from '@/components/table/components/table-feedback-state'
 import { TableLoading } from '@/components/table/components/table-loading'
 import { cn } from '@/lib/utils'
-import type { Category, Product, Subcategory } from '@/lib/products-api'
-import { useProductColumns } from '@/components/products/products-table-columns'
+import type { Category, Product, ProductInput, Subcategory } from '@/lib/products-api'
+import { useProductColumns, type ProductTableRow } from '@/components/products/products-table-columns'
 import { EditProductDialog } from '@/components/products/create-product-dialog'
 import { getProductColumnLabels } from '@/components/products/products-table-columns.config'
 import { getProductFilterFields } from '@/components/products/products-table-filters.config'
@@ -47,11 +48,33 @@ export function ProductsTable({
 }: Props) {
   const { t, i18n } = useLingui()
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
+  const pending = useMutationState({
+    filters: { mutationKey: ['create-product'], status: 'pending' },
+    select: (mutation: Mutation<unknown, Error, ProductInput>) => ({
+      input: mutation.state.variables,
+      submittedAt: mutation.state.submittedAt,
+      id: mutation.mutationId,
+    }),
+  })
+  const data = useMemo<ProductTableRow[]>(() => pending.length === 0 ? products ?? emptyProducts : [
+    ...pending.flatMap(({ input, submittedAt, id }) => input ? [{
+      ...input,
+      // Mutation IDs are display-only keys; server product IDs stay untouched.
+      id: -id,
+      categoryName: categories.find((category) => category.id === input.categoryId)?.name ?? String(input.categoryId),
+      subcategoryName: input.subcategoryId === null ? null
+        : subcategories.find((subcategory) => subcategory.id === input.subcategoryId)?.name ?? String(input.subcategoryId),
+      created_at: new Date(submittedAt).toISOString(),
+      isPending: true,
+    }] : []),
+    ...(products ?? emptyProducts),
+  ], [pending, products, categories, subcategories])
 
   const table = useTable({
     features: tableFeatureSet,
     columns: useProductColumns({ categories, subcategories, onCategoryChange, onEditProduct: setEditingProduct }),
-    data: products ?? emptyProducts,
+    data,
+    getRowId: ({ id }) => String(id),
     manualSorting: true,
     manualFiltering: true,
     columnResizeMode: 'onChange',
@@ -81,8 +104,9 @@ export function ProductsTable({
       <Table
         table={table}
         className={cn('h-96 rounded-lg border bg-card transition-opacity', isFetching && !isLoading && 'opacity-60')}
-        feedbackState={isLoading ? <TableLoading /> : undefined}
+        feedbackState={isLoading && pending.length === 0 ? <TableLoading /> : undefined}
         endSlot={emptyState}
+        rowClassName={(row) => row.original.isPending ? 'bg-muted/40' : undefined}
       />
       {editingProduct && <EditProductDialog product={editingProduct} onClose={() => setEditingProduct(null)} />}
     </div>

@@ -7,7 +7,11 @@ import '@/test/setup-dom'
 import { AppWrapper } from '@/test/utils'
 import { createProduct, ProductsApiError, type Product } from '@/lib/products-api'
 import { CreateProductDialog } from '@/components/products/create-product-dialog'
-import { PendingProducts } from '@/components/products/pending-products'
+import { ProductsTable } from '@/components/products/products-table'
+import { defineBoundingClientRect, defineClientDimensions } from '@/test/dom'
+
+defineBoundingClientRect()
+defineClientDimensions()
 
 vi.mock('@/lib/products-api', async (importOriginal) => ({
   ...await importOriginal<typeof import('@/lib/products-api')>(),
@@ -30,13 +34,18 @@ const existingProduct: Product = {
 const savedProduct = { ...existingProduct, id: 9, name: 'Blue Mug', sku: 'MUG-1', price: 9.99, stock: 0 }
 
 function SavedProducts({ queryFn }: { queryFn: () => Promise<Product[]> }) {
-  const { data } = useQuery({ queryKey, queryFn, staleTime: Infinity })
-  return <ul aria-label="Saved products">{data?.map((product) => <li key={product.id}>{product.name}</li>)}</ul>
+  const { data, isPending, isFetching } = useQuery({ queryKey, queryFn, staleTime: Infinity })
+  return <ProductsTable products={data} isLoading={isPending} isFetching={isFetching}
+    sorting={[{ id: 'price', desc: true }]} onSortingChange={() => {}}
+    columnFilters={[{ id: 'name', value: 'Existing' }]} onColumnFiltersChange={() => {}}
+    categories={[{ id: 1, name: 'Kitchen' }, { id: 3, name: 'Office' }]}
+    subcategories={[{ id: 2, name: 'Mugs', categoryId: 1 }, { id: 4, name: 'Pens', categoryId: 3 }]}
+    onCategoryChange={() => {}} />
 }
 
-function setup(queryFn = async () => [existingProduct]) {
+function setup(queryFn = async () => [existingProduct], initialProducts: Product[] | null = [existingProduct]) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } })
-  client.setQueryData(queryKey, [existingProduct])
+  if (initialProducts !== null) client.setQueryData(queryKey, initialProducts)
   const invalidate = vi.spyOn(client, 'invalidateQueries')
   const user = userEvent.setup()
   render(
@@ -46,7 +55,6 @@ function setup(queryFn = async () => [existingProduct]) {
           <Routes>
             <Route path="/products" element={<>
               <CreateProductDialog />
-              <PendingProducts />
               <SavedProducts queryFn={queryFn} />
             </>} />
             <Route path="/login" element={<p>Sign in again</p>} />
@@ -70,7 +78,7 @@ beforeEach(() => {
   vi.mocked(createProduct).mockReset()
 })
 
-it('shows a pending product without changing the cache and keeps it visible through refetch', async () => {
+it('shows a pending product inside the table without changing the cache and keeps it through refetch', async () => {
   let finish!: () => void
   vi.mocked(createProduct).mockImplementation(() => new Promise((resolve) => {
     finish = () => resolve(savedProduct)
@@ -79,7 +87,7 @@ it('shows a pending product without changing the cache and keeps it visible thro
   const refetch = vi.fn(() => new Promise<Product[]>((resolve) => { finishRefetch = resolve }))
   const { user, invalidate, client, queryKey } = setup(refetch)
   const trigger = screen.getByRole('button', { name: 'Create product' })
-  expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  expect(screen.queryByRole('dialog', { name: 'Create product' })).not.toBeInTheDocument()
   await user.click(trigger)
   await fillRequired(user)
   await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Create product' }))
@@ -91,8 +99,14 @@ it('shows a pending product without changing the cache and keeps it visible thro
   })
   expect(screen.getByRole('button', { name: 'Creating product…' })).toHaveAttribute('aria-disabled', 'true')
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-  expect(await screen.findByRole('status')).toHaveTextContent('Blue Mug')
-  expect(screen.getByRole('status')).toHaveTextContent('MUG-1')
+  const table = screen.getByRole('table')
+  const pendingRow = await within(table).findByRole('row', { name: /Blue Mug/ })
+  expect(within(table).getAllByRole('row')[1]).toBe(pendingRow)
+  expect(within(pendingRow).getByRole('status')).toHaveTextContent('Creating product…')
+  expect(within(pendingRow).getByRole('cell', { name: 'MUG-1' })).toBeInTheDocument()
+  expect(within(pendingRow).getByRole('cell', { name: 'Kitchen' })).toBeInTheDocument()
+  expect(within(pendingRow).getByRole('cell', { name: '$9.99' })).toBeInTheDocument()
+  expect(within(pendingRow).getByRole('button', { name: 'Edit product Blue Mug' })).toBeDisabled()
   expect(client.getQueryData(queryKey)).toEqual([existingProduct])
   expect(refetch).not.toHaveBeenCalled()
   await user.click(screen.getByRole('button', { name: 'Creating product…' }))
@@ -101,11 +115,12 @@ it('shows a pending product without changing the cache and keeps it visible thro
   await user.keyboard('{Escape}')
   finish()
   await waitFor(() => expect(refetch).toHaveBeenCalledOnce())
-  expect(screen.getByRole('status')).toHaveTextContent('Blue Mug')
+  expect(within(table).getByRole('row', { name: /Blue Mug/ })).toContainElement(within(table).getByRole('status'))
   expect(screen.getByRole('button', { name: 'Creating product…' })).toHaveAttribute('aria-disabled', 'true')
   finishRefetch([existingProduct, savedProduct])
-  await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument())
-  expect(within(screen.getByRole('list', { name: 'Saved products' })).getByText('Blue Mug')).toBeInTheDocument()
+  await waitFor(() => expect(within(table).queryByRole('status')).not.toBeInTheDocument())
+  expect(within(table).getAllByRole('row', { name: /Blue Mug/ })).toHaveLength(1)
+  expect(within(table).getByRole('button', { name: 'Edit product Blue Mug' })).toBeEnabled()
   expect(client.getQueryData(queryKey)).toEqual([existingProduct, savedProduct])
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   expect(invalidate).toHaveBeenCalledWith({ queryKey: ['products'] })
@@ -127,11 +142,13 @@ it('clears incompatible subcategories, preserves errors for retry, and resets on
   await user.click(await screen.findByRole('option', { name: 'Office' }))
   expect(screen.getByRole('combobox', { name: 'Subcategory (optional)' })).toHaveTextContent('None')
   await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Create product' }))
-  expect(await screen.findByRole('status')).toHaveTextContent('Blue Mug')
+  const table = screen.getByRole('table')
+  expect(await within(table).findByRole('row', { name: /Blue Mug/ })).toBeInTheDocument()
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   reject(new ProductsApiError(409))
   expect(await screen.findByRole('alert')).toHaveTextContent('A product with this SKU already exists.')
-  expect(screen.queryByRole('status')).not.toBeInTheDocument()
+  expect(within(table).queryByRole('status', { hidden: true })).not.toBeInTheDocument()
+  expect(within(table).queryByText('Blue Mug')).not.toBeInTheDocument()
   expect(screen.getByLabelText('Name')).toHaveValue('Blue Mug')
   expect(screen.getByLabelText('SKU')).toHaveValue('MUG-1')
   expect(screen.getByLabelText('Price')).toHaveValue(9.99)
@@ -156,4 +173,28 @@ it('uses native constraints to reject invalid values before posting and redirect
   fireEvent.change(price, { target: { value: '0' } })
   await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Create product' }))
   expect(await screen.findByText('Sign in again')).toBeInTheDocument()
+})
+
+it('keeps the pending row visible while the initial catalog is still loading', async () => {
+  let finishInitial!: (products: Product[]) => void
+  const queryFn = vi.fn()
+    .mockImplementationOnce(() => new Promise<Product[]>((resolve) => { finishInitial = resolve }))
+    .mockResolvedValue([existingProduct])
+  let reject!: (error: Error) => void
+  vi.mocked(createProduct).mockImplementationOnce(() => new Promise((_resolve, rejectPromise) => {
+    reject = rejectPromise
+  }))
+  const { user, client, queryKey } = setup(queryFn, null)
+  await user.click(screen.getByRole('button', { name: 'Create product' }))
+  await fillRequired(user)
+  await user.click(within(screen.getByRole('dialog', { name: 'Create product' })).getByRole('button', { name: 'Create product' }))
+  const table = screen.getByRole('table')
+  expect(await within(table).findByRole('row', { name: /Blue Mug/ })).toBeVisible()
+  expect(screen.queryByRole('status', { name: 'Loading' })).not.toBeInTheDocument()
+  expect(client.getQueryData(queryKey)).toBeUndefined()
+  finishInitial([existingProduct])
+  await waitFor(() => expect(within(table).getByText('Existing product')).toBeInTheDocument())
+  reject(new ProductsApiError(409))
+  expect(await screen.findByRole('alert')).toHaveTextContent('A product with this SKU already exists.')
+  expect(within(table).queryByText('Blue Mug')).not.toBeInTheDocument()
 })

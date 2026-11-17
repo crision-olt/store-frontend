@@ -18,10 +18,11 @@ while displaying their names.
 On **Products**, select **Create product** above the table. Enter a name, unique SKU,
 category, price, and stock; description and subcategory are optional. Subcategories
 belong to the selected category. Saving immediately closes the dialog and shows a
-pending product above the table, independently of its filters and sorting. This
-preview remains visible until the request and catalog refresh finish; the table
+pending product as the first row inside the table, independently of its filters
+and sorting. Pending rows show a saving status and cannot be edited until saved.
+The row remains pending until the request and catalog refresh finish; the table
 then shows the server results using the existing filters and sorting.
-Failed saves remove the preview and reopen the form with your entries and an error
+Failed saves remove the pending row and reopen the form with your entries and an error
 message. Pending products use TanStack Query mutation state, not the product cache.
 
 Select **Edit** beside a product name to open the same form with its current

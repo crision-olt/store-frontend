@@ -290,7 +290,13 @@ describe('ProductsTable', () => {
         />
       )
     }
-    render(<AppWrapper><FilteredTable /></AppWrapper>)
+    render(
+      <AppWrapper>
+        <QueryClientProvider client={new QueryClient()}>
+          <FilteredTable />
+        </QueryClientProvider>
+      </AppWrapper>,
+    )
 
     fireEvent.click(screen.getByRole('button', { name: 'Filters' }))
     fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'Demo' } })
