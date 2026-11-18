@@ -53,6 +53,19 @@ The dropdown lists both visible and hidden columns; the pinned product name cann
 be hidden or moved. To reorder with the keyboard, focus a handle, press Space,
 use the arrow keys, then press Space to drop or Escape to cancel.
 
+Select **Download Excel** beside **Columns** to save `Products_{timestamp}.xlsx`,
+where the timestamp is the current Unix time in milliseconds. The export uses all
+loaded results for the current filters and sort, not just rows visible in the
+scroll viewport. Only visible data columns are included, in their displayed order,
+with translated headers; actions and unsaved products are excluded. Prices and
+stock stay numeric, and creation dates retain their ISO timestamps.
+Downloading is disabled while filters are debouncing, results are loading or
+refreshing, filters are invalid, loading failed, or there are no saved results.
+The service's `/exports/xlsx` endpoint supplies the styled workbook. The browser
+buffers the request and completed download before saving; the service still
+parses and generates the workbook incrementally. A failed or interrupted download
+shows an error and can be retried without resetting the table configuration.
+
 Use **Roles and permissions** to create permissions and new roles with selected
 permissions. The API requires `access:manage`; see the service's roles and permissions
 setup for bootstrapping an administrator. This page does not assign roles to users.

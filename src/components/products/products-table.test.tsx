@@ -4,22 +4,40 @@ import { i18n } from '@lingui/core'
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/vitest'
 import '@/test/setup-dom'
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MemoryRouter } from 'react-router-dom'
 
-import type { ColumnFiltersState, SortingState, Updater } from '@tanstack/react-table'
+import { useTable, type ColumnFiltersState, type SortingState, type Updater } from '@tanstack/react-table'
 import type { Category, Product, Subcategory } from '@/lib/products-api'
-import { ProductsApiError, updateProduct } from '@/lib/products-api'
+import { listAllProducts, ProductsApiError, updateProduct } from '@/lib/products-api'
 import { defineBoundingClientRect, defineClientDimensions } from '@/test/dom'
 import { AppWrapper } from '@/test/utils'
 import { ProductsTable } from '@/components/products/products-table'
+import { downloadExcel } from '@/lib/exports-api'
+import { DownloadProductsButton } from '@/components/products/download-products-button'
+import { useProductColumns } from '@/components/products/products-table-columns'
+import { tableFeatureSet } from '@/components/table/features'
+import { ProductsPage } from '@/pages/products'
+
+vi.mock('@/components/auth/require-auth', () => ({
+  RequireAuth: ({ children }: { children: ReactNode }) => children,
+}))
+vi.mock('@/components/store-layout', () => ({
+  StoreLayout: ({ children }: { children: ReactNode }) => <main>{children}</main>,
+}))
+
+vi.mock('@/lib/exports-api', async (importOriginal) => ({
+  ...await importOriginal<typeof import('@/lib/exports-api')>(),
+  downloadExcel: vi.fn(),
+}))
 
 vi.mock('@/lib/products-api', async (importOriginal) => ({
   ...await importOriginal<typeof import('@/lib/products-api')>(),
   listCategories: vi.fn(async () => categories),
   listSubcategories: vi.fn(async () => subcategories),
   updateProduct: vi.fn(),
+  listAllProducts: vi.fn(),
 }))
 
 defineBoundingClientRect()
@@ -54,6 +72,7 @@ const defaultProps = {
   products: [product],
   isLoading: false,
   isFetching: false,
+  isExportDisabled: false,
   sorting: [] as SortingState,
   onSortingChange,
   columnFilters: [] as ColumnFiltersState,
@@ -63,7 +82,7 @@ const defaultProps = {
   onCategoryChange: vi.fn(),
 }
 
-const renderProductsTable = (props: Partial<typeof defaultProps> = {}) => {
+const renderProductsTable = (props: Partial<typeof defaultProps> = {}, content?: ReactNode) => {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
   return {
     client,
@@ -71,7 +90,7 @@ const renderProductsTable = (props: Partial<typeof defaultProps> = {}) => {
       <AppWrapper>
         <QueryClientProvider client={client}>
           <MemoryRouter initialEntries={['/products']}>
-            <ProductsTable {...defaultProps} {...props} />
+            {content ?? <ProductsTable {...defaultProps} {...props} />}
           </MemoryRouter>
         </QueryClientProvider>
       </AppWrapper>,
@@ -83,6 +102,118 @@ describe('ProductsTable', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(updateProduct).mockReset()
+    vi.mocked(downloadExcel).mockReset()
+    vi.mocked(listAllProducts).mockReset()
+  })
+
+  test('exports filtered rows in their current order with only visible columns and a timestamped filename', async () => {
+    vi.mocked(downloadExcel).mockResolvedValue()
+    const user = userEvent.setup()
+    renderProductsTable({
+      products: [{ ...product, id: 2, name: 'Second', price: 20 }, product],
+      sorting: [{ id: 'price', desc: true }],
+      columnFilters: [{ id: 'category', value: ['1'] }],
+    })
+    await user.click(screen.getByRole('button', { name: 'Columns' }))
+    for (const name of ['SKU', 'Subcategory', 'Created']) {
+      await user.click(screen.getByRole('checkbox', { name }))
+    }
+    await user.keyboard('{Escape}')
+    await user.click(screen.getByRole('button', { name: 'Download Excel' }))
+    await waitFor(() => expect(downloadExcel).toHaveBeenCalledExactlyOnceWith({
+      headers: ['Name', 'Category', 'Price', 'Stock'],
+      rows: [
+        ['Second', 'Accessories', 20, 4],
+        ['Demo product', 'Accessories', 12.5, 4],
+      ],
+    }, expect.stringMatching(/^Products_\d{13}\.xlsx$/)))
+    expect(onColumnFiltersChange).not.toHaveBeenCalled()
+    expect(onSortingChange).not.toHaveBeenCalled()
+  })
+
+  test('prevents duplicate downloads and allows retrying after a failed export', async () => {
+    let reject!: (error: Error) => void
+    vi.mocked(downloadExcel).mockImplementationOnce(() => new Promise((_resolve, rejectPromise) => {
+      reject = rejectPromise
+    })).mockResolvedValue(undefined)
+    const user = userEvent.setup()
+    renderProductsTable()
+    await user.click(screen.getByRole('button', { name: 'Download Excel' }))
+    expect(screen.getByRole('button', { name: 'Preparing Excel…' })).toBeDisabled()
+    await act(async () => reject(new Error('Connection lost')))
+    expect(await screen.findByRole('alert')).toHaveTextContent('Could not download Excel. Please try again.')
+    await user.click(screen.getByRole('button', { name: 'Download Excel' }))
+    await waitFor(() => expect(downloadExcel).toHaveBeenCalledTimes(2))
+    await waitFor(() => expect(screen.queryByRole('alert')).not.toBeInTheDocument())
+  })
+
+  test('matches pinned and reordered columns and excludes unsaved products', async () => {
+    function ReorderedDownload() {
+      const table = useTable({
+        features: tableFeatureSet,
+        columns: useProductColumns({
+          categories: [], subcategories: [], onCategoryChange: vi.fn(),
+          onEditProduct: vi.fn(), onArchiveProduct: vi.fn(),
+        }),
+        data: [{ ...product, id: -1, name: 'Unsaved', isPending: true }, product],
+        initialState: {
+          columnOrder: ['stock', 'price', 'sku', 'name'],
+          columnVisibility: { sku: false, category: false, subcategory: false, created_at: false },
+          columnPinning: { start: ['name'], end: [] },
+        },
+      })
+      return <DownloadProductsButton table={table} disabled={false} />
+    }
+    vi.mocked(downloadExcel).mockResolvedValue()
+    renderProductsTable({}, <ReorderedDownload />)
+    await userEvent.click(screen.getByRole('button', { name: 'Download Excel' }))
+    await waitFor(() => expect(downloadExcel).toHaveBeenCalledExactlyOnceWith({
+      headers: ['Name', 'Stock', 'Price'],
+      rows: [['Demo product', 4, 12.5]],
+    }, expect.stringMatching(/^Products_\d{13}\.xlsx$/)))
+  })
+
+  test('waits for changed page filters and their results before exporting', async () => {
+    let finish!: (products: Product[]) => void
+    vi.mocked(listAllProducts).mockImplementation((query) => query?.search
+      ? new Promise((resolve) => { finish = resolve })
+      : Promise.resolve([product]))
+    vi.mocked(downloadExcel).mockResolvedValue()
+    renderProductsTable({}, <ProductsPage />)
+    const user = userEvent.setup()
+    const button = screen.getByRole('button', { name: 'Download Excel' })
+    await waitFor(() => expect(button).toBeEnabled())
+    await user.click(screen.getByRole('button', { name: 'Filters' }))
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'Target' } })
+    expect(button).toBeDisabled()
+    await waitFor(() => expect(listAllProducts).toHaveBeenLastCalledWith(
+      expect.objectContaining({ search: 'Target' }), expect.anything(),
+    ))
+    expect(button).toBeDisabled()
+    await act(async () => finish([{ ...product, name: 'Target product' }]))
+    await waitFor(() => expect(button).toBeEnabled())
+    await user.click(button)
+    await waitFor(() => expect(downloadExcel).toHaveBeenCalledWith(
+      expect.objectContaining({
+        rows: [['Target product', 'DEMO-1', 'Accessories', null, 12.5, 4, product.created_at]],
+      }),
+      expect.stringMatching(/^Products_\d{13}\.xlsx$/),
+    ))
+    await user.click(screen.getByRole('button', { name: /Filters/ }))
+    fireEvent.change(screen.getByRole('spinbutton', { name: 'Minimum price' }), { target: { value: '30' } })
+    fireEvent.change(screen.getByRole('spinbutton', { name: 'Maximum price' }), { target: { value: '20' } })
+    expect(button).toBeDisabled()
+  })
+
+  test.each([
+    { isLoading: true },
+    { isFetching: true },
+    { products: [] },
+    { isExportDisabled: true },
+  ])('does not export an empty, loading or outdated table: %o', (props) => {
+    renderProductsTable(props)
+    expect(screen.getByRole('button', { name: 'Download Excel' })).toBeDisabled()
+    expect(downloadExcel).not.toHaveBeenCalled()
   })
 
   test('formats prices in euros using the selected language', () => {
@@ -320,7 +451,7 @@ describe('ProductsTable', () => {
     render(
       <AppWrapper>
         <QueryClientProvider client={new QueryClient()}>
-          <FilteredTable />
+          <MemoryRouter><FilteredTable /></MemoryRouter>
         </QueryClientProvider>
       </AppWrapper>,
     )

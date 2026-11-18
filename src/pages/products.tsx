@@ -107,6 +107,8 @@ function ProductsContent() {
             products={products.data}
             isLoading={products.isPending && !products.isError}
             isFetching={products.isFetching}
+            isExportDisabled={products.isError || hasInvalidPriceRange(filters)
+              || JSON.stringify(toProductsQuery(filters)) !== JSON.stringify(toProductsQuery(appliedFilters))}
             sorting={sorting}
             onSortingChange={setSorting}
             columnFilters={columnFilters}

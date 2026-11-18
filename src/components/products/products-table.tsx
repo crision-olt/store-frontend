@@ -16,6 +16,7 @@ import type { Category, Product, ProductInput, Subcategory } from '@/lib/product
 import { useProductColumns, type ProductTableRow } from '@/components/products/products-table-columns'
 import { EditProductDialog } from '@/components/products/create-product-dialog'
 import { ArchiveProductDialog } from '@/components/products/archive-product-dialog'
+import { DownloadProductsButton } from '@/components/products/download-products-button'
 import { getProductColumnLabels } from '@/components/products/products-table-columns.config'
 import { getProductFilterFields } from '@/components/products/products-table-filters.config'
 import { isNotEmptyArray } from '@/utils/is-not-empty-array'
@@ -26,6 +27,7 @@ type Props = {
   products: Product[] | undefined
   isLoading: boolean
   isFetching: boolean
+  isExportDisabled?: boolean
   sorting: SortingState
   onSortingChange: OnChangeFn<SortingState>
   columnFilters: ColumnFiltersState
@@ -39,6 +41,7 @@ export function ProductsTable({
   products,
   isLoading,
   isFetching,
+  isExportDisabled = false,
   sorting,
   onSortingChange,
   columnFilters,
@@ -101,7 +104,10 @@ export function ProductsTable({
     <div className="flex min-w-0 flex-col gap-3">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <TableFilters table={table} title={t`Product filters`} fields={filterFields} onRemoveFilter={removeFilter} />
-        <TableColumnVisibility table={table} columnLabels={getProductColumnLabels(i18n)} excludedColumnIds={['actions']} />
+        <div className="flex items-start gap-2">
+          <DownloadProductsButton table={table} disabled={isLoading || isFetching || isExportDisabled} />
+          <TableColumnVisibility table={table} columnLabels={getProductColumnLabels(i18n)} excludedColumnIds={['actions']} />
+        </div>
       </div>
       <Table
         table={table}

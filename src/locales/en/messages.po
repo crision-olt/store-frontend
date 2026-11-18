@@ -181,6 +181,10 @@ msgstr "Could not create the account"
 msgid "Could not create the product. Please try again."
 msgstr "Could not create the product. Please try again."
 
+#: src/components/products/download-products-button.tsx:53
+msgid "Could not download Excel. Please try again."
+msgstr "Could not download Excel. Please try again."
+
 #: src/components/products/create-product-dialog.tsx:162
 #: src/pages/categories.tsx:62
 #: src/pages/products.tsx:87
@@ -334,6 +338,10 @@ msgstr "Description (optional)"
 #: src/pages/login.tsx:49
 msgid "Don't have an account?"
 msgstr "Don't have an account?"
+
+#: src/components/products/download-products-button.tsx:50
+msgid "Download Excel"
+msgstr "Download Excel"
 
 #: src/components/table/components/table-column-visibility.tsx:170
 msgid "Drag handles to reorder columns. Or focus a handle, press Space, then use the arrow keys."
@@ -495,7 +503,7 @@ msgstr "No permissions assigned."
 msgid "No permissions yet."
 msgstr "No permissions yet."
 
-#: src/components/products/products-table.tsx:97
+#: src/components/products/products-table.tsx:100
 msgid "No products found."
 msgstr "No products found."
 
@@ -560,6 +568,10 @@ msgstr "Pinned"
 msgid "Pinned columns cannot be hidden or moved."
 msgstr "Pinned columns cannot be hidden or moved."
 
+#: src/components/products/download-products-button.tsx:50
+msgid "Preparing Excel…"
+msgstr "Preparing Excel…"
+
 #: src/components/products/create-product-dialog.tsx:90
 #: src/components/products/products-table-columns.config.ts:11
 #: src/components/products/products-table-columns.tsx:180
@@ -567,7 +579,7 @@ msgstr "Pinned columns cannot be hidden or moved."
 msgid "Price"
 msgstr "Price"
 
-#: src/components/products/products-table.tsx:103
+#: src/components/products/products-table.tsx:106
 msgid "Product filters"
 msgstr "Product filters"
 
