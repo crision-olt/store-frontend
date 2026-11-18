@@ -1,20 +1,18 @@
 import { useLingui } from '@lingui/react/macro'
-import { useMutation } from '@tanstack/react-query'
 import { DownloadIcon } from 'lucide-react'
 import { Navigate, useLocation } from 'react-router-dom'
 import type { ProductTableRow } from '@/components/products/products-table-columns'
 import { getProductColumnLabels } from '@/components/products/products-table-columns.config'
 import type { DataTable } from '@/components/table/features'
 import { Button } from '@/components/ui/button'
-import { downloadExcel, ExportsApiError, type ExcelCell, type ExcelTable } from '@/lib/exports-api'
+import { useDownloadExcel } from '@/hooks/use-download-excel'
+import { ExportsApiError, type ExcelCell } from '@/lib/exports-api'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 
 export function DownloadProductsButton({ table, disabled }: { table: DataTable<ProductTableRow>; disabled: boolean }) {
   const { t, i18n } = useLingui()
   const location = useLocation()
-  const download = useMutation({
-    mutationFn: ({ data, filename }: { data: ExcelTable; filename: string }) => downloadExcel(data, filename),
-  })
+  const download = useDownloadExcel()
 
   if (download.error instanceof ExportsApiError && download.error.status === 401) {
     return <Navigate to={buildLinkWithRedirect('/login', location.pathname + location.search)} replace />
