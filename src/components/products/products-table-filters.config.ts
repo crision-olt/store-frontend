@@ -46,10 +46,5 @@ export function getProductFilterFields({
         filters.maxPrice !== '' ? `${i18n._(msg`Max`)}: ${filters.maxPrice}` : '',
       ].filter(Boolean).join(' · '),
     },
-    {
-      id: 'stock',
-      label: i18n._(msg`Availability`),
-      value: filters.stock.length === 1 ? (filters.stock[0] === 'in' ? i18n._(msg`In stock`) : i18n._(msg`Out of stock`)) : '',
-    },
   ]
 }

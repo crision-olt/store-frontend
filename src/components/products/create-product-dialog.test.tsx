@@ -29,10 +29,10 @@ const queryKey = ['products', { search: 'Existing', sortBy: 'price', sortOrder: 
 const existingProduct: Product = {
   id: 8, name: 'Existing product', sku: 'OLD-1', description: null,
   categoryId: 1, categoryName: 'Kitchen', subcategoryId: null,
-  subcategoryName: null, price: 20, stock: 5, created_at: '2026-01-01',
+  subcategoryName: null, price: 20, created_at: '2026-01-01',
 }
 
-const savedProduct = { ...existingProduct, id: 9, name: 'Blue Mug', sku: 'MUG-1', price: 9.99, stock: 0 }
+const savedProduct = { ...existingProduct, id: 9, name: 'Blue Mug', sku: 'MUG-1', price: 9.99 }
 
 function SavedProducts({ queryFn }: { queryFn: () => Promise<Product[]> }) {
   const { data, isPending, isFetching } = useQuery({ queryKey, queryFn, staleTime: Infinity })
@@ -97,7 +97,7 @@ it('shows a pending product inside the table without changing the cache and keep
   expect(createProduct).toHaveBeenCalledOnce()
   expect(vi.mocked(createProduct).mock.calls[0][0]).toEqual({
     name: 'Blue Mug', sku: 'MUG-1', description: null,
-    categoryId: 1, subcategoryId: null, price: 9.99, stock: 0,
+    categoryId: 1, subcategoryId: null, price: 9.99,
   })
   expect(screen.getByRole('button', { name: 'Creating product…' })).toHaveAttribute('aria-disabled', 'true')
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument()

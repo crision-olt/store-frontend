@@ -9,7 +9,6 @@ export function getProductColumnLabels(i18n: I18n): Record<SortableColumn, strin
     category: i18n._(msg`Category`),
     subcategory: i18n._(msg`Subcategory`),
     price: i18n._(msg`Price`),
-    stock: i18n._(msg`Stock`),
     created_at: i18n._(msg`Created`),
   }
 }

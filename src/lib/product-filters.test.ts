@@ -13,7 +13,6 @@ describe('product filters', () => {
       subcategory: undefined,
       minPrice: undefined,
       maxPrice: undefined,
-      inStock: undefined,
     })
   })
 
@@ -25,7 +24,6 @@ describe('product filters', () => {
         subcategory: ['2'],
         minPrice: '0',
         maxPrice: '19.5',
-        stock: ['out'],
       }),
     ).toEqual({
       search: 'mug',
@@ -33,10 +31,7 @@ describe('product filters', () => {
       subcategory: ['2'],
       minPrice: 0,
       maxPrice: 19.5,
-      inStock: false,
     })
-    expect(toProductsQuery({ ...emptyFilters, stock: ['in'] }).inStock).toBe(true)
-    expect(toProductsQuery({ ...emptyFilters, stock: ['in', 'out'] }).inStock).toBeUndefined()
   })
 
   it('maps table column filters to product query filters', () => {
@@ -46,7 +41,6 @@ describe('product filters', () => {
         { id: 'category', value: ['1', '3'] },
         { id: 'subcategory', value: ['2', '4'] },
         { id: 'price', value: { minPrice: '5', maxPrice: '20' } },
-        { id: 'stock', value: ['in', 'out'] },
       ]),
     ).toEqual({
       search: '  mug ',
@@ -54,7 +48,6 @@ describe('product filters', () => {
       subcategory: ['2', '4'],
       minPrice: '5',
       maxPrice: '20',
-      stock: ['in', 'out'],
     })
   })
 

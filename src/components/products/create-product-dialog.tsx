@@ -35,7 +35,6 @@ function ProductForm({ categories, subcategories, initial, editing, pending, err
       categoryId,
       subcategoryId,
       price: Number(data.get('price')),
-      stock: Number(data.get('stock')),
     })
   }
 
@@ -89,10 +88,6 @@ function ProductForm({ categories, subcategories, initial, editing, pending, err
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="product-price">{t`Price`}</Label>
             <Input id="product-price" name="price" type="number" defaultValue={initial?.price} min={0} max={99999999.99} step="0.01" required />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="product-stock">{t`Stock`}</Label>
-            <Input id="product-stock" name="stock" type="number" min={0} max={2147483647} step={1} defaultValue={initial?.stock ?? 0} required />
           </div>
         </div>
         {categories.length === 0 && <p role="alert" className="text-sm text-muted-foreground">{t`Create a category on the Categories page before adding products.`}</p>}

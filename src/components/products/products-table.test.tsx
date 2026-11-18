@@ -53,7 +53,6 @@ const product: Product = {
   subcategoryId: null,
   subcategoryName: null,
   price: 12.5,
-  stock: 4,
   created_at: '2025-01-01T00:00:00.000Z',
 }
 
@@ -121,10 +120,10 @@ describe('ProductsTable', () => {
     await user.keyboard('{Escape}')
     await user.click(screen.getByRole('button', { name: 'Download Excel' }))
     await waitFor(() => expect(downloadExcel).toHaveBeenCalledExactlyOnceWith({
-      headers: ['Name', 'Category', 'Price', 'Stock'],
+      headers: ['Name', 'Category', 'Price'],
       rows: [
-        ['Second', 'Accessories', 20, 4],
-        ['Demo product', 'Accessories', 12.5, 4],
+        ['Second', 'Accessories', 20],
+        ['Demo product', 'Accessories', 12.5],
       ],
     }, expect.stringMatching(/^Products_\d{13}\.xlsx$/)))
     expect(onColumnFiltersChange).not.toHaveBeenCalled()
@@ -157,8 +156,8 @@ describe('ProductsTable', () => {
         }),
         data: [{ ...product, id: -1, name: 'Unsaved', isPending: true }, product],
         initialState: {
-          columnOrder: ['stock', 'price', 'sku', 'name'],
-          columnVisibility: { sku: false, category: false, subcategory: false, created_at: false },
+          columnOrder: ['price', 'category', 'sku', 'name'],
+          columnVisibility: { sku: false, subcategory: false, created_at: false },
           columnPinning: { start: ['name'], end: [] },
         },
       })
@@ -168,8 +167,8 @@ describe('ProductsTable', () => {
     renderProductsTable({}, <ReorderedDownload />)
     await userEvent.click(screen.getByRole('button', { name: 'Download Excel' }))
     await waitFor(() => expect(downloadExcel).toHaveBeenCalledExactlyOnceWith({
-      headers: ['Name', 'Stock', 'Price'],
-      rows: [['Demo product', 4, 12.5]],
+      headers: ['Name', 'Price', 'Category'],
+      rows: [['Demo product', 12.5, 'Accessories']],
     }, expect.stringMatching(/^Products_\d{13}\.xlsx$/)))
   })
 
@@ -195,7 +194,7 @@ describe('ProductsTable', () => {
     await user.click(button)
     await waitFor(() => expect(downloadExcel).toHaveBeenCalledWith(
       expect.objectContaining({
-        rows: [['Target product', 'DEMO-1', 'Accessories', null, 12.5, 4, product.created_at]],
+        rows: [['Target product', 'DEMO-1', 'Accessories', null, 12.5, product.created_at]],
       }),
       expect.stringMatching(/^Products_\d{13}\.xlsx$/),
     ))
@@ -252,7 +251,7 @@ describe('ProductsTable', () => {
         super(callback)
         this.observe = (target) => {
           if (target.getAttribute('data-testid') === 'table-size-container') {
-            callback([{ target, contentRect: new DOMRect(0, 0, 1200, 40) } as ResizeObserverEntry], this)
+            callback([{ target, contentRect: new DOMRect(0, 0, 1050, 40) } as ResizeObserverEntry], this)
           }
         }
       }
@@ -264,25 +263,19 @@ describe('ProductsTable', () => {
     }
     const container = screen.getByTestId('table-container')
     const width = (id: string) => Number.parseFloat(container.style.getPropertyValue(`--col-${id}-size`))
-    const totalWidth = () => ['name', 'sku', 'category', 'subcategory', 'price', 'stock', 'created_at', 'actions']
+    const totalWidth = () => ['name', 'sku', 'category', 'subcategory', 'price', 'created_at', 'actions']
       .reduce((sum, id) => sum + width(id), 0)
     const initialSkuWidth = width('sku')
     const resizer = screen.getByTestId('table-header-cell-sku-resizer')
 
-    expect(totalWidth()).toBeGreaterThan(1200)
+    expect(totalWidth()).toBeGreaterThan(1050)
     fireEvent.mouseDown(resizer, { clientX: 200, buttons: 1 })
     fireEvent.mouseMove(document, { clientX: 160, buttons: 1 })
     expect(width('sku')).toBe(initialSkuWidth - 40)
-    expect(totalWidth()).toBeCloseTo(1200)
+    expect(totalWidth()).toBeCloseTo(1050)
     fireEvent.mouseUp(document, { clientX: 160 })
     expect(width('sku')).toBe(initialSkuWidth - 40)
-    expect(totalWidth()).toBeCloseTo(1200)
-
-    fireEvent.mouseDown(screen.getByTestId('table-header-cell-stock-resizer'), { clientX: 300, buttons: 1 })
-    fireEvent.mouseMove(document, { clientX: 200, buttons: 1 })
-    expect(width('stock')).toBe(110)
-    expect(totalWidth()).toBeCloseTo(1200)
-    fireEvent.mouseUp(document, { clientX: 200 })
+    expect(totalWidth()).toBeCloseTo(1050)
   })
 
   test('opens one prefilled editor and saves the chosen product with compatible category selections', async () => {
@@ -302,7 +295,7 @@ describe('ProductsTable', () => {
     expect(screen.getByLabelText('SKU')).toHaveValue('DEMO-1')
     expect(screen.getByLabelText('Description (optional)')).toHaveValue('A sample product')
     expect(screen.getByLabelText('Price')).toHaveValue(12.5)
-    expect(screen.getByLabelText('Stock')).toHaveValue(4)
+    expect(screen.queryByLabelText('Stock')).not.toBeInTheDocument()
     expect(screen.getByRole('combobox', { name: 'Category' })).toHaveTextContent('Accessories')
     expect(screen.getByRole('combobox', { name: 'Subcategory (optional)' })).toHaveTextContent('Cases')
     await user.clear(screen.getByLabelText('Name'))
@@ -317,11 +310,10 @@ describe('ProductsTable', () => {
     expect(screen.queryByRole('option', { name: 'Cases' })).not.toBeInTheDocument()
     await user.click(await screen.findByRole('option', { name: 'Tools' }))
     fireEvent.change(screen.getByLabelText('Price'), { target: { value: '0' } })
-    fireEvent.change(screen.getByLabelText('Stock'), { target: { value: '0' } })
     await user.click(screen.getByRole('button', { name: 'Save' }))
     expect(updateProduct).toHaveBeenCalledExactlyOnceWith(7, {
       name: 'Updated product', sku: 'NEW-1', description: null,
-      categoryId: 3, subcategoryId: 4, price: 0, stock: 0,
+      categoryId: 3, subcategoryId: 4, price: 0,
     })
     expect(screen.getByRole('button', { name: 'Saving…' })).toBeDisabled()
     await user.keyboard('{Escape}')
@@ -401,10 +393,10 @@ describe('ProductsTable', () => {
 
     await user.click(screen.getByRole('button', { name: 'Columns' }))
     const popup = screen.getByRole('dialog', { name: 'Visible columns' })
-    expect(within(popup).getAllByRole('checkbox')).toHaveLength(7)
+    expect(within(popup).getAllByRole('checkbox')).toHaveLength(6)
     expect(within(popup).queryByRole('checkbox', { name: /actions/i })).not.toBeInTheDocument()
     expect(within(popup).queryByRole('button', { name: /Reorder actions/i })).not.toBeInTheDocument()
-    for (const name of ['Name', 'SKU', 'Category', 'Subcategory', 'Price', 'Stock', 'Created']) {
+    for (const name of ['Name', 'SKU', 'Category', 'Subcategory', 'Price', 'Created']) {
       expect(within(popup).getByRole('checkbox', { name })).toBeChecked()
     }
     expect(within(popup).getByRole('checkbox', { name: 'Name' })).toHaveAttribute('aria-disabled', 'true')
@@ -424,7 +416,7 @@ describe('ProductsTable', () => {
   test('starts with collapsed filters and keeps controls outside column headers', () => {
     const { container } = renderProductsTable()
 
-    for (const columnId of ['name', 'category', 'subcategory', 'price', 'stock']) {
+    for (const columnId of ['name', 'category', 'subcategory', 'price']) {
       expect(screen.queryByTestId(`table-header-cell-${columnId}-filter-button`)).not.toBeInTheDocument()
     }
 
@@ -519,15 +511,12 @@ describe('ProductsTable', () => {
     expect(screen.getByRole('button', { name: 'Filters' })).toHaveAttribute('aria-expanded', 'false')
   })
 
-  test.each([
-    ['price', { minPrice: '', maxPrice: '25' }, 'Price: Max: 25'],
-    ['stock', ['out'], 'Availability: Out of stock'],
-  ])('shows a readable summary for an existing %s filter', async (id, value, summary) => {
-    renderProductsTable({ columnFilters: [{ id, value }] })
+  test('shows a readable summary for an existing price filter', async () => {
+    renderProductsTable({ columnFilters: [{ id: 'price', value: { minPrice: '', maxPrice: '25' } }] })
 
     await waitFor(() => expect(screen.getByRole('dialog', { name: 'Product filters' })).toBeVisible())
     fireEvent.click(screen.getByRole('button', { name: /Filters/ }))
-    expect(screen.getByRole('group', { name: 'Active filters' })).toHaveTextContent(summary)
+    expect(screen.getByRole('group', { name: 'Active filters' })).toHaveTextContent('Price: Max: 25')
     expect(screen.queryByRole('dialog', { name: 'Product filters' })).not.toBeInTheDocument()
   })
 
@@ -558,7 +547,6 @@ describe('ProductsTable', () => {
   test.each([
     ['category', 'Filter by category', ['1', '3'], ['Accessories', 'Hardware']],
     ['subcategory', 'Filter by subcategory', ['2', '4'], ['Cases (Accessories)', 'Tools (Hardware)']],
-    ['stock', 'Filter by availability', ['in', 'out'], ['All']],
   ])('displays multiple selected values for the %s filter', (columnId, label, selected, labels) => {
     renderProductsTable({
       columnFilters: [{ id: String(columnId), value: selected }],
@@ -566,9 +554,6 @@ describe('ProductsTable', () => {
       subcategories,
     })
 
-    if (selected.length === 2 && columnId === 'stock') {
-      fireEvent.click(screen.getByRole('button', { name: 'Filters' }))
-    }
     const trigger = screen.getByRole('combobox', { name: String(label) })
     for (const value of labels) expect(trigger).toHaveTextContent(String(value))
   })

@@ -16,7 +16,7 @@ to create categories and subcategories. Product filters use their IDs
 while displaying their names.
 
 On **Products**, select **Create product** above the table. Enter a name, unique SKU,
-category, price, and stock; description and subcategory are optional. Subcategories
+category, and price; description and subcategory are optional. Subcategories
 belong to the selected category. Saving immediately closes the dialog and shows a
 pending product as the first row inside the table, independently of its filters
 and sorting. Pending rows show a saving status and cannot be edited or archived until saved.
@@ -57,8 +57,8 @@ Select **Download Excel** beside **Columns** to save `Products_{timestamp}.xlsx`
 where the timestamp is the current Unix time in milliseconds. The export uses all
 loaded results for the current filters and sort, not just rows visible in the
 scroll viewport. Only visible data columns are included, in their displayed order,
-with translated headers; actions and unsaved products are excluded. Prices and
-stock stay numeric, and creation dates retain their ISO timestamps.
+with translated headers; actions and unsaved products are excluded. Prices stay
+numeric, and creation dates retain their ISO timestamps.
 Downloading is disabled while filters are debouncing, results are loading or
 refreshing, filters are invalid, loading failed, or there are no saved results.
 The service's `/exports/xlsx` endpoint supplies the styled workbook. The browser

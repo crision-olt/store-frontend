@@ -10,7 +10,6 @@ const product = {
   subcategoryId: 2,
   subcategoryName: 'Mugs',
   price: 9.99,
-  stock: 5,
   created_at: '2026-01-01T00:00:00.000Z',
 }
 const page = { data: [product], total: 1, page: 2, pageSize: 10 }
@@ -36,7 +35,7 @@ describe('products API', () => {
   it('updates the chosen product with cookies and validates the server response', async () => {
     const input = {
       name: 'New mug', sku: 'MUG-2', description: null,
-      categoryId: 1, subcategoryId: null, price: 0, stock: 0,
+      categoryId: 1, subcategoryId: null, price: 0,
     }
     const updated = { ...product, ...input, subcategoryName: null }
     const fetch = vi.fn().mockResolvedValue(new Response(JSON.stringify(updated)))
@@ -57,7 +56,7 @@ describe('products API', () => {
   it('creates a product with cookies and validates the returned product', async () => {
     const input = {
       name: 'Blue Mug', sku: 'MUG-1', description: null,
-      categoryId: 1, subcategoryId: 2, price: 9.99, stock: 5,
+      categoryId: 1, subcategoryId: 2, price: 9.99,
     }
     const fetch = vi.fn().mockResolvedValue(new Response(JSON.stringify(product), { status: 201 }))
     vi.stubGlobal('fetch', fetch)
@@ -85,7 +84,6 @@ describe('products API', () => {
         category: undefined,
         subcategory: '2',
         minPrice: 0,
-        inStock: false,
         sortBy: 'price',
         sortOrder: 'asc',
         page: 2,
@@ -93,7 +91,7 @@ describe('products API', () => {
     ).resolves.toEqual(page)
 
     expect(fetch).toHaveBeenCalledWith(
-      'https://api.example.com/products?search=mug+%26+more&subcategory=2&minPrice=0&inStock=false&sortBy=price&sortOrder=asc&page=2',
+      'https://api.example.com/products?search=mug+%26+more&subcategory=2&minPrice=0&sortBy=price&sortOrder=asc&page=2',
       { credentials: 'include' },
     )
   })

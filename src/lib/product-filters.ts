@@ -1,15 +1,12 @@
 import type { ColumnFiltersState } from '@tanstack/react-table'
 import type { ProductsQuery } from '@/lib/products-api'
 
-export type StockFilter = 'in' | 'out'
-
 export type ProductFilterValues = {
   search: string
   category: string[]
   subcategory: string[]
   minPrice: string
   maxPrice: string
-  stock: StockFilter[]
 }
 
 export const emptyFilters: ProductFilterValues = {
@@ -18,7 +15,6 @@ export const emptyFilters: ProductFilterValues = {
   subcategory: [],
   minPrice: '',
   maxPrice: '',
-  stock: [],
 }
 
 function getStringValue(value: unknown): string {
@@ -37,7 +33,6 @@ export function columnFiltersToProductFilters(columnFilters: ColumnFiltersState)
     typeof price === 'object' && price !== null && 'minPrice' in price ? getStringValue(price.minPrice) : ''
   const maxPrice =
     typeof price === 'object' && price !== null && 'maxPrice' in price ? getStringValue(price.maxPrice) : ''
-  const stock = getValue('stock')
 
   return {
     search: getStringValue(getValue('name')),
@@ -45,7 +40,6 @@ export function columnFiltersToProductFilters(columnFilters: ColumnFiltersState)
     subcategory: getStringValues(getValue('subcategory')),
     minPrice,
     maxPrice,
-    stock: getStringValues(stock).filter((value): value is StockFilter => value === 'in' || value === 'out'),
   }
 }
 
@@ -75,8 +69,7 @@ export function hasActiveFilters(filters: ProductFilterValues): boolean {
     filters.category.length > 0 ||
     filters.subcategory.length > 0 ||
     filters.minPrice !== '' ||
-    filters.maxPrice !== '' ||
-    filters.stock.length === 1
+    filters.maxPrice !== ''
   )
 }
 
@@ -87,6 +80,5 @@ export function toProductsQuery(filters: ProductFilterValues): ProductsQuery {
     subcategory: filters.subcategory.length > 0 ? filters.subcategory : undefined,
     minPrice: parsePrice(filters.minPrice),
     maxPrice: parsePrice(filters.maxPrice),
-    inStock: filters.stock.length === 1 ? filters.stock[0] === 'in' : undefined,
   }
 }

@@ -4,7 +4,7 @@ import { msg } from '@lingui/core/macro'
 import { createColumnHelper } from '@tanstack/react-table'
 import { useMemo } from 'react'
 import { tableFeatureSet } from '@/components/table/features'
-import { DateCell, PriceCell, StockCell } from '@/components/products/products-table-cells'
+import { DateCell, PriceCell } from '@/components/products/products-table-cells'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -16,7 +16,6 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import type { Category, Product, Subcategory } from '@/lib/products-api'
-import type { StockFilter } from '@/lib/product-filters'
 
 export type ProductTableRow = Product & { isPending?: boolean }
 
@@ -212,47 +211,6 @@ export function useProductColumns({ categories, subcategories, onCategoryChange,
                 onChange={(event) => update('maxPrice', event.currentTarget.value)}
               />
             </div>
-          )
-        },
-      },
-    }),
-    columnHelper.accessor('stock', {
-      header: () => <Trans>Stock</Trans>,
-      cell: ({ cell }) => <StockCell value={cell.getValue()} />,
-      minSize: 110,
-      meta: {
-        align: 'right',
-        showFilter: false,
-        Filter: ({ header }) => {
-          const value = header.column.getFilterValue()
-          const selected = getTextFilterValues(value).filter(
-            (item): item is StockFilter => item === 'in' || item === 'out',
-          )
-          const labels: Record<StockFilter, string> = {
-            in: i18n._(msg`In stock`),
-            out: i18n._(msg`Out of stock`),
-          }
-
-          return (
-            <Select
-              multiple
-              value={selected}
-              onValueChange={(values) => header.column.setFilterValue(values.length > 0 ? values : undefined)}
-            >
-              <SelectTrigger className="w-full" aria-label={i18n._(msg`Filter by availability`)}>
-                <SelectValue>
-                  {selected.length === 0 || selected.length === 2
-                    ? <span className="text-muted-foreground">{i18n._(msg`All`)}</span>
-                    : <span className="flex flex-wrap gap-1">
-                        {selected.map((item) => <Badge key={item} variant="secondary">{labels[item]}</Badge>)}
-                      </span>}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent alignItemWithTrigger={false}>
-                <SelectItem value="in">{labels.in}</SelectItem>
-                <SelectItem value="out">{labels.out}</SelectItem>
-              </SelectContent>
-            </Select>
           )
         },
       },
