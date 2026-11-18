@@ -37,6 +37,8 @@ Column options (`align`, `lineClamp`, `width`, `className`, `showFilter`, `Filte
 ### Sizing (`sizeMode`)
 
 - `full` (default): columns use their `size` or `meta.width` and grow proportionally to fill the container.
+  Set `meta.fillRemainingWidth` on one non-resizable leaf column (such as a trailing actions column) to absorb any
+  leftover width after manual resizing or hiding columns. Other columns keep their resolved widths.
 - `fixed`: columns keep their sizes and the table is exactly as wide as the sum of its visible columns.
 - `auto`: the browser sizes the columns from their content (slower with many rows).
 

@@ -39,6 +39,11 @@ export const computeColumnLayout = <T extends RowData>(
   const columnSizing = table.state.columnSizing
   const flatColumns = table.getAllFlatColumns()
   const computed = new Map<string, number | undefined>()
+  const fillColumn = sizeMode === 'full' && width > 0
+    ? flatColumns.find((column) =>
+        column.columns.length === 0 && column.getIsVisible() && column.columnDef.meta?.fillRemainingWidth,
+      )
+    : undefined
   let totalSize = 'auto'
 
   if (sizeMode !== 'auto' && width > 0) {
@@ -73,7 +78,9 @@ export const computeColumnLayout = <T extends RowData>(
       totalSize = '100%'
       if (columnsWidth > 0 && width > columnsWidth) {
         const factor = width / columnsWidth
-        columns.forEach((column) => computed.set(column.id, (computed.get(column.id) ?? 0) * factor))
+        columns.forEach((column) => {
+          if (column !== fillColumn) computed.set(column.id, (computed.get(column.id) ?? 0) * factor)
+        })
       }
     }
   }
@@ -86,16 +93,25 @@ export const computeColumnLayout = <T extends RowData>(
     )
   }
 
+  const visibleLeaves = fillColumn
+    ? flatColumns.filter((column) => column.columns.length === 0 && column.getIsVisible())
+    : []
+  const remainingWidth = fillColumn
+    ? Math.max(0, width - visibleLeaves.reduce((acc, column) => acc + leafSize(column), 0))
+    : 0
+  const resolvedLeafSize = (column: DataColumn<T>) =>
+    leafSize(column) + (column === fillColumn ? remainingWidth : 0)
+
   const sizes = new Map<string, number>()
   for (const column of flatColumns) {
     sizes.set(
       column.id,
       column.columns.length === 0
-        ? leafSize(column)
+        ? resolvedLeafSize(column)
         : column
             .getLeafColumns()
             .filter((leaf) => leaf.getIsVisible())
-            .reduce((acc, leaf) => acc + leafSize(leaf), 0),
+            .reduce((acc, leaf) => acc + resolvedLeafSize(leaf), 0),
     )
   }
 

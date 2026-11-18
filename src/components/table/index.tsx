@@ -23,6 +23,8 @@ declare module '@tanstack/react-table' {
     textEllipsis?: boolean
     // Optional property for width in px or %, e.g., "10%", "100px"...
     width?: string
+    // Let a visible leaf column absorb leftover space in full mode without resizing its neighbors.
+    fillRemainingWidth?: boolean
     // Optional property for custom styles, can be used to set minWidth, maxWidth, etc.
     style?: CSSProperties
     // Optional property for custom class names, can be used to set specific styles for a column

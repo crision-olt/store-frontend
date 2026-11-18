@@ -245,6 +245,46 @@ describe('ProductsTable', () => {
     expect(onColumnFiltersChange).not.toHaveBeenCalled()
   })
 
+  test('keeps the rows full width when columns are narrowed without undoing the resize', () => {
+    const NativeResizeObserver = ResizeObserver
+    globalThis.ResizeObserver = class extends NativeResizeObserver {
+      constructor(callback: ResizeObserverCallback) {
+        super(callback)
+        this.observe = (target) => {
+          if (target.getAttribute('data-testid') === 'table-size-container') {
+            callback([{ target, contentRect: new DOMRect(0, 0, 1200, 40) } as ResizeObserverEntry], this)
+          }
+        }
+      }
+    }
+    try {
+      renderProductsTable()
+    } finally {
+      globalThis.ResizeObserver = NativeResizeObserver
+    }
+    const container = screen.getByTestId('table-container')
+    const width = (id: string) => Number.parseFloat(container.style.getPropertyValue(`--col-${id}-size`))
+    const totalWidth = () => ['name', 'sku', 'category', 'subcategory', 'price', 'stock', 'created_at', 'actions']
+      .reduce((sum, id) => sum + width(id), 0)
+    const initialSkuWidth = width('sku')
+    const resizer = screen.getByTestId('table-header-cell-sku-resizer')
+
+    expect(totalWidth()).toBeGreaterThan(1200)
+    fireEvent.mouseDown(resizer, { clientX: 200, buttons: 1 })
+    fireEvent.mouseMove(document, { clientX: 160, buttons: 1 })
+    expect(width('sku')).toBe(initialSkuWidth - 40)
+    expect(totalWidth()).toBeCloseTo(1200)
+    fireEvent.mouseUp(document, { clientX: 160 })
+    expect(width('sku')).toBe(initialSkuWidth - 40)
+    expect(totalWidth()).toBeCloseTo(1200)
+
+    fireEvent.mouseDown(screen.getByTestId('table-header-cell-stock-resizer'), { clientX: 300, buttons: 1 })
+    fireEvent.mouseMove(document, { clientX: 200, buttons: 1 })
+    expect(width('stock')).toBe(110)
+    expect(totalWidth()).toBeCloseTo(1200)
+    fireEvent.mouseUp(document, { clientX: 200 })
+  })
+
   test('opens one prefilled editor and saves the chosen product with compatible category selections', async () => {
     let finish!: () => void
     vi.mocked(updateProduct).mockImplementation((id, input) => new Promise((resolve) => {
