@@ -20,6 +20,19 @@ afterEach(() => {
 })
 
 describe('products API', () => {
+  it('archives a product with cookies and accepts an empty success response', async () => {
+    const fetch = vi.fn().mockResolvedValue(new Response(null, { status: 204 }))
+    vi.stubGlobal('fetch', fetch)
+    const api = createProductsApi('https://api.example.com')
+    await expect(api.archiveProduct(1)).resolves.toBeUndefined()
+    expect(fetch).toHaveBeenCalledWith('https://api.example.com/products/1/archive', {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'application/json' }, body: '{}',
+    })
+    fetch.mockResolvedValueOnce(new Response(null, { status: 401 }))
+    await expect(api.archiveProduct(1)).rejects.toMatchObject({ status: 401 })
+  })
+
   it('updates the chosen product with cookies and validates the server response', async () => {
     const input = {
       name: 'New mug', sku: 'MUG-2', description: null,

@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils'
 import type { Category, Product, ProductInput, Subcategory } from '@/lib/products-api'
 import { useProductColumns, type ProductTableRow } from '@/components/products/products-table-columns'
 import { EditProductDialog } from '@/components/products/create-product-dialog'
+import { ArchiveProductDialog } from '@/components/products/archive-product-dialog'
 import { getProductColumnLabels } from '@/components/products/products-table-columns.config'
 import { getProductFilterFields } from '@/components/products/products-table-filters.config'
 import { isNotEmptyArray } from '@/utils/is-not-empty-array'
@@ -48,6 +49,7 @@ export function ProductsTable({
 }: Props) {
   const { t, i18n } = useLingui()
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
+  const [archivingProduct, setArchivingProduct] = useState<Product | null>(null)
   const pending = useMutationState({
     filters: { mutationKey: ['create-product'], status: 'pending' },
     select: (mutation: Mutation<unknown, Error, ProductInput>) => ({
@@ -72,7 +74,7 @@ export function ProductsTable({
 
   const table = useTable({
     features: tableFeatureSet,
-    columns: useProductColumns({ categories, subcategories, onCategoryChange, onEditProduct: setEditingProduct }),
+    columns: useProductColumns({ categories, subcategories, onCategoryChange, onEditProduct: setEditingProduct, onArchiveProduct: setArchivingProduct }),
     data,
     getRowId: ({ id }) => String(id),
     manualSorting: true,
@@ -113,6 +115,7 @@ export function ProductsTable({
         rowClassName={(row) => row.original.isPending ? 'bg-muted/40' : undefined}
       />
       {editingProduct && <EditProductDialog product={editingProduct} onClose={() => setEditingProduct(null)} />}
+      {archivingProduct && <ArchiveProductDialog product={archivingProduct} onClose={() => setArchivingProduct(null)} />}
     </div>
   )
 }

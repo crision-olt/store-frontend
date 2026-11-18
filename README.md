@@ -19,7 +19,7 @@ On **Products**, select **Create product** above the table. Enter a name, unique
 category, price, and stock; description and subcategory are optional. Subcategories
 belong to the selected category. Saving immediately closes the dialog and shows a
 pending product as the first row inside the table, independently of its filters
-and sorting. Pending rows show a saving status and cannot be edited until saved.
+and sorting. Pending rows show a saving status and cannot be edited or archived until saved.
 The row remains pending until the request and catalog refresh finish; the table
 then shows the server results using the existing filters and sorting.
 Failed saves remove the pending row and reopen the form with your entries and an error
@@ -30,6 +30,12 @@ details. **Save** persists your changes and refreshes the catalog without resett
 filters or sorting. Failed saves keep your edits and display an error; **Cancel**
 discards unsaved changes.
 The actions column is always visible, has an empty header, and is omitted from **Columns** settings.
+
+Select **Archive** in the actions column and confirm to hide a product from the catalog.
+Its data and SKU are retained, not deleted. The row stays until archiving and the
+catalog refresh finish; failed requests show an error and allow retrying.
+There is no restore screen yet. Existing service databases need the
+`sql/products-archived.sql` migration before using this feature; see the service README.
 
 On **Products**, use **Filters** above the table to open a dropdown without moving
 the table. Close it with Escape, the close button, or a click outside.

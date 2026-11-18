@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-quer
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import '@/test/setup-dom'
 import { AppWrapper } from '@/test/utils'
-import { createProduct, ProductsApiError, type Product } from '@/lib/products-api'
+import { archiveProduct, createProduct, ProductsApiError, type Product } from '@/lib/products-api'
 import { CreateProductDialog } from '@/components/products/create-product-dialog'
 import { ProductsTable } from '@/components/products/products-table'
 import { defineBoundingClientRect, defineClientDimensions } from '@/test/dom'
@@ -16,6 +16,7 @@ defineClientDimensions()
 vi.mock('@/lib/products-api', async (importOriginal) => ({
   ...await importOriginal<typeof import('@/lib/products-api')>(),
   createProduct: vi.fn(),
+  archiveProduct: vi.fn(),
   listCategories: vi.fn().mockResolvedValue([
     { id: 1, name: 'Kitchen' }, { id: 3, name: 'Office' },
   ]),
@@ -76,6 +77,7 @@ async function fillRequired(user: ReturnType<typeof userEvent.setup>) {
 
 beforeEach(() => {
   vi.mocked(createProduct).mockReset()
+  vi.mocked(archiveProduct).mockReset()
 })
 
 it('shows a pending product inside the table without changing the cache and keeps it through refetch', async () => {
@@ -107,6 +109,7 @@ it('shows a pending product inside the table without changing the cache and keep
   expect(within(pendingRow).getByRole('cell', { name: 'Kitchen' })).toBeInTheDocument()
   expect(within(pendingRow).getByRole('cell', { name: '€9.99' })).toBeInTheDocument()
   expect(within(pendingRow).getByRole('button', { name: 'Edit product Blue Mug' })).toBeDisabled()
+  expect(within(pendingRow).getByRole('button', { name: 'Archive product Blue Mug' })).toBeDisabled()
   expect(client.getQueryData(queryKey)).toEqual([existingProduct])
   expect(refetch).not.toHaveBeenCalled()
   await user.click(screen.getByRole('button', { name: 'Creating product…' }))
@@ -197,4 +200,66 @@ it('keeps the pending row visible while the initial catalog is still loading', a
   reject(new ProductsApiError(409))
   expect(await screen.findByRole('alert')).toHaveTextContent('A product with this SKU already exists.')
   expect(within(table).queryByText('Blue Mug')).not.toBeInTheDocument()
+})
+
+it('confirms archiving and removes the row only after the request and catalog refresh finish', async () => {
+  let finish!: () => void
+  vi.mocked(archiveProduct).mockImplementationOnce(() => new Promise<void>((resolve) => { finish = resolve }))
+  let finishRefetch!: (products: Product[]) => void
+  const refetch = vi.fn(() => new Promise<Product[]>((resolve) => { finishRefetch = resolve }))
+  const { user, client, queryKey } = setup(refetch)
+  const table = screen.getByRole('table')
+  await user.click(screen.getByRole('button', { name: 'Archive product Existing product' }))
+  let dialog = screen.getByRole('dialog', { name: 'Archive product' })
+  expect(dialog).toHaveTextContent('Existing product')
+  expect(dialog).toHaveTextContent('its data will be kept')
+  await user.click(within(dialog).getByRole('button', { name: 'Cancel' }))
+  expect(archiveProduct).not.toHaveBeenCalled()
+  expect(within(table).getByText('Existing product')).toBeInTheDocument()
+
+  await user.click(screen.getByRole('button', { name: 'Archive product Existing product' }))
+  dialog = screen.getByRole('dialog', { name: 'Archive product' })
+  await user.click(within(dialog).getByRole('button', { name: 'Archive' }))
+  expect(archiveProduct).toHaveBeenCalledExactlyOnceWith(8)
+  expect(within(dialog).getByRole('button', { name: 'Archiving…' })).toBeDisabled()
+  expect(within(dialog).getByRole('button', { name: 'Cancel' })).toBeDisabled()
+  await user.keyboard('{Escape}')
+  expect(dialog).toBeInTheDocument()
+  expect(client.getQueryData(queryKey)).toEqual([existingProduct])
+  finish()
+  await waitFor(() => expect(refetch).toHaveBeenCalledOnce())
+  expect(dialog).toBeInTheDocument()
+  expect(within(table).getByText('Existing product')).toBeInTheDocument()
+  finishRefetch([])
+  await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Archive product' })).not.toBeInTheDocument())
+  expect(within(table).queryByText('Existing product')).not.toBeInTheDocument()
+  expect(client.getQueryData(queryKey)).toEqual([])
+})
+
+it.each([
+  [500, 'Could not archive the product. Please try again.'],
+  [404, 'This product no longer exists.'],
+])('keeps the product and allows retry after an archive HTTP %s error', async (status, message) => {
+  vi.mocked(archiveProduct).mockRejectedValueOnce(new ProductsApiError(status)).mockResolvedValueOnce(undefined)
+  const { user, client, queryKey } = setup(async () => [])
+  const table = screen.getByRole('table')
+  await user.click(screen.getByRole('button', { name: 'Archive product Existing product' }))
+  const dialog = screen.getByRole('dialog', { name: 'Archive product' })
+  await user.click(within(dialog).getByRole('button', { name: 'Archive' }))
+  expect(await within(dialog).findByRole('alert')).toHaveTextContent(message)
+  expect(within(table).getByText('Existing product')).toBeInTheDocument()
+  expect(client.getQueryData(queryKey)).toEqual([existingProduct])
+  await user.click(within(dialog).getByRole('button', { name: 'Archive' }))
+  await waitFor(() => expect(dialog).not.toBeInTheDocument())
+  expect(archiveProduct).toHaveBeenCalledTimes(2)
+  expect(within(table).queryByText('Existing product')).not.toBeInTheDocument()
+})
+
+it('redirects expired sessions when archiving without changing the catalog cache', async () => {
+  vi.mocked(archiveProduct).mockRejectedValueOnce(new ProductsApiError(401))
+  const { user, client, queryKey } = setup()
+  await user.click(screen.getByRole('button', { name: 'Archive product Existing product' }))
+  await user.click(within(screen.getByRole('dialog', { name: 'Archive product' })).getByRole('button', { name: 'Archive' }))
+  expect(await screen.findByText('Sign in again')).toBeInTheDocument()
+  expect(client.getQueryData(queryKey)).toEqual([existingProduct])
 })

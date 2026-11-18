@@ -23,9 +23,9 @@ msgstr "Filtros activos"
 msgid "Add a new product to your catalog."
 msgstr "Añade un nuevo producto a tu catálogo."
 
-#: src/components/products/products-table-columns.tsx:111
-#: src/components/products/products-table-columns.tsx:161
-#: src/components/products/products-table-columns.tsx:246
+#: src/components/products/products-table-columns.tsx:109
+#: src/components/products/products-table-columns.tsx:159
+#: src/components/products/products-table-columns.tsx:244
 msgid "All"
 msgstr "Todos"
 
@@ -36,6 +36,29 @@ msgstr "Todos los usuarios"
 #: src/pages/register.tsx:46
 msgid "Already have an account?"
 msgstr "¿Ya tienes una cuenta?"
+
+#: src/components/products/archive-product-dialog.tsx:47
+#: src/components/products/products-table-columns.tsx:281
+msgid "Archive"
+msgstr "Archivar"
+
+#. placeholder {0}: product.name
+#: src/components/products/archive-product-dialog.tsx:34
+msgid "Archive {0}? It will be hidden from the catalog, but its data will be kept."
+msgstr "¿Archivar {0}? Se ocultará del catálogo, pero se conservarán sus datos."
+
+#: src/components/products/archive-product-dialog.tsx:32
+msgid "Archive product"
+msgstr "Archivar producto"
+
+#. placeholder {0}: row.original.name
+#: src/components/products/products-table-columns.tsx:280
+msgid "Archive product {0}"
+msgstr "Archivar producto {0}"
+
+#: src/components/products/archive-product-dialog.tsx:47
+msgid "Archiving…"
+msgstr "Archivando…"
 
 #: src/components/products/products-table-filters.config.ts:51
 msgid "Availability"
@@ -59,12 +82,13 @@ msgstr "Bloquear usuario {0}"
 msgid "Blocked"
 msgstr "Bloqueado"
 
-#: src/pages/products.tsx:82
+#: src/pages/products.tsx:81
 msgid "Browse and filter the product catalog."
 msgstr "Explora y filtra el catálogo de productos."
 
 #: src/components/access/permission-list.tsx:55
 #: src/components/access/role-list.tsx:73
+#: src/components/products/archive-product-dialog.tsx:44
 #: src/components/products/create-product-dialog.tsx:109
 #: src/components/products/create-product-dialog.tsx:167
 #: src/components/users/user-form.tsx:69
@@ -78,7 +102,7 @@ msgstr "Categorías"
 
 #: src/components/products/create-product-dialog.tsx:60
 #: src/components/products/products-table-columns.config.ts:9
-#: src/components/products/products-table-columns.tsx:92
+#: src/components/products/products-table-columns.tsx:90
 #: src/components/products/products-table-filters.config.ts:27
 #: src/pages/categories.tsx:83
 msgid "Category"
@@ -104,7 +128,7 @@ msgstr "Borrar filtros"
 msgid "Clear sorting"
 msgstr "Quitar orden"
 
-#: src/components/table/components/table-column-visibility.tsx:141
+#: src/components/table/components/table-column-visibility.tsx:142
 msgid "Close column settings"
 msgstr "Cerrar configuración de columnas"
 
@@ -113,7 +137,7 @@ msgstr "Cerrar configuración de columnas"
 msgid "Close filter"
 msgstr "Cerrar filtro"
 
-#: src/components/table/components/table-column-visibility.tsx:133
+#: src/components/table/components/table-column-visibility.tsx:134
 msgid "Columns"
 msgstr "Columnas"
 
@@ -124,6 +148,10 @@ msgstr "Confirmar contraseña"
 #: src/lib/auth-schemas.ts:17
 msgid "Confirm your password"
 msgstr "Confirma tu contraseña"
+
+#: src/components/products/archive-product-dialog.tsx:40
+msgid "Could not archive the product. Please try again."
+msgstr "No se pudo archivar el producto. Inténtalo de nuevo."
 
 #: src/components/users/user-list.tsx:66
 msgid "Could not change the user status. Please try again."
@@ -155,7 +183,7 @@ msgstr "No se pudo crear el producto. Inténtalo de nuevo."
 
 #: src/components/products/create-product-dialog.tsx:162
 #: src/pages/categories.tsx:62
-#: src/pages/products.tsx:88
+#: src/pages/products.tsx:87
 msgid "Could not load categories. Please try again."
 msgstr "No se pudieron cargar las categorías. Inténtalo de nuevo."
 
@@ -163,7 +191,7 @@ msgstr "No se pudieron cargar las categorías. Inténtalo de nuevo."
 msgid "Could not load permissions. Please try again."
 msgstr "No se pudieron cargar los permisos. Inténtalo de nuevo."
 
-#: src/pages/products.tsx:99
+#: src/pages/products.tsx:98
 msgid "Could not load products. Please try again."
 msgstr "No se pudieron cargar los productos. Inténtalo de nuevo."
 
@@ -260,7 +288,7 @@ msgid "Create, edit and delete roles and permissions."
 msgstr "Crea, edita y elimina roles y permisos."
 
 #: src/components/products/products-table-columns.config.ts:13
-#: src/components/products/products-table-columns.tsx:262
+#: src/components/products/products-table-columns.tsx:260
 msgid "Created"
 msgstr "Creado"
 
@@ -270,7 +298,7 @@ msgstr "Creando cuenta…"
 
 #: src/components/products/create-product-dialog.tsx:111
 #: src/components/products/create-product-dialog.tsx:153
-#: src/components/products/pending-products.tsx:17
+#: src/components/products/products-table-columns.tsx:64
 msgid "Creating product…"
 msgstr "Creando producto…"
 
@@ -307,13 +335,13 @@ msgstr "Descripción (opcional)"
 msgid "Don't have an account?"
 msgstr "¿No tienes una cuenta?"
 
-#: src/components/table/components/table-column-visibility.tsx:169
+#: src/components/table/components/table-column-visibility.tsx:170
 msgid "Drag handles to reorder columns. Or focus a handle, press Space, then use the arrow keys."
 msgstr "Arrastra los controles para reordenar las columnas. O enfoca un control, pulsa Espacio y usa las flechas."
 
 #: src/components/access/permission-list.tsx:41
 #: src/components/access/role-list.tsx:47
-#: src/components/products/products-table-columns.tsx:68
+#: src/components/products/products-table-columns.tsx:277
 #: src/components/users/user-list.tsx:53
 msgid "Edit"
 msgstr "Editar"
@@ -328,7 +356,7 @@ msgid "Edit product"
 msgstr "Editar producto"
 
 #. placeholder {0}: row.original.name
-#: src/components/products/products-table-columns.tsx:67
+#: src/components/products/products-table-columns.tsx:276
 msgid "Edit product {0}"
 msgstr "Editar producto {0}"
 
@@ -353,7 +381,7 @@ msgstr "Correo electrónico"
 msgid "Enter a valid email"
 msgstr "Introduce un correo electrónico válido"
 
-#: src/pages/products.tsx:93
+#: src/pages/products.tsx:92
 msgid "Enter a valid price range: the minimum cannot exceed the maximum."
 msgstr "Introduce un rango de precios válido: el mínimo no puede superar al máximo."
 
@@ -366,15 +394,15 @@ msgstr "Introduce tus datos para empezar"
 msgid "Filter"
 msgstr "Filtrar"
 
-#: src/components/products/products-table-columns.tsx:243
+#: src/components/products/products-table-columns.tsx:241
 msgid "Filter by availability"
 msgstr "Filtrar por disponibilidad"
 
-#: src/components/products/products-table-columns.tsx:108
+#: src/components/products/products-table-columns.tsx:106
 msgid "Filter by category"
 msgstr "Filtrar por categoría"
 
-#: src/components/products/products-table-columns.tsx:158
+#: src/components/products/products-table-columns.tsx:156
 msgid "Filter by subcategory"
 msgstr "Filtrar por subcategoría"
 
@@ -382,7 +410,7 @@ msgstr "Filtrar por subcategoría"
 msgid "Filters"
 msgstr "Filtros"
 
-#: src/components/products/products-table-columns.tsx:233
+#: src/components/products/products-table-columns.tsx:231
 #: src/components/products/products-table-filters.config.ts:52
 msgid "In stock"
 msgstr "En stock"
@@ -422,31 +450,31 @@ msgstr "Cargando usuarios…"
 msgid "Manage categories"
 msgstr "Gestionar categorías"
 
-#: src/components/products/products-table-columns.tsx:211
+#: src/components/products/products-table-columns.tsx:209
 #: src/components/products/products-table-filters.config.ts:46
 msgid "Max"
 msgstr "Máx."
 
-#: src/components/products/products-table-columns.tsx:212
+#: src/components/products/products-table-columns.tsx:210
 msgid "Maximum price"
 msgstr "Precio máximo"
 
-#: src/components/products/products-table-columns.tsx:201
+#: src/components/products/products-table-columns.tsx:199
 #: src/components/products/products-table-filters.config.ts:45
 msgid "Min"
 msgstr "Mín."
 
-#: src/components/products/products-table-columns.tsx:202
+#: src/components/products/products-table-columns.tsx:200
 msgid "Minimum price"
 msgstr "Precio mínimo"
 
 #: src/components/products/create-product-dialog.tsx:46
 #: src/components/products/products-table-columns.config.ts:7
-#: src/components/products/products-table-columns.tsx:56
+#: src/components/products/products-table-columns.tsx:59
 msgid "Name"
 msgstr "Nombre"
 
-#: src/components/products/products-table-columns.tsx:78
+#: src/components/products/products-table-columns.tsx:76
 msgid "Name, SKU or description"
 msgstr "Nombre, SKU o descripción"
 
@@ -467,7 +495,7 @@ msgstr "Sin permisos asignados."
 msgid "No permissions yet."
 msgstr "Todavía no hay permisos."
 
-#: src/components/products/products-table.tsx:71
+#: src/components/products/products-table.tsx:97
 msgid "No products found."
 msgstr "No se encontraron productos."
 
@@ -489,7 +517,7 @@ msgid "None"
 msgstr "Ninguna"
 
 #: src/components/products/products-table-cells.tsx:16
-#: src/components/products/products-table-columns.tsx:234
+#: src/components/products/products-table-columns.tsx:232
 #: src/components/products/products-table-filters.config.ts:52
 msgid "Out of stock"
 msgstr "Sin stock"
@@ -524,27 +552,27 @@ msgstr "Nombre del permiso"
 msgid "Permissions"
 msgstr "Permisos"
 
-#: src/components/table/components/table-column-visibility.tsx:83
+#: src/components/table/components/table-column-visibility.tsx:84
 msgid "Pinned"
 msgstr "Fijada"
 
-#: src/components/table/components/table-column-visibility.tsx:170
+#: src/components/table/components/table-column-visibility.tsx:171
 msgid "Pinned columns cannot be hidden or moved."
 msgstr "Las columnas fijadas no se pueden ocultar ni mover."
 
 #: src/components/products/create-product-dialog.tsx:90
 #: src/components/products/products-table-columns.config.ts:11
-#: src/components/products/products-table-columns.tsx:182
+#: src/components/products/products-table-columns.tsx:180
 #: src/components/products/products-table-filters.config.ts:43
 msgid "Price"
 msgstr "Precio"
 
-#: src/components/products/products-table.tsx:77
+#: src/components/products/products-table.tsx:103
 msgid "Product filters"
 msgstr "Filtros de productos"
 
 #: src/components/store-layout.tsx:27
-#: src/pages/products.tsx:81
+#: src/pages/products.tsx:80
 msgid "Products"
 msgstr "Productos"
 
@@ -552,11 +580,11 @@ msgstr "Productos"
 msgid "Remove filter: {label}"
 msgstr "Quitar filtro: {label}"
 
-#: src/components/table/components/table-column-visibility.tsx:92
+#: src/components/table/components/table-column-visibility.tsx:93
 msgid "Reorder {label}"
 msgstr "Reordenar {label}"
 
-#: src/components/table/components/table-column-visibility.tsx:83
+#: src/components/table/components/table-column-visibility.tsx:84
 msgid "Required"
 msgstr "Obligatoria"
 
@@ -593,7 +621,7 @@ msgstr "Guardando…"
 msgid "Search"
 msgstr "Buscar"
 
-#: src/components/products/products-table-columns.tsx:79
+#: src/components/products/products-table-columns.tsx:77
 msgid "Search products"
 msgstr "Buscar productos"
 
@@ -633,7 +661,7 @@ msgstr "Iniciando sesión…"
 
 #: src/components/products/create-product-dialog.tsx:50
 #: src/components/products/products-table-columns.config.ts:8
-#: src/components/products/products-table-columns.tsx:87
+#: src/components/products/products-table-columns.tsx:85
 msgid "SKU"
 msgstr "SKU"
 
@@ -647,7 +675,7 @@ msgstr "Ordenar descendente"
 
 #: src/components/products/create-product-dialog.tsx:94
 #: src/components/products/products-table-columns.config.ts:12
-#: src/components/products/products-table-columns.tsx:222
+#: src/components/products/products-table-columns.tsx:220
 msgid "Stock"
 msgstr "Stock"
 
@@ -657,7 +685,7 @@ msgid "Store"
 msgstr "Tienda"
 
 #: src/components/products/products-table-columns.config.ts:10
-#: src/components/products/products-table-columns.tsx:131
+#: src/components/products/products-table-columns.tsx:129
 #: src/components/products/products-table-filters.config.ts:32
 msgid "Subcategory"
 msgstr "Subcategoría"
@@ -686,6 +714,7 @@ msgstr "Este permiso ya existe."
 msgid "This permission is protected, already exists, or is still assigned to a role."
 msgstr "Este permiso está protegido, ya existe o sigue asignado a un rol."
 
+#: src/components/products/archive-product-dialog.tsx:39
 #: src/components/products/create-product-dialog.tsx:105
 msgid "This product no longer exists."
 msgstr "Este producto ya no existe."
@@ -706,7 +735,7 @@ msgstr "Esta subcategoría ya existe en la categoría seleccionada."
 #: src/components/products/create-product-dialog.tsx:166
 #: src/pages/access.tsx:89
 #: src/pages/access.tsx:119
-#: src/pages/products.tsx:101
+#: src/pages/products.tsx:100
 #: src/pages/users.tsx:46
 #: src/pages/users.tsx:61
 msgid "Try again"
@@ -730,7 +759,7 @@ msgstr "Actualiza los datos del producto."
 msgid "Users"
 msgstr "Usuarios"
 
-#: src/components/table/components/table-column-visibility.tsx:140
+#: src/components/table/components/table-column-visibility.tsx:141
 msgid "Visible columns"
 msgstr "Columnas visibles"
 

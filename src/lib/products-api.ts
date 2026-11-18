@@ -75,7 +75,7 @@ export function createProductsApi(serviceUrl: string) {
       body: JSON.stringify(body),
     })
     if (!response.ok) throw new ProductsApiError(response.status)
-    return response.json()
+    return response.status === 204 ? undefined : response.json()
   }
 
   async function listProducts(query: ProductsQuery = {}, signal?: AbortSignal) {
@@ -92,6 +92,9 @@ export function createProductsApi(serviceUrl: string) {
   }
 
   return {
+    async archiveProduct(id: number) {
+      await write('POST', `/products/${id}/archive`, {})
+    },
     async createProduct(input: ProductInput) {
       return productSchema.parse(await write('POST', '/products', input))
     },
@@ -126,5 +129,5 @@ export function createProductsApi(serviceUrl: string) {
   }
 }
 
-export const { createProduct, updateProduct, listProducts, listAllProducts, listCategories, listSubcategories, createCategory, createSubcategory } =
+export const { archiveProduct, createProduct, updateProduct, listProducts, listAllProducts, listCategories, listSubcategories, createCategory, createSubcategory } =
   createProductsApi(import.meta.env.AUTH_SERVICE_URL)

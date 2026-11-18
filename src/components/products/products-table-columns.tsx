@@ -48,9 +48,10 @@ type ProductColumnOptions = {
   subcategories: Subcategory[]
   onCategoryChange: () => void
   onEditProduct: (product: Product) => void
+  onArchiveProduct: (product: Product) => void
 }
 
-export function useProductColumns({ categories, subcategories, onCategoryChange, onEditProduct }: ProductColumnOptions) {
+export function useProductColumns({ categories, subcategories, onCategoryChange, onEditProduct, onArchiveProduct }: ProductColumnOptions) {
   const { i18n } = useLingui()
 
   return useMemo(() => columnHelper.columns([
@@ -262,9 +263,9 @@ export function useProductColumns({ categories, subcategories, onCategoryChange,
     columnHelper.display({
       id: 'actions',
       header: () => null,
-      size: 96,
-      minSize: 96,
-      maxSize: 96,
+      size: 176,
+      minSize: 176,
+      maxSize: 176,
       enableHiding: false,
       enableSorting: false,
       enableColumnFilter: false,
@@ -275,8 +276,12 @@ export function useProductColumns({ categories, subcategories, onCategoryChange,
             aria-label={i18n._(msg`Edit product ${row.original.name}`)} onClick={() => onEditProduct(row.original)}>
             <Trans>Edit</Trans>
           </Button>
+          <Button type="button" variant="destructive" size="sm" disabled={row.original.isPending}
+            aria-label={i18n._(msg`Archive product ${row.original.name}`)} onClick={() => onArchiveProduct(row.original)}>
+            <Trans>Archive</Trans>
+          </Button>
         </div>
       ),
     }),
-  ]), [categories, subcategories, onCategoryChange, onEditProduct, i18n])
+  ]), [categories, subcategories, onCategoryChange, onEditProduct, onArchiveProduct, i18n])
 }
