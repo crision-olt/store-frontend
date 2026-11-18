@@ -45,6 +45,11 @@ msgstr "Alérgenos (opcional)"
 msgid "Already have an account?"
 msgstr "¿Ya tienes una cuenta?"
 
+#. placeholder {0}: offer.minimumDistinctProducts
+#: src/pages/offers.tsx:228
+msgid "Any {0} different eligible products"
+msgstr "Cualquier combinación de {0} productos elegibles distintos"
+
 #: src/components/products/archive-product-dialog.tsx:47
 #: src/components/products/products-table-columns.tsx:240
 msgid "Archive"
@@ -90,12 +95,21 @@ msgstr "Bloqueado"
 msgid "Browse and filter the product catalog."
 msgstr "Explora y filtra el catálogo de productos."
 
+#: src/pages/offers.tsx:200
+msgid "Bundle products with a fixed menu price or a percentage discount."
+msgstr "Agrupa productos con un precio fijo de menú o un descuento porcentual."
+
+#: src/pages/offers.tsx:151
+msgid "Bundle total"
+msgstr "Total del paquete"
+
 #: src/components/access/permission-list.tsx:55
 #: src/components/access/role-list.tsx:73
 #: src/components/products/archive-product-dialog.tsx:44
 #: src/components/products/create-product-dialog.tsx:130
 #: src/components/products/create-product-dialog.tsx:194
 #: src/components/users/user-form.tsx:69
+#: src/pages/offers.tsx:156
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -200,6 +214,10 @@ msgstr "No se pudieron cargar los alérgenos."
 msgid "Could not load categories. Please try again."
 msgstr "No se pudieron cargar las categorías. Inténtalo de nuevo."
 
+#: src/pages/offers.tsx:204
+msgid "Could not load offers or products."
+msgstr "No se pudieron cargar las ofertas o los productos."
+
 #: src/pages/access.tsx:88
 msgid "Could not load permissions. Please try again."
 msgstr "No se pudieron cargar los permisos. Inténtalo de nuevo."
@@ -225,11 +243,15 @@ msgstr "No se pudo guardar el producto. Inténtalo de nuevo."
 msgid "Could not save the user. Please try again."
 msgstr "No se pudo guardar el usuario. Inténtalo de nuevo."
 
+#: src/pages/offers.tsx:154
+msgid "Could not save this offer. Check the price and selected products, then try again."
+msgstr "No se pudo guardar la oferta. Revisa el precio y los productos seleccionados e inténtalo de nuevo."
+
 #: src/pages/login.tsx:66
 msgid "Could not sign in. Please try again."
 msgstr "No se pudo iniciar sesión. Inténtalo de nuevo."
 
-#: src/components/store-layout.tsx:73
+#: src/components/store-layout.tsx:74
 msgid "Could not sign out. Please try again."
 msgstr "No se pudo cerrar la sesión. Inténtalo de nuevo."
 
@@ -265,6 +287,11 @@ msgstr "Crea categorías y asígnales subcategorías."
 #: src/pages/categories.tsx:75
 msgid "Create category"
 msgstr "Crear categoría"
+
+#: src/pages/offers.tsx:71
+#: src/pages/offers.tsx:157
+msgid "Create offer"
+msgstr "Crear oferta"
 
 #: src/pages/access.tsx:66
 #: src/pages/access.tsx:75
@@ -344,6 +371,10 @@ msgstr "¿Eliminar el rol {0}?"
 msgid "Description (optional)"
 msgstr "Descripción (opcional)"
 
+#: src/pages/offers.tsx:99
+msgid "Discount (%)"
+msgstr "Descuento (%)"
+
 #: src/pages/login.tsx:49
 msgid "Don't have an account?"
 msgstr "¿No tienes una cuenta?"
@@ -360,8 +391,18 @@ msgstr "Arrastra los controles para reordenar las columnas. O enfoca un control,
 #: src/components/access/role-list.tsx:47
 #: src/components/products/products-table-columns.tsx:236
 #: src/components/users/user-list.tsx:53
+#: src/pages/offers.tsx:233
 msgid "Edit"
 msgstr "Editar"
+
+#. placeholder {0}: offer.name
+#: src/pages/offers.tsx:232
+msgid "Edit {0}"
+msgstr "Editar {0}"
+
+#: src/pages/offers.tsx:71
+msgid "Edit offer"
+msgstr "Editar oferta"
 
 #. placeholder {0}: permission.name
 #: src/components/access/permission-list.tsx:39
@@ -387,6 +428,10 @@ msgstr "Editar rol {0}"
 msgid "Edit user {0}"
 msgstr "Editar usuario {0}"
 
+#: src/pages/offers.tsx:105
+msgid "Eligible products"
+msgstr "Productos elegibles"
+
 #: src/components/users/user-form.tsx:37
 #: src/pages/login.tsx:55
 #: src/pages/register.tsx:52
@@ -401,6 +446,10 @@ msgstr "Introduce un correo electrónico válido"
 #: src/pages/products.tsx:92
 msgid "Enter a valid price range: the minimum cannot exceed the maximum."
 msgstr "Introduce un rango de precios válido: el mínimo no puede superar al máximo."
+
+#: src/pages/offers.tsx:139
+msgid "Enter a whole number between 1 and the number of eligible products."
+msgstr "Introduce un número entero entre 1 y la cantidad de productos elegibles."
 
 #: src/pages/register.tsx:45
 msgid "Enter your details to get started"
@@ -423,6 +472,15 @@ msgstr "Filtrar por subcategoría"
 msgid "Filters"
 msgstr "Filtros"
 
+#: src/pages/offers.tsx:107
+#: src/pages/offers.tsx:107
+msgid "Find products"
+msgstr "Buscar productos"
+
+#: src/pages/offers.tsx:99
+msgid "Fixed price (€)"
+msgstr "Precio fijo (€)"
+
 #: src/pages/login.tsx:63
 msgid "Invalid email or password"
 msgstr "Correo electrónico o contraseña incorrectos"
@@ -430,6 +488,10 @@ msgstr "Correo electrónico o contraseña incorrectos"
 #: src/components/language-switcher.tsx:19
 msgid "Language"
 msgstr "Idioma"
+
+#: src/pages/offers.tsx:138
+msgid "Leave blank to require every selected product. Extra units of the same product do not count toward the minimum."
+msgstr "Déjalo en blanco para exigir todos los productos seleccionados. Las unidades adicionales del mismo producto no cuentan para el mínimo."
 
 #: src/components/table/components/table-loading.tsx:17
 msgid "Loading"
@@ -442,6 +504,10 @@ msgstr "Cargando alérgenos…"
 #: src/pages/categories.tsx:106
 msgid "Loading categories…"
 msgstr "Cargando categorías…"
+
+#: src/pages/offers.tsx:211
+msgid "Loading offers and products…"
+msgstr "Cargando ofertas y productos…"
 
 #: src/pages/access.tsx:87
 #: src/pages/access.tsx:106
@@ -474,10 +540,25 @@ msgstr "Máx."
 msgid "Maximum price"
 msgstr "Precio máximo"
 
+#: src/pages/offers.tsx:90
+#: src/pages/offers.tsx:93
+#: src/pages/offers.tsx:224
+msgid "Menu"
+msgstr "Menú"
+
+#: src/components/store-layout.tsx:29
+#: src/pages/offers.tsx:199
+msgid "Menus and promotions"
+msgstr "Menús y promociones"
+
 #: src/components/products/products-table-columns.tsx:198
 #: src/components/products/products-table-filters.config.ts:45
 msgid "Min"
 msgstr "Mín."
+
+#: src/pages/offers.tsx:132
+msgid "Minimum different products (optional)"
+msgstr "Mínimo de productos distintos (opcional)"
 
 #: src/components/products/products-table-columns.tsx:199
 msgid "Minimum price"
@@ -486,6 +567,7 @@ msgstr "Precio mínimo"
 #: src/components/products/create-product-dialog.tsx:50
 #: src/components/products/products-table-columns.config.ts:7
 #: src/components/products/products-table-columns.tsx:58
+#: src/pages/offers.tsx:76
 msgid "Name"
 msgstr "Nombre"
 
@@ -504,6 +586,14 @@ msgstr "No se encontraron alérgenos."
 #: src/pages/categories.tsx:107
 msgid "No categories yet."
 msgstr "Todavía no hay categorías."
+
+#: src/pages/offers.tsx:118
+msgid "No matching products."
+msgstr "No se encontraron productos."
+
+#: src/pages/offers.tsx:217
+msgid "No offers yet."
+msgstr "Aún no hay ofertas."
 
 #: src/components/access/role-list.tsx:58
 msgid "No permissions assigned."
@@ -534,6 +624,10 @@ msgstr "Todavía no hay usuarios."
 #: src/components/products/create-product-dialog.tsx:86
 msgid "None"
 msgstr "Ninguna"
+
+#: src/pages/offers.tsx:81
+msgid "Offer type"
+msgstr "Tipo de oferta"
 
 #: src/components/users/user-form.tsx:42
 #: src/pages/login.tsx:56
@@ -593,9 +687,35 @@ msgstr "Filtros de productos"
 msgid "Products"
 msgstr "Productos"
 
+#: src/pages/offers.tsx:105
+msgid "Products in this bundle"
+msgstr "Productos del paquete"
+
+#: src/pages/offers.tsx:150
+msgid "Products subtotal"
+msgstr "Subtotal de productos"
+
+#: src/pages/offers.tsx:90
+#: src/pages/offers.tsx:94
+#: src/pages/offers.tsx:225
+msgid "Promotion"
+msgstr "Promoción"
+
+#: src/pages/offers.tsx:145
+msgid "Qualifies with any {threshold} different products from the selected list."
+msgstr "Válida con cualquier combinación de {threshold} productos distintos de la lista seleccionada."
+
 #: src/components/table/components/table-filters.tsx:91
 msgid "Remove filter: {label}"
 msgstr "Quitar filtro: {label}"
+
+#: src/pages/offers.tsx:126
+msgid "Remove unavailable products"
+msgstr "Quitar productos no disponibles"
+
+#: src/pages/offers.tsx:123
+msgid "Remove unavailable products before saving."
+msgstr "Quita los productos no disponibles antes de guardar."
 
 #: src/components/table/components/table-column-visibility.tsx:93
 msgid "Reorder {label}"
@@ -618,7 +738,7 @@ msgstr "Nombre del rol"
 msgid "Roles"
 msgstr "Roles"
 
-#: src/components/store-layout.tsx:30
+#: src/components/store-layout.tsx:31
 #: src/pages/access.tsx:61
 msgid "Roles and permissions"
 msgstr "Roles y permisos"
@@ -627,10 +747,16 @@ msgstr "Roles y permisos"
 #: src/components/access/role-list.tsx:72
 #: src/components/products/create-product-dialog.tsx:132
 #: src/components/users/user-list.tsx:35
+#: src/pages/offers.tsx:157
 msgid "Save"
 msgstr "Guardar"
 
+#: src/pages/offers.tsx:215
+msgid "Saved offers"
+msgstr "Ofertas guardadas"
+
 #: src/components/products/create-product-dialog.tsx:132
+#: src/pages/offers.tsx:157
 msgid "Saving…"
 msgstr "Guardando…"
 
@@ -659,6 +785,11 @@ msgstr "Seleccionar alérgenos"
 msgid "Select permissions"
 msgstr "Selecciona permisos"
 
+#. placeholder {0}: selected.size
+#: src/pages/offers.tsx:120
+msgid "Selected products: {0} of 100"
+msgstr "Productos seleccionados: {0} de 100"
+
 #: src/pages/login.tsx:70
 #: src/pages/register.tsx:48
 msgid "Sign in"
@@ -668,7 +799,7 @@ msgstr "Iniciar sesión"
 msgid "Sign in to your account"
 msgstr "Inicia sesión en tu cuenta"
 
-#: src/components/store-layout.tsx:69
+#: src/components/store-layout.tsx:70
 msgid "Sign out"
 msgstr "Cerrar sesión"
 
@@ -694,8 +825,8 @@ msgstr "Ordenar ascendente"
 msgid "Sort descending"
 msgstr "Ordenar descendente"
 
-#: src/components/store-layout.tsx:40
-#: src/components/store-layout.tsx:42
+#: src/components/store-layout.tsx:41
+#: src/components/store-layout.tsx:43
 msgid "Store"
 msgstr "Tienda"
 
@@ -716,6 +847,10 @@ msgstr "Nombre de la subcategoría"
 #: src/pages/allergens.tsx:22
 msgid "The 14 food allergen categories listed by the European Union."
 msgstr "Las 14 categorías de alérgenos alimentarios enumeradas por la Unión Europea."
+
+#: src/pages/offers.tsx:106
+msgid "The bundle includes one of each selected product."
+msgstr "El paquete incluye una unidad de cada producto seleccionado."
 
 #: src/pages/login.tsx:65
 msgid "This account is blocked. Contact an administrator."
@@ -759,6 +894,7 @@ msgstr "Esta subcategoría ya existe en la categoría seleccionada."
 #: src/pages/access.tsx:89
 #: src/pages/access.tsx:119
 #: src/pages/allergens.tsx:30
+#: src/pages/offers.tsx:208
 #: src/pages/products.tsx:100
 #: src/pages/users.tsx:46
 #: src/pages/users.tsx:61
@@ -778,7 +914,7 @@ msgstr "Desbloquear usuario {0}"
 msgid "Update the product details."
 msgstr "Actualiza los datos del producto."
 
-#: src/components/store-layout.tsx:29
+#: src/components/store-layout.tsx:30
 #: src/pages/users.tsx:36
 msgid "Users"
 msgstr "Usuarios"

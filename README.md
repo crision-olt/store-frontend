@@ -20,6 +20,15 @@ The page is a read-only reference. To assign allergens, use the optional
 **Allergens** multiselect when creating or editing a product. An empty selection
 means no allergens have been recorded, not that the product is allergen-free.
 
+Use **Menus and promotions** to create or edit bundles containing one of each
+selected product. Set a fixed menu price or apply a percentage discount to the
+selected products' current subtotal. For a promotion, set **Minimum different
+products** to allow any subset of the eligible list that meets the minimum.
+For example, select six coffees, set the minimum to four, and enter a 10% discount.
+Repeated units of the same coffee count as one. The page previews fixed bundle
+totals; it does not apply offers to orders. If a product is archived, remove it from the bundle
+before saving changes.
+
 On **Products**, select **Create product** above the table. Enter a name, unique SKU,
 category, and price; description and subcategory are optional. Subcategories
 belong to the selected category. Saving immediately closes the dialog and shows a
