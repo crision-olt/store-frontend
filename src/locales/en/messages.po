@@ -32,6 +32,11 @@ msgstr "All"
 msgid "All users"
 msgstr "All users"
 
+#: src/components/store-layout.tsx:28
+#: src/pages/allergens.tsx:21
+msgid "Allergens"
+msgstr "Allergens"
+
 #: src/pages/register.tsx:46
 msgid "Already have an account?"
 msgstr "Already have an account?"
@@ -180,6 +185,10 @@ msgstr "Could not create the product. Please try again."
 msgid "Could not download Excel. Please try again."
 msgstr "Could not download Excel. Please try again."
 
+#: src/pages/allergens.tsx:29
+msgid "Could not load allergens."
+msgstr "Could not load allergens."
+
 #: src/components/products/create-product-dialog.tsx:157
 #: src/pages/categories.tsx:62
 #: src/pages/products.tsx:87
@@ -215,7 +224,7 @@ msgstr "Could not save the user. Please try again."
 msgid "Could not sign in. Please try again."
 msgstr "Could not sign in. Please try again."
 
-#: src/components/store-layout.tsx:72
+#: src/components/store-layout.tsx:73
 msgid "Could not sign out. Please try again."
 msgstr "Could not sign out. Please try again."
 
@@ -421,6 +430,10 @@ msgstr "Language"
 msgid "Loading"
 msgstr "Loading"
 
+#: src/pages/allergens.tsx:26
+msgid "Loading allergens…"
+msgstr "Loading allergens…"
+
 #: src/components/products/create-product-dialog.tsx:165
 #: src/pages/categories.tsx:106
 msgid "Loading categories…"
@@ -475,6 +488,10 @@ msgstr "Name, SKU or description"
 #: src/components/users/user-form.tsx:42
 msgid "New password (optional)"
 msgstr "New password (optional)"
+
+#: src/pages/allergens.tsx:42
+msgid "No allergens found."
+msgstr "No allergens found."
 
 #: src/pages/categories.tsx:107
 msgid "No categories yet."
@@ -593,7 +610,7 @@ msgstr "Role name"
 msgid "Roles"
 msgstr "Roles"
 
-#: src/components/store-layout.tsx:29
+#: src/components/store-layout.tsx:30
 #: src/pages/access.tsx:61
 msgid "Roles and permissions"
 msgstr "Roles and permissions"
@@ -639,7 +656,7 @@ msgstr "Sign in"
 msgid "Sign in to your account"
 msgstr "Sign in to your account"
 
-#: src/components/store-layout.tsx:68
+#: src/components/store-layout.tsx:69
 msgid "Sign out"
 msgstr "Sign out"
 
@@ -665,8 +682,8 @@ msgstr "Sort ascending"
 msgid "Sort descending"
 msgstr "Sort descending"
 
-#: src/components/store-layout.tsx:39
-#: src/components/store-layout.tsx:41
+#: src/components/store-layout.tsx:40
+#: src/components/store-layout.tsx:42
 msgid "Store"
 msgstr "Store"
 
@@ -683,6 +700,10 @@ msgstr "Subcategory (optional)"
 #: src/pages/categories.tsx:92
 msgid "Subcategory name"
 msgstr "Subcategory name"
+
+#: src/pages/allergens.tsx:22
+msgid "The 14 food allergen categories listed by the European Union."
+msgstr "The 14 food allergen categories listed by the European Union."
 
 #: src/pages/login.tsx:65
 msgid "This account is blocked. Contact an administrator."
@@ -705,6 +726,10 @@ msgstr "This permission is protected, already exists, or is still assigned to a 
 msgid "This product no longer exists."
 msgstr "This product no longer exists."
 
+#: src/pages/allergens.tsx:23
+msgid "This reference does not indicate which allergens a product contains."
+msgstr "This reference does not indicate which allergens a product contains."
+
 #: src/pages/access.tsx:95
 msgid "This role already exists."
 msgstr "This role already exists."
@@ -721,6 +746,7 @@ msgstr "This subcategory already exists in the selected category."
 #: src/components/products/create-product-dialog.tsx:161
 #: src/pages/access.tsx:89
 #: src/pages/access.tsx:119
+#: src/pages/allergens.tsx:30
 #: src/pages/products.tsx:100
 #: src/pages/users.tsx:46
 #: src/pages/users.tsx:61
@@ -740,7 +766,7 @@ msgstr "Unblock user {0}"
 msgid "Update the product details."
 msgstr "Update the product details."
 
-#: src/components/store-layout.tsx:28
+#: src/components/store-layout.tsx:29
 #: src/pages/users.tsx:36
 msgid "Users"
 msgstr "Users"

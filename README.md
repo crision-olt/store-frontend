@@ -15,6 +15,10 @@ After setting up the service's database, use **Categories** in the navigation
 to create categories and subcategories. Product filters use their IDs
 while displaying their names.
 
+Use **Allergens** to view the 14 EU food allergen categories in English or Spanish.
+This read-only reference requires the service's `sql/allergens.sql` setup script
+and does not assign allergens to products.
+
 On **Products**, select **Create product** above the table. Enter a name, unique SKU,
 category, and price; description and subcategory are optional. Subcategories
 belong to the selected category. Saving immediately closes the dialog and shows a
