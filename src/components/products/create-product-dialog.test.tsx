@@ -13,6 +13,14 @@ import { defineBoundingClientRect, defineClientDimensions } from '@/test/dom'
 defineBoundingClientRect()
 defineClientDimensions()
 
+vi.mock('@/lib/allergens-api', async (importOriginal) => ({
+  ...await importOriginal<typeof import('@/lib/allergens-api')>(),
+  listAllergens: vi.fn().mockResolvedValue([
+    { id: 3, code: 'eggs', name: 'Eggs', nameEs: 'Huevos' },
+    { id: 7, code: 'milk', name: 'Milk', nameEs: 'Leche' },
+  ]),
+}))
+
 vi.mock('@/lib/products-api', async (importOriginal) => ({
   ...await importOriginal<typeof import('@/lib/products-api')>(),
   createProduct: vi.fn(),
@@ -29,7 +37,7 @@ const queryKey = ['products', { search: 'Existing', sortBy: 'price', sortOrder: 
 const existingProduct: Product = {
   id: 8, name: 'Existing product', sku: 'OLD-1', description: null,
   categoryId: 1, categoryName: 'Kitchen', subcategoryId: null,
-  subcategoryName: null, price: 20, created_at: '2026-01-01',
+  subcategoryName: null, price: 20, allergenIds: [], created_at: '2026-01-01',
 }
 
 const savedProduct = { ...existingProduct, id: 9, name: 'Blue Mug', sku: 'MUG-1', price: 9.99 }
@@ -92,12 +100,16 @@ it('shows a pending product inside the table without changing the cache and keep
   expect(screen.queryByRole('dialog', { name: 'Create product' })).not.toBeInTheDocument()
   await user.click(trigger)
   await fillRequired(user)
+  await user.click(screen.getByRole('combobox', { name: 'Allergens (optional)' }))
+  await user.click(await screen.findByRole('option', { name: 'Eggs' }))
+  await user.click(screen.getByRole('option', { name: 'Milk' }))
+  await user.keyboard('{Escape}')
   await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Create product' }))
 
   expect(createProduct).toHaveBeenCalledOnce()
   expect(vi.mocked(createProduct).mock.calls[0][0]).toEqual({
     name: 'Blue Mug', sku: 'MUG-1', description: null,
-    categoryId: 1, subcategoryId: null, price: 9.99,
+    categoryId: 1, subcategoryId: null, price: 9.99, allergenIds: [3, 7],
   })
   expect(screen.getByRole('button', { name: 'Creating product…' })).toHaveAttribute('aria-disabled', 'true')
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument()

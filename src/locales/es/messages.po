@@ -7,7 +7,7 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 "Language: es\n"
 
-#: src/components/products/create-product-dialog.tsx:96
+#: src/components/products/create-product-dialog.tsx:122
 msgid "A product with this SKU already exists."
 msgstr "Ya existe un producto con este SKU."
 
@@ -19,7 +19,7 @@ msgstr "Ya existe un usuario con este correo."
 msgid "Active filters"
 msgstr "Filtros activos"
 
-#: src/components/products/create-product-dialog.tsx:154
+#: src/components/products/create-product-dialog.tsx:183
 msgid "Add a new product to your catalog."
 msgstr "Añade un nuevo producto a tu catálogo."
 
@@ -36,6 +36,10 @@ msgstr "Todos los usuarios"
 #: src/pages/allergens.tsx:21
 msgid "Allergens"
 msgstr "Alérgenos"
+
+#: src/components/products/create-product-dialog.tsx:99
+msgid "Allergens (optional)"
+msgstr "Alérgenos (opcional)"
 
 #: src/pages/register.tsx:46
 msgid "Already have an account?"
@@ -89,8 +93,8 @@ msgstr "Explora y filtra el catálogo de productos."
 #: src/components/access/permission-list.tsx:55
 #: src/components/access/role-list.tsx:73
 #: src/components/products/archive-product-dialog.tsx:44
-#: src/components/products/create-product-dialog.tsx:104
-#: src/components/products/create-product-dialog.tsx:162
+#: src/components/products/create-product-dialog.tsx:130
+#: src/components/products/create-product-dialog.tsx:194
 #: src/components/users/user-form.tsx:69
 msgid "Cancel"
 msgstr "Cancelar"
@@ -100,7 +104,7 @@ msgstr "Cancelar"
 msgid "Categories"
 msgstr "Categorías"
 
-#: src/components/products/create-product-dialog.tsx:59
+#: src/components/products/create-product-dialog.tsx:64
 #: src/components/products/products-table-columns.config.ts:9
 #: src/components/products/products-table-columns.tsx:89
 #: src/components/products/products-table-filters.config.ts:27
@@ -116,9 +120,9 @@ msgstr "Nombre de la categoría"
 msgid "Check the email, the password (8 to 72 characters) and the role."
 msgstr "Revisa el correo, la contraseña (de 8 a 72 caracteres) y el rol."
 
-#: src/components/products/create-product-dialog.tsx:98
-msgid "Check the product details and selected category, then try again."
-msgstr "Revisa los datos del producto y la categoría seleccionada e inténtalo de nuevo."
+#: src/components/products/create-product-dialog.tsx:124
+msgid "Check the product details, category, and allergens, then try again."
+msgstr "Revisa los datos del producto, la categoría y los alérgenos e inténtalo de nuevo."
 
 #: src/components/table/components/table-filters.tsx:101
 msgid "Clear filters"
@@ -177,7 +181,7 @@ msgstr "No se pudo crear la subcategoría. Inténtalo de nuevo."
 msgid "Could not create the account"
 msgstr "No se pudo crear la cuenta"
 
-#: src/components/products/create-product-dialog.tsx:101
+#: src/components/products/create-product-dialog.tsx:127
 msgid "Could not create the product. Please try again."
 msgstr "No se pudo crear el producto. Inténtalo de nuevo."
 
@@ -185,11 +189,12 @@ msgstr "No se pudo crear el producto. Inténtalo de nuevo."
 msgid "Could not download Excel. Please try again."
 msgstr "No se pudo descargar el archivo de Excel. Inténtalo de nuevo."
 
+#: src/components/products/create-product-dialog.tsx:187
 #: src/pages/allergens.tsx:29
 msgid "Could not load allergens."
 msgstr "No se pudieron cargar los alérgenos."
 
-#: src/components/products/create-product-dialog.tsx:157
+#: src/components/products/create-product-dialog.tsx:188
 #: src/pages/categories.tsx:62
 #: src/pages/products.tsx:87
 msgid "Could not load categories. Please try again."
@@ -212,7 +217,7 @@ msgstr "No se pudieron cargar los roles. Inténtalo de nuevo."
 msgid "Could not load users. Please try again."
 msgstr "No se pudieron cargar los usuarios. Inténtalo de nuevo."
 
-#: src/components/products/create-product-dialog.tsx:101
+#: src/components/products/create-product-dialog.tsx:127
 msgid "Could not save the product. Please try again."
 msgstr "No se pudo guardar el producto. Inténtalo de nuevo."
 
@@ -240,7 +245,7 @@ msgstr "No se pudo actualizar el rol. Inténtalo de nuevo."
 msgid "Could not verify your session."
 msgstr "No se pudo verificar tu sesión."
 
-#: src/components/products/create-product-dialog.tsx:93
+#: src/components/products/create-product-dialog.tsx:119
 msgid "Create a category on the Categories page before adding products."
 msgstr "Crea una categoría en la página Categorías antes de añadir productos."
 
@@ -266,9 +271,9 @@ msgstr "Crear categoría"
 msgid "Create permission"
 msgstr "Crear permiso"
 
-#: src/components/products/create-product-dialog.tsx:106
-#: src/components/products/create-product-dialog.tsx:148
-#: src/components/products/create-product-dialog.tsx:153
+#: src/components/products/create-product-dialog.tsx:132
+#: src/components/products/create-product-dialog.tsx:177
+#: src/components/products/create-product-dialog.tsx:182
 msgid "Create product"
 msgstr "Crear producto"
 
@@ -304,8 +309,8 @@ msgstr "Creado"
 msgid "Creating account…"
 msgstr "Creando cuenta…"
 
-#: src/components/products/create-product-dialog.tsx:106
-#: src/components/products/create-product-dialog.tsx:148
+#: src/components/products/create-product-dialog.tsx:132
+#: src/components/products/create-product-dialog.tsx:177
 #: src/components/products/products-table-columns.tsx:63
 msgid "Creating product…"
 msgstr "Creando producto…"
@@ -335,7 +340,7 @@ msgstr "Eliminar rol {0}"
 msgid "Delete role {0}?"
 msgstr "¿Eliminar el rol {0}?"
 
-#: src/components/products/create-product-dialog.tsx:53
+#: src/components/products/create-product-dialog.tsx:58
 msgid "Description (optional)"
 msgstr "Descripción (opcional)"
 
@@ -363,7 +368,7 @@ msgstr "Editar"
 msgid "Edit permission {0}"
 msgstr "Editar permiso {0}"
 
-#: src/components/products/create-product-dialog.tsx:153
+#: src/components/products/create-product-dialog.tsx:182
 msgid "Edit product"
 msgstr "Editar producto"
 
@@ -434,7 +439,6 @@ msgstr "Cargando"
 msgid "Loading allergens…"
 msgstr "Cargando alérgenos…"
 
-#: src/components/products/create-product-dialog.tsx:165
 #: src/pages/categories.tsx:106
 msgid "Loading categories…"
 msgstr "Cargando categorías…"
@@ -443,6 +447,10 @@ msgstr "Cargando categorías…"
 #: src/pages/access.tsx:106
 msgid "Loading permissions…"
 msgstr "Cargando permisos…"
+
+#: src/components/products/create-product-dialog.tsx:197
+msgid "Loading product options…"
+msgstr "Cargando opciones del producto…"
 
 #: src/pages/access.tsx:116
 #: src/pages/users.tsx:43
@@ -475,7 +483,7 @@ msgstr "Mín."
 msgid "Minimum price"
 msgstr "Precio mínimo"
 
-#: src/components/products/create-product-dialog.tsx:45
+#: src/components/products/create-product-dialog.tsx:50
 #: src/components/products/products-table-columns.config.ts:7
 #: src/components/products/products-table-columns.tsx:58
 msgid "Name"
@@ -522,8 +530,8 @@ msgstr "Todavía no hay subcategorías."
 msgid "No users yet."
 msgstr "Todavía no hay usuarios."
 
-#: src/components/products/create-product-dialog.tsx:78
-#: src/components/products/create-product-dialog.tsx:81
+#: src/components/products/create-product-dialog.tsx:83
+#: src/components/products/create-product-dialog.tsx:86
 msgid "None"
 msgstr "Ninguna"
 
@@ -569,7 +577,7 @@ msgstr "Las columnas fijadas no se pueden ocultar ni mover."
 msgid "Preparing Excel…"
 msgstr "Preparando Excel…"
 
-#: src/components/products/create-product-dialog.tsx:89
+#: src/components/products/create-product-dialog.tsx:94
 #: src/components/products/products-table-columns.config.ts:11
 #: src/components/products/products-table-columns.tsx:179
 #: src/components/products/products-table-filters.config.ts:43
@@ -617,12 +625,12 @@ msgstr "Roles y permisos"
 
 #: src/components/access/permission-list.tsx:54
 #: src/components/access/role-list.tsx:72
-#: src/components/products/create-product-dialog.tsx:106
+#: src/components/products/create-product-dialog.tsx:132
 #: src/components/users/user-list.tsx:35
 msgid "Save"
 msgstr "Guardar"
 
-#: src/components/products/create-product-dialog.tsx:106
+#: src/components/products/create-product-dialog.tsx:132
 msgid "Saving…"
 msgstr "Guardando…"
 
@@ -634,7 +642,7 @@ msgstr "Buscar"
 msgid "Search products"
 msgstr "Buscar productos"
 
-#: src/components/products/create-product-dialog.tsx:66
+#: src/components/products/create-product-dialog.tsx:71
 #: src/pages/categories.tsx:86
 msgid "Select a category"
 msgstr "Selecciona una categoría"
@@ -642,6 +650,10 @@ msgstr "Selecciona una categoría"
 #: src/components/users/user-form.tsx:51
 msgid "Select a role"
 msgstr "Selecciona un rol"
+
+#: src/components/products/create-product-dialog.tsx:103
+msgid "Select allergens"
+msgstr "Seleccionar alérgenos"
 
 #: src/components/access/permission-multiselect.tsx:25
 msgid "Select permissions"
@@ -668,7 +680,7 @@ msgstr "Regístrate"
 msgid "Signing in…"
 msgstr "Iniciando sesión…"
 
-#: src/components/products/create-product-dialog.tsx:49
+#: src/components/products/create-product-dialog.tsx:54
 #: src/components/products/products-table-columns.config.ts:8
 #: src/components/products/products-table-columns.tsx:84
 msgid "SKU"
@@ -693,7 +705,7 @@ msgstr "Tienda"
 msgid "Subcategory"
 msgstr "Subcategoría"
 
-#: src/components/products/create-product-dialog.tsx:74
+#: src/components/products/create-product-dialog.tsx:79
 msgid "Subcategory (optional)"
 msgstr "Subcategoría (opcional)"
 
@@ -722,7 +734,7 @@ msgid "This permission is protected, already exists, or is still assigned to a r
 msgstr "Este permiso está protegido, ya existe o sigue asignado a un rol."
 
 #: src/components/products/archive-product-dialog.tsx:39
-#: src/components/products/create-product-dialog.tsx:100
+#: src/components/products/create-product-dialog.tsx:126
 msgid "This product no longer exists."
 msgstr "Este producto ya no existe."
 
@@ -743,7 +755,7 @@ msgid "This subcategory already exists in the selected category."
 msgstr "Esta subcategoría ya existe en la categoría seleccionada."
 
 #: src/components/auth/require-auth.tsx:29
-#: src/components/products/create-product-dialog.tsx:161
+#: src/components/products/create-product-dialog.tsx:193
 #: src/pages/access.tsx:89
 #: src/pages/access.tsx:119
 #: src/pages/allergens.tsx:30
@@ -762,7 +774,7 @@ msgstr "Desbloquear"
 msgid "Unblock user {0}"
 msgstr "Desbloquear usuario {0}"
 
-#: src/components/products/create-product-dialog.tsx:154
+#: src/components/products/create-product-dialog.tsx:183
 msgid "Update the product details."
 msgstr "Actualiza los datos del producto."
 

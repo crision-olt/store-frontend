@@ -8,21 +8,25 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { AllergensApiError, listAllergens, type Allergen } from '@/lib/allergens-api'
 import { createProduct, updateProduct, listCategories, listSubcategories, ProductsApiError, type Category, type Product, type ProductInput, type Subcategory } from '@/lib/products-api'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 
-function ProductForm({ categories, subcategories, initial, editing, pending, error, onSubmit }: {
+function ProductForm({ categories, subcategories, allergens, initial, editing, pending, error, onSubmit }: {
   categories: Category[]
   subcategories: Subcategory[]
+  allergens: Allergen[]
   initial: ProductInput | undefined
   editing: boolean
   pending: boolean
   error: unknown
   onSubmit: (input: ProductInput) => void
 }) {
-  const { t } = useLingui()
+  const { t, i18n } = useLingui()
   const [categoryId, setCategoryId] = useState<number | null>(initial?.categoryId ?? null)
   const [subcategoryId, setSubcategoryId] = useState<number | null>(initial?.subcategoryId ?? null)
+  const [allergenIds, setAllergenIds] = useState(initial?.allergenIds ?? [])
+  const allergenName = (allergen: Allergen) => i18n.locale === 'es' ? allergen.nameEs : allergen.name
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -35,6 +39,7 @@ function ProductForm({ categories, subcategories, initial, editing, pending, err
       categoryId,
       subcategoryId,
       price: Number(data.get('price')),
+      allergenIds,
     })
   }
 
@@ -90,12 +95,33 @@ function ProductForm({ categories, subcategories, initial, editing, pending, err
             <Input id="product-price" name="price" type="number" defaultValue={initial?.price} min={0} max={99999999.99} step="0.01" required />
           </div>
         </div>
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="product-allergens">{t`Allergens (optional)`}</Label>
+          <Select multiple value={allergenIds.map(String)} disabled={pending || allergens.length === 0}
+            onValueChange={(values) => setAllergenIds(values.map(Number))}>
+            <SelectTrigger id="product-allergens" className="w-full">
+              <SelectValue>{t`Select allergens`}</SelectValue>
+            </SelectTrigger>
+            <SelectContent alignItemWithTrigger={false}>
+              {allergens.map((allergen) => <SelectItem key={allergen.id} value={String(allergen.id)}>
+                {allergenName(allergen)}
+              </SelectItem>)}
+            </SelectContent>
+          </Select>
+          {allergenIds.length > 0 && (
+            <ul role="list" className="flex flex-wrap gap-1.5 text-xs">
+              {allergens.filter(({ id }) => allergenIds.includes(id)).map((allergen) => (
+                <li key={allergen.id} className="rounded-md bg-muted px-2 py-1">{allergenName(allergen)}</li>
+              ))}
+            </ul>
+          )}
+        </div>
         {categories.length === 0 && <p role="alert" className="text-sm text-muted-foreground">{t`Create a category on the Categories page before adding products.`}</p>}
         {error ? <p role="alert" className="text-sm text-destructive">
           {error instanceof ProductsApiError && error.status === 409
             ? t`A product with this SKU already exists.`
             : error instanceof ProductsApiError && error.status === 400
-              ? t`Check the product details and selected category, then try again.`
+              ? t`Check the product details, category, and allergens, then try again.`
               : editing && error instanceof ProductsApiError && error.status === 404
                 ? t`This product no longer exists.`
                 : editing ? t`Could not save the product. Please try again.` : t`Could not create the product. Please try again.`}
@@ -118,6 +144,7 @@ function ProductDialog({ product, onClose }: { product?: Product; onClose?: () =
   const location = useLocation()
   const categories = useQuery({ queryKey: ['product-categories'], queryFn: listCategories, enabled: open, retry: false })
   const subcategories = useQuery({ queryKey: ['product-subcategories'], queryFn: () => listSubcategories(), enabled: open, retry: false })
+  const allergens = useQuery({ queryKey: ['allergens'], queryFn: ({ signal }) => listAllergens(signal), enabled: open, retry: false })
   const save = useMutation({
     mutationKey: [product ? 'update-product' : 'create-product'],
     mutationFn: (input: ProductInput) => product ? updateProduct(product.id, input) : createProduct(input),
@@ -132,7 +159,9 @@ function ProductDialog({ product, onClose }: { product?: Product; onClose?: () =
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['products'] }),
   })
 
-  if ([categories.error, subcategories.error, save.error].some((error) => error instanceof ProductsApiError && error.status === 401)) {
+  if ([categories.error, subcategories.error, allergens.error, save.error].some((error) =>
+    (error instanceof ProductsApiError || error instanceof AllergensApiError) && error.status === 401,
+  )) {
     return <Navigate to={buildLinkWithRedirect('/login', location.pathname + location.search)} replace />
   }
 
@@ -152,19 +181,22 @@ function ProductDialog({ product, onClose }: { product?: Product; onClose?: () =
         <Dialog.Popup className="fixed top-1/2 left-1/2 z-50 max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border bg-background p-6 text-foreground shadow-lg outline-none">
           <Dialog.Title className="text-lg font-semibold">{product ? t`Edit product` : t`Create product`}</Dialog.Title>
           <Dialog.Description className="mt-1 text-sm text-muted-foreground">{product ? t`Update the product details.` : t`Add a new product to your catalog.`}</Dialog.Description>
-          {categories.isError || subcategories.isError ? (
+          {categories.isError || subcategories.isError || allergens.isError ? (
             <div className="mt-4 flex flex-col items-start gap-3">
-              <p role="alert" className="text-sm text-destructive">{t`Could not load categories. Please try again.`}</p>
+              <p role="alert" className="text-sm text-destructive">{allergens.isError
+                ? t`Could not load allergens.`
+                : t`Could not load categories. Please try again.`}</p>
               <Button variant="outline" onClick={() => {
                 void categories.refetch()
                 void subcategories.refetch()
+                void allergens.refetch()
               }}>{t`Try again`}</Button>
               <Dialog.Close render={<Button variant="outline" />}>{t`Cancel`}</Dialog.Close>
             </div>
-          ) : categories.isPending || subcategories.isPending ? (
-            <p role="status" className="mt-4 text-sm text-muted-foreground">{t`Loading categories…`}</p>
+          ) : categories.isPending || subcategories.isPending || allergens.isPending ? (
+            <p role="status" className="mt-4 text-sm text-muted-foreground">{t`Loading product options…`}</p>
           ) : (
-            <ProductForm categories={categories.data} subcategories={subcategories.data} initial={save.variables ?? product}
+            <ProductForm categories={categories.data} subcategories={subcategories.data} allergens={allergens.data} initial={save.variables ?? product}
               editing={product !== undefined} pending={save.isPending} error={save.error} onSubmit={(input) => save.mutate(input)} />
           )}
         </Dialog.Popup>

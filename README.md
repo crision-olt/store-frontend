@@ -16,8 +16,9 @@ to create categories and subcategories. Product filters use their IDs
 while displaying their names.
 
 Use **Allergens** to view the 14 EU food allergen categories in English or Spanish.
-This read-only reference requires the service's `sql/allergens.sql` setup script
-and does not assign allergens to products.
+The page is a read-only reference. To assign allergens, use the optional
+**Allergens** multiselect when creating or editing a product. An empty selection
+means no allergens have been recorded, not that the product is allergen-free.
 
 On **Products**, select **Create product** above the table. Enter a name, unique SKU,
 category, and price; description and subcategory are optional. Subcategories

@@ -43,6 +43,14 @@ vi.mock('@/lib/products-api', async (importOriginal) => ({
 defineBoundingClientRect()
 defineClientDimensions()
 
+vi.mock('@/lib/allergens-api', async (importOriginal) => ({
+  ...await importOriginal<typeof import('@/lib/allergens-api')>(),
+  listAllergens: vi.fn().mockResolvedValue([
+    { id: 3, code: 'eggs', name: 'Eggs', nameEs: 'Huevos' },
+    { id: 7, code: 'milk', name: 'Milk', nameEs: 'Leche' },
+  ]),
+}))
+
 const product: Product = {
   id: 1,
   name: 'Demo product',
@@ -52,6 +60,7 @@ const product: Product = {
   categoryName: 'Accessories',
   subcategoryId: null,
   subcategoryName: null,
+  allergenIds: [7],
   price: 12.5,
   created_at: '2025-01-01T00:00:00.000Z',
 }
@@ -296,6 +305,10 @@ describe('ProductsTable', () => {
     expect(screen.getByLabelText('Description (optional)')).toHaveValue('A sample product')
     expect(screen.getByLabelText('Price')).toHaveValue(12.5)
     expect(screen.queryByLabelText('Stock')).not.toBeInTheDocument()
+    await user.click(screen.getByRole('combobox', { name: 'Allergens (optional)' }))
+    const milk = await screen.findByRole('option', { name: 'Milk', selected: true })
+    await user.click(milk)
+    await user.keyboard('{Escape}')
     expect(screen.getByRole('combobox', { name: 'Category' })).toHaveTextContent('Accessories')
     expect(screen.getByRole('combobox', { name: 'Subcategory (optional)' })).toHaveTextContent('Cases')
     await user.clear(screen.getByLabelText('Name'))
@@ -313,7 +326,7 @@ describe('ProductsTable', () => {
     await user.click(screen.getByRole('button', { name: 'Save' }))
     expect(updateProduct).toHaveBeenCalledExactlyOnceWith(7, {
       name: 'Updated product', sku: 'NEW-1', description: null,
-      categoryId: 3, subcategoryId: 4, price: 0,
+      categoryId: 3, subcategoryId: 4, price: 0, allergenIds: [],
     })
     expect(screen.getByRole('button', { name: 'Saving…' })).toBeDisabled()
     await user.keyboard('{Escape}')

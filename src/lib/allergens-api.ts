@@ -8,6 +8,8 @@ const allergensSchema = z.array(z.object({
   nameEs: z.string().min(1),
 }))
 
+export type Allergen = z.infer<typeof allergensSchema>[number]
+
 export class AllergensApiError extends Error {
   readonly status: number
 

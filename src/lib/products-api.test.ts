@@ -9,6 +9,7 @@ const product = {
   categoryName: 'Kitchen',
   subcategoryId: 2,
   subcategoryName: 'Mugs',
+  allergenIds: [],
   price: 9.99,
   created_at: '2026-01-01T00:00:00.000Z',
 }
@@ -35,7 +36,7 @@ describe('products API', () => {
   it('updates the chosen product with cookies and validates the server response', async () => {
     const input = {
       name: 'New mug', sku: 'MUG-2', description: null,
-      categoryId: 1, subcategoryId: null, price: 0,
+      categoryId: 1, subcategoryId: null, price: 0, allergenIds: [7],
     }
     const updated = { ...product, ...input, subcategoryName: null }
     const fetch = vi.fn().mockResolvedValue(new Response(JSON.stringify(updated)))
@@ -56,7 +57,7 @@ describe('products API', () => {
   it('creates a product with cookies and validates the returned product', async () => {
     const input = {
       name: 'Blue Mug', sku: 'MUG-1', description: null,
-      categoryId: 1, subcategoryId: 2, price: 9.99,
+      categoryId: 1, subcategoryId: 2, price: 9.99, allergenIds: [],
     }
     const fetch = vi.fn().mockResolvedValue(new Response(JSON.stringify(product), { status: 201 }))
     vi.stubGlobal('fetch', fetch)
