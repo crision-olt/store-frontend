@@ -3,7 +3,6 @@ import { I18nProvider } from '@lingui/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { MemoryRouter } from 'react-router-dom'
-import { ThemeContext } from '@/providers/theme-context'
 import { AccessPage } from './access'
 
 function renderAccess(queryClient: QueryClient) {
@@ -11,13 +10,11 @@ function renderAccess(queryClient: QueryClient) {
   queryClient.setQueryData(['current-user'], { id: 1, email: 'admin@example.com', created_at: '2026-01-01' })
   return renderToStaticMarkup(
     <I18nProvider i18n={i18n}>
-      <ThemeContext.Provider value={{ theme: 'dark', toggleTheme: () => {} }}>
-        <QueryClientProvider client={queryClient}>
-          <MemoryRouter initialEntries={['/access']}>
-            <AccessPage />
-          </MemoryRouter>
-        </QueryClientProvider>
-      </ThemeContext.Provider>
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={['/access']}>
+          <AccessPage />
+        </MemoryRouter>
+      </QueryClientProvider>
     </I18nProvider>,
   )
 }

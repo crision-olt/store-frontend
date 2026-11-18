@@ -3,7 +3,6 @@ import { I18nProvider } from '@lingui/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { MemoryRouter } from 'react-router-dom'
-import { ThemeContext } from '@/providers/theme-context'
 import { UsersPage } from './users'
 
 describe('users page', () => {
@@ -16,13 +15,11 @@ describe('users page', () => {
       { id: 8, email: 'fired@example.com', created_at: '2026-01-01T00:00:00.000Z', blocked: true, role: { id: 3, name: 'reader' } }])
     const markup = renderToStaticMarkup(
       <I18nProvider i18n={i18n}>
-        <ThemeContext.Provider value={{ theme: 'dark', toggleTheme: () => {} }}>
-          <QueryClientProvider client={client}>
-            <MemoryRouter initialEntries={['/users']}>
-              <UsersPage />
-            </MemoryRouter>
-          </QueryClientProvider>
-        </ThemeContext.Provider>
+        <QueryClientProvider client={client}>
+          <MemoryRouter initialEntries={['/users']}>
+            <UsersPage />
+          </MemoryRouter>
+        </QueryClientProvider>
       </I18nProvider>,
     )
 

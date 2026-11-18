@@ -4,7 +4,6 @@ import { Boxes, FolderTree, LogOut, ShieldCheck, Store, Users } from 'lucide-rea
 import type { ReactNode } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { LanguageSwitcher } from '@/components/language-switcher'
-import { ThemeToggle } from '@/components/theme-toggle'
 import { useSessionGuard } from '@/hooks/use-session-guard'
 import { Button } from '@/components/ui/button'
 import { logout } from '@/lib/auth-api'
@@ -58,7 +57,6 @@ export function StoreLayout({ children }: { children: ReactNode }) {
         </nav>
         <div className="hidden flex-1 md:block" />
         <div className="flex flex-wrap items-center gap-2 border-t border-sidebar-border px-3 py-3">
-          <ThemeToggle />
           <LanguageSwitcher />
           <Button
             variant="ghost"
