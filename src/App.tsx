@@ -7,6 +7,7 @@ import { DiscountsPage } from '@/pages/discounts'
 import { OffersPage } from '@/pages/offers'
 import { ProductsPage } from '@/pages/products'
 import { RegisterPage } from '@/pages/register'
+import { TablesPage } from '@/pages/tables'
 import { UsersPage } from '@/pages/users'
 
 export default function App() {
@@ -18,6 +19,7 @@ export default function App() {
       <Route path="/categories" element={<CategoriesPage />} />
       <Route path="/allergens" element={<AllergensPage />} />
       <Route path="/discounts" element={<DiscountsPage />} />
+      <Route path="/tables" element={<TablesPage />} />
       <Route path="/offers" element={<OffersPage />} />
       <Route path="/users" element={<UsersPage />} />
       <Route path="/access" element={<AccessPage />} />

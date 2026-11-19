@@ -15,6 +15,11 @@ msgstr "A product with this SKU already exists."
 msgid "A user with this email already exists."
 msgstr "A user with this email already exists."
 
+#. placeholder {0}: table.number
+#: src/pages/tables.tsx:52
+msgid "Accessible for table {0}"
+msgstr "Accessible for table {0}"
+
 #: src/components/table/components/table-filters.tsx:83
 msgid "Active filters"
 msgstr "Active filters"
@@ -117,8 +122,14 @@ msgstr "Bundle total"
 #: src/pages/categories.tsx:218
 #: src/pages/discounts.tsx:118
 #: src/pages/offers.tsx:167
+#: src/pages/tables.tsx:123
 msgid "Cancel"
 msgstr "Cancel"
+
+#. placeholder {0}: table.number
+#: src/pages/tables.tsx:34
+msgid "Capacity for table {0}"
+msgstr "Capacity for table {0}"
 
 #: src/components/store-layout.tsx:27
 #: src/pages/categories.tsx:163
@@ -171,6 +182,10 @@ msgstr "Close filter"
 #: src/components/table/components/table-column-visibility.tsx:134
 msgid "Columns"
 msgstr "Columns"
+
+#: src/pages/tables.tsx:98
+msgid "Configure the number and settings of your restaurant tables."
+msgstr "Configure the number and settings of your restaurant tables."
 
 #: src/pages/register.tsx:54
 msgid "Confirm password"
@@ -248,9 +263,17 @@ msgstr "Could not load products. Please try again."
 msgid "Could not load roles. Please try again."
 msgstr "Could not load roles. Please try again."
 
+#: src/pages/tables.tsx:102
+msgid "Could not load tables."
+msgstr "Could not load tables."
+
 #: src/pages/users.tsx:60
 msgid "Could not load users. Please try again."
 msgstr "Could not load users. Please try again."
+
+#: src/pages/tables.tsx:142
+msgid "Could not save table settings."
+msgstr "Could not save table settings."
 
 #: src/components/products/create-product-dialog.tsx:143
 msgid "Could not save the product. Please try again."
@@ -272,7 +295,7 @@ msgstr "Could not save this offer. Check the price and selected products, then t
 msgid "Could not sign in. Please try again."
 msgstr "Could not sign in. Please try again."
 
-#: src/components/store-layout.tsx:75
+#: src/components/store-layout.tsx:76
 msgid "Could not sign out. Please try again."
 msgstr "Could not sign out. Please try again."
 
@@ -291,6 +314,10 @@ msgstr "Could not update role. Please try again."
 #: src/pages/categories.tsx:215
 msgid "Could not update subcategory. Please try again."
 msgstr "Could not update subcategory. Please try again."
+
+#: src/pages/tables.tsx:128
+msgid "Could not update the table count. Reload the tables and try again."
+msgstr "Could not update the table count. Reload the tables and try again."
 
 #: src/components/auth/require-auth.tsx:27
 msgid "Could not verify your session."
@@ -604,6 +631,10 @@ msgstr "Loading product options…"
 msgid "Loading roles…"
 msgstr "Loading roles…"
 
+#: src/pages/tables.tsx:105
+msgid "Loading tables…"
+msgstr "Loading tables…"
+
 #: src/pages/users.tsx:58
 msgid "Loading users…"
 msgstr "Loading users…"
@@ -715,6 +746,10 @@ msgstr "No roles yet."
 msgid "No subcategories yet."
 msgstr "No subcategories yet."
 
+#: src/pages/tables.tsx:141
+msgid "No tables configured yet."
+msgstr "No tables configured yet."
+
 #: src/pages/users.tsx:64
 msgid "No users yet."
 msgstr "No users yet."
@@ -724,9 +759,18 @@ msgstr "No users yet."
 msgid "None"
 msgstr "None"
 
+#: src/pages/tables.tsx:112
+msgid "Number of tables"
+msgstr "Number of tables"
+
 #: src/pages/offers.tsx:90
 msgid "Offer type"
 msgstr "Offer type"
+
+#. placeholder {0}: table.number
+#: src/pages/tables.tsx:47
+msgid "Outside for table {0}"
+msgstr "Outside for table {0}"
 
 #: src/components/users/user-form.tsx:42
 #: src/pages/login.tsx:56
@@ -809,9 +853,17 @@ msgstr "Promotion"
 msgid "Qualifies with any {threshold} different products from the selected list."
 msgstr "Qualifies with any {threshold} different products from the selected list."
 
+#: src/pages/tables.tsx:133
+msgid "Reload tables"
+msgstr "Reload tables"
+
 #: src/components/table/components/table-filters.tsx:91
 msgid "Remove filter: {label}"
 msgstr "Remove filter: {label}"
+
+#: src/pages/tables.tsx:122
+msgid "Remove tables"
+msgstr "Remove tables"
 
 #: src/pages/offers.tsx:137
 msgid "Remove unavailable products"
@@ -846,7 +898,7 @@ msgstr "Roles"
 msgid "Roles allowed to use this discount"
 msgstr "Roles allowed to use this discount"
 
-#: src/components/store-layout.tsx:32
+#: src/components/store-layout.tsx:33
 #: src/pages/access.tsx:61
 msgid "Roles and permissions"
 msgstr "Roles and permissions"
@@ -861,6 +913,11 @@ msgstr "Roles and permissions"
 #: src/pages/offers.tsx:168
 msgid "Save"
 msgstr "Save"
+
+#. placeholder {0}: table.number
+#: src/pages/tables.tsx:54
+msgid "Save table {0}"
+msgstr "Save table {0}"
 
 #: src/pages/discounts.tsx:183
 msgid "Saved discounts"
@@ -919,7 +976,7 @@ msgstr "Sign in"
 msgid "Sign in to your account"
 msgstr "Sign in to your account"
 
-#: src/components/store-layout.tsx:71
+#: src/components/store-layout.tsx:72
 msgid "Sign out"
 msgstr "Sign out"
 
@@ -945,8 +1002,8 @@ msgstr "Sort ascending"
 msgid "Sort descending"
 msgstr "Sort descending"
 
-#: src/components/store-layout.tsx:42
-#: src/components/store-layout.tsx:44
+#: src/components/store-layout.tsx:43
+#: src/components/store-layout.tsx:45
 msgid "Store"
 msgstr "Store"
 
@@ -969,6 +1026,28 @@ msgstr "Subcategory name (English)"
 #: src/pages/categories.tsx:212
 msgid "Subcategory name (Spanish)"
 msgstr "Subcategory name (Spanish)"
+
+#. placeholder {0}: table.number
+#: src/pages/tables.tsx:32
+msgid "Table {0}"
+msgstr "Table {0}"
+
+#: src/pages/tables.tsx:108
+msgid "Table count"
+msgstr "Table count"
+
+#: src/pages/tables.tsx:139
+msgid "Table settings"
+msgstr "Table settings"
+
+#: src/components/store-layout.tsx:31
+#: src/pages/tables.tsx:97
+msgid "Tables"
+msgstr "Tables"
+
+#: src/pages/tables.tsx:121
+msgid "Tables above the new count will be permanently removed."
+msgstr "Tables above the new count will be permanently removed."
 
 #: src/pages/allergens.tsx:22
 msgid "The 14 food allergen categories listed by the European Union."
@@ -1027,6 +1106,7 @@ msgstr "This subcategory already exists in the selected category."
 #: src/pages/discounts.tsx:176
 #: src/pages/offers.tsx:219
 #: src/pages/products.tsx:100
+#: src/pages/tables.tsx:103
 #: src/pages/users.tsx:46
 #: src/pages/users.tsx:61
 msgid "Try again"
@@ -1041,11 +1121,15 @@ msgstr "Unblock"
 msgid "Unblock user {0}"
 msgstr "Unblock user {0}"
 
+#: src/pages/tables.tsx:117
+msgid "Update table count"
+msgstr "Update table count"
+
 #: src/components/products/create-product-dialog.tsx:199
 msgid "Update the product details."
 msgstr "Update the product details."
 
-#: src/components/store-layout.tsx:31
+#: src/components/store-layout.tsx:32
 #: src/pages/users.tsx:36
 msgid "Users"
 msgstr "Users"
