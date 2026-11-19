@@ -2,6 +2,7 @@ import type { I18n } from '@lingui/core'
 import { msg } from '@lingui/core/macro'
 import type { ColumnFiltersState } from '@tanstack/react-table'
 import type { TableFilterField } from '@/components/table'
+import { localizedName } from '@/lib/localized-name'
 import { columnFiltersToProductFilters } from '@/lib/product-filters'
 import type { Category, Subcategory } from '@/lib/products-api'
 
@@ -25,7 +26,10 @@ export function getProductFilterFields({
     {
       id: 'category',
       label: i18n._(msg`Category`),
-      value: filters.category.map((id) => categories.find((category) => String(category.id) === id)?.name ?? id).join(', '),
+      value: filters.category.map((id) => {
+        const category = categories.find((item) => String(item.id) === id)
+        return category ? localizedName(category.name, category.nameEs, i18n.locale) : id
+      }).join(', '),
     },
     {
       id: 'subcategory',
@@ -34,7 +38,9 @@ export function getProductFilterFields({
         const subcategory = subcategories.find((item) => String(item.id) === id)
         const category = categories.find((item) => item.id === subcategory?.categoryId)
         return subcategory
-          ? `${subcategory.name}${category ? ` (${category.name})` : ''}`
+          ? `${localizedName(subcategory.name, subcategory.nameEs, i18n.locale)}${category
+            ? ` (${localizedName(category.name, category.nameEs, i18n.locale)})`
+            : ''}`
           : id
       }).join(', '),
     },

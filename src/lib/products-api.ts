@@ -4,12 +4,15 @@ import { resolveServiceUrl } from '@/lib/http'
 const productSchema = z.object({
   id: z.number(),
   name: z.string(),
+  nameEs: z.string().nullable(),
   description: z.string().nullable(),
   sku: z.string(),
   categoryId: z.number().int().positive(),
   categoryName: z.string(),
+  categoryNameEs: z.string().nullable(),
   subcategoryId: z.number().int().positive().nullable(),
   subcategoryName: z.string().nullable(),
+  subcategoryNameEs: z.string().nullable(),
   price: z.number(),
   allergenIds: z.array(z.number().int().positive()),
   created_at: z.string(),
@@ -22,11 +25,11 @@ const productsPageSchema = z.object({
   pageSize: z.number(),
 })
 
-const categorySchema = z.object({ id: z.number().int().positive(), name: z.string() })
+const categorySchema = z.object({ id: z.number().int().positive(), name: z.string(), nameEs: z.string().nullable() })
 const subcategorySchema = categorySchema.extend({ categoryId: z.number().int().positive() })
 
 export type Product = z.infer<typeof productSchema>
-export type ProductInput = Pick<Product, 'name' | 'description' | 'sku' | 'categoryId' | 'subcategoryId' | 'price' | 'allergenIds'>
+export type ProductInput = Pick<Product, 'name' | 'description' | 'sku' | 'categoryId' | 'subcategoryId' | 'price' | 'allergenIds'> & { nameEs: string }
 export type ProductsPage = z.infer<typeof productsPageSchema>
 export type Category = z.infer<typeof categorySchema>
 export type Subcategory = z.infer<typeof subcategorySchema>
@@ -119,14 +122,20 @@ export function createProductsApi(serviceUrl: string) {
       const suffix = category ? `?${new URLSearchParams({ category })}` : ''
       return z.array(subcategorySchema).parse(await get(`/products/subcategories${suffix}`))
     },
-    async createCategory(name: string) {
-      return categorySchema.parse(await write('POST', '/products/categories', { name }))
+    async createCategory(input: { name: string; nameEs: string }) {
+      return categorySchema.parse(await write('POST', '/products/categories', input))
     },
-    async createSubcategory(name: string, categoryId: number) {
-      return subcategorySchema.parse(await write('POST', '/products/subcategories', { name, categoryId }))
+    async updateCategory(id: number, input: { name: string; nameEs: string }) {
+      return categorySchema.parse(await write('PUT', `/products/categories/${id}`, input))
+    },
+    async createSubcategory(input: { name: string; nameEs: string; categoryId: number }) {
+      return subcategorySchema.parse(await write('POST', '/products/subcategories', input))
+    },
+    async updateSubcategory(id: number, input: { name: string; nameEs: string }) {
+      return subcategorySchema.parse(await write('PUT', `/products/subcategories/${id}`, input))
     },
   }
 }
 
-export const { archiveProduct, createProduct, updateProduct, listProducts, listAllProducts, listCategories, listSubcategories, createCategory, createSubcategory } =
+export const { archiveProduct, createProduct, updateProduct, listProducts, listAllProducts, listCategories, listSubcategories, createCategory, updateCategory, createSubcategory, updateSubcategory } =
   createProductsApi(import.meta.env.AUTH_SERVICE_URL)

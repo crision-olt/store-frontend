@@ -67,8 +67,11 @@ export function ProductsTable({
       // Mutation IDs are display-only keys; server product IDs stay untouched.
       id: -id,
       categoryName: categories.find((category) => category.id === input.categoryId)?.name ?? String(input.categoryId),
+      categoryNameEs: categories.find((category) => category.id === input.categoryId)?.nameEs ?? null,
       subcategoryName: input.subcategoryId === null ? null
         : subcategories.find((subcategory) => subcategory.id === input.subcategoryId)?.name ?? String(input.subcategoryId),
+      subcategoryNameEs: input.subcategoryId === null ? null
+        : subcategories.find((subcategory) => subcategory.id === input.subcategoryId)?.nameEs ?? null,
       created_at: new Date(submittedAt).toISOString(),
       isPending: true,
     }] : []),

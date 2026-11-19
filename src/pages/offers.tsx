@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { listOffers, OffersApiError, saveOffer, type Offer, type OfferInput } from '@/lib/offers-api'
 import { listAllProducts, ProductsApiError, type Product } from '@/lib/products-api'
+import { localizedName } from '@/lib/localized-name'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 
 const key = ['offers'] as const
@@ -26,6 +27,7 @@ function OfferForm({ offer, products, saving, error, onCancel, onSave }: {
 }) {
   const { t, i18n } = useLingui()
   const [name, setName] = useState(offer?.name ?? '')
+  const [nameEs, setNameEs] = useState(offer?.nameEs ?? '')
   const [kind, setKind] = useState<OfferInput['kind']>(offer?.kind ?? 'menu')
   const [amount, setAmount] = useState(offer ? String(offer.amount) : '')
   const [minimum, setMinimum] = useState(offer?.minimumDistinctProducts?.toString() ?? '')
@@ -34,7 +36,9 @@ function OfferForm({ offer, products, saving, error, onCancel, onSave }: {
   const byId = useMemo(() => new Map(products.map((product) => [product.id, product])), [products])
   const visible = useMemo(() => {
     const term = search.trim().toLowerCase()
-    return products.filter(({ name, sku }) => name.toLowerCase().includes(term) || sku.toLowerCase().includes(term))
+    return products.filter(({ name, nameEs, sku }) =>
+      name.toLowerCase().includes(term) || (nameEs ?? '').toLowerCase().includes(term) || sku.toLowerCase().includes(term),
+    )
   }, [products, search])
   const selectedIds = [...selected]
   const unavailable = selectedIds.filter((id) => !byId.has(id))
@@ -46,7 +50,8 @@ function OfferForm({ offer, products, saving, error, onCancel, onSave }: {
   const value = Number(amount)
   const validAmount = amount.trim() !== '' && Number.isFinite(value) && Math.round(value * 100) / 100 === value &&
     (fixed ? value >= 0 && value <= 99999999.99 : value > 0 && value <= 100)
-  const valid = name.trim().length > 0 && selected.size > 0 && unavailable.length === 0 && validAmount && validThreshold
+  const valid = name.trim().length > 0 && nameEs.trim().length > 0 &&
+    selected.size > 0 && unavailable.length === 0 && validAmount && validThreshold
   const money = formatMoney(i18n.locale)
   const total = validAmount
     ? fixed ? value : Number((BigInt(subtotalCents) * BigInt(10000 - Math.round(value * 100)) + 5000n) / 10000n) / 100
@@ -61,7 +66,7 @@ function OfferForm({ offer, products, saving, error, onCancel, onSave }: {
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (valid && !saving) onSave({
-      name: name.trim(), kind, amount: value, productIds: selectedIds,
+      name: name.trim(), nameEs: nameEs.trim(), kind, amount: value, productIds: selectedIds,
       ...(threshold === undefined ? {} : { minimumDistinctProducts: threshold }),
     })
   }
@@ -73,8 +78,12 @@ function OfferForm({ offer, products, saving, error, onCancel, onSave }: {
         <form onSubmit={submit}>
           <fieldset disabled={saving} className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="offer-name">{t`Name`}</Label>
+              <Label htmlFor="offer-name">{t`Name (English)`}</Label>
               <Input id="offer-name" required maxLength={100} value={name} onChange={(event) => setName(event.target.value)} />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="offer-name-es">{t`Name (Spanish)`}</Label>
+              <Input id="offer-name-es" required maxLength={100} value={nameEs} onChange={(event) => setNameEs(event.target.value)} />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="flex flex-col gap-2">
@@ -107,12 +116,14 @@ function OfferForm({ offer, products, saving, error, onCancel, onSave }: {
               <Input type="search" aria-label={t`Find products`} placeholder={t`Find products`}
                 value={search} onChange={(event) => setSearch(event.target.value)} />
               <div className="mt-2 max-h-52 overflow-auto rounded-md border">
-                {visible.map(({ id, name, sku, price }) => (
-                  <label key={id} className="flex min-h-10 items-center gap-3 border-b px-3 py-2 text-sm last:border-b-0">
-                    <input type="checkbox" className="size-4 shrink-0 accent-primary" checked={selected.has(id)}
-                      disabled={selected.size >= 100 && !selected.has(id)} onChange={() => toggle(id)} />
-                    <span className="min-w-0 flex-1 wrap-anywhere">{name} <span className="text-muted-foreground">{sku}</span></span>
-                    <span className="shrink-0 tabular-nums">{money.format(price)}</span>
+                {visible.map((product) => (
+                  <label key={product.id} className="flex min-h-10 items-center gap-3 border-b px-3 py-2 text-sm last:border-b-0">
+                    <input type="checkbox" className="size-4 shrink-0 accent-primary" checked={selected.has(product.id)}
+                      disabled={selected.size >= 100 && !selected.has(product.id)} onChange={() => toggle(product.id)} />
+                    <span className="min-w-0 flex-1 wrap-anywhere">
+                      {localizedName(product.name, product.nameEs, i18n.locale)} <span className="text-muted-foreground">{product.sku}</span>
+                    </span>
+                    <span className="shrink-0 tabular-nums">{money.format(product.price)}</span>
                   </label>
                 ))}
                 {visible.length === 0 && <p className="p-3 text-sm text-muted-foreground">{t`No matching products.`}</p>}
@@ -219,7 +230,7 @@ function OffersContent() {
                   {offers.data.map((offer) => (
                     <li key={offer.id} className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0">
                       <div className="min-w-0 wrap-anywhere">
-                        <p className="text-sm font-medium">{offer.name}</p>
+                        <p className="text-sm font-medium">{localizedName(offer.name, offer.nameEs, i18n.locale)}</p>
                         <p className="text-sm text-muted-foreground">{offer.kind === 'menu'
                           ? `${t`Menu`} · ${money.format(offer.amount)}`
                           : `${t`Promotion`} · ${percent.format(offer.amount / 100)}`}</p>
@@ -229,7 +240,7 @@ function OffersContent() {
                           </p>
                         )}
                       </div>
-                      <Button type="button" size="sm" variant="outline" aria-label={t`Edit ${offer.name}`}
+                      <Button type="button" size="sm" variant="outline" aria-label={t`Edit ${localizedName(offer.name, offer.nameEs, i18n.locale)}`}
                         disabled={save.isPending} onClick={() => selectOffer(offer)}>{t`Edit`}</Button>
                     </li>
                   ))}

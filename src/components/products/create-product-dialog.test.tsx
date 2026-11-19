@@ -26,18 +26,19 @@ vi.mock('@/lib/products-api', async (importOriginal) => ({
   createProduct: vi.fn(),
   archiveProduct: vi.fn(),
   listCategories: vi.fn().mockResolvedValue([
-    { id: 1, name: 'Kitchen' }, { id: 3, name: 'Office' },
+    { id: 1, name: 'Kitchen', nameEs: 'Cocina' }, { id: 3, name: 'Office', nameEs: 'Oficina' },
   ]),
   listSubcategories: vi.fn().mockResolvedValue([
-    { id: 2, name: 'Mugs', categoryId: 1 }, { id: 4, name: 'Pens', categoryId: 3 },
+    { id: 2, name: 'Mugs', nameEs: 'Tazas', categoryId: 1 },
+    { id: 4, name: 'Pens', nameEs: 'Plumas', categoryId: 3 },
   ]),
 }))
 
 const queryKey = ['products', { search: 'Existing', sortBy: 'price', sortOrder: 'desc' }] as const
 const existingProduct: Product = {
-  id: 8, name: 'Existing product', sku: 'OLD-1', description: null,
-  categoryId: 1, categoryName: 'Kitchen', subcategoryId: null,
-  subcategoryName: null, price: 20, allergenIds: [], created_at: '2026-01-01',
+  id: 8, name: 'Existing product', nameEs: 'Producto existente', sku: 'OLD-1', description: null,
+  categoryId: 1, categoryName: 'Kitchen', categoryNameEs: 'Cocina', subcategoryId: null,
+  subcategoryName: null, subcategoryNameEs: null, price: 20, allergenIds: [], created_at: '2026-01-01',
 }
 
 const savedProduct = { ...existingProduct, id: 9, name: 'Blue Mug', sku: 'MUG-1', price: 9.99 }
@@ -47,8 +48,11 @@ function SavedProducts({ queryFn }: { queryFn: () => Promise<Product[]> }) {
   return <ProductsTable products={data} isLoading={isPending} isFetching={isFetching}
     sorting={[{ id: 'price', desc: true }]} onSortingChange={() => {}}
     columnFilters={[{ id: 'name', value: 'Existing' }]} onColumnFiltersChange={() => {}}
-    categories={[{ id: 1, name: 'Kitchen' }, { id: 3, name: 'Office' }]}
-    subcategories={[{ id: 2, name: 'Mugs', categoryId: 1 }, { id: 4, name: 'Pens', categoryId: 3 }]}
+    categories={[{ id: 1, name: 'Kitchen', nameEs: 'Cocina' }, { id: 3, name: 'Office', nameEs: 'Oficina' }]}
+    subcategories={[
+      { id: 2, name: 'Mugs', nameEs: 'Tazas', categoryId: 1 },
+      { id: 4, name: 'Pens', nameEs: 'Plumas', categoryId: 3 },
+    ]}
     onCategoryChange={() => {}} />
 }
 
@@ -76,7 +80,8 @@ function setup(queryFn = async () => [existingProduct], initialProducts: Product
 }
 
 async function fillRequired(user: ReturnType<typeof userEvent.setup>) {
-  await user.type(screen.getByLabelText('Name'), ' Blue Mug ')
+  await user.type(screen.getByLabelText('Name (English)'), ' Blue Mug ')
+  await user.type(screen.getByLabelText('Name (Spanish)'), ' Taza azul ')
   await user.type(screen.getByLabelText('SKU'), ' MUG-1 ')
   await user.type(screen.getByLabelText('Price'), '9.99')
   await user.click(screen.getByRole('combobox', { name: 'Category' }))
@@ -108,7 +113,7 @@ it('shows a pending product inside the table without changing the cache and keep
 
   expect(createProduct).toHaveBeenCalledOnce()
   expect(vi.mocked(createProduct).mock.calls[0][0]).toEqual({
-    name: 'Blue Mug', sku: 'MUG-1', description: null,
+    name: 'Blue Mug', nameEs: 'Taza azul', sku: 'MUG-1', description: null,
     categoryId: 1, subcategoryId: null, price: 9.99, allergenIds: [3, 7],
   })
   expect(screen.getByRole('button', { name: 'Creating product…' })).toHaveAttribute('aria-disabled', 'true')
@@ -164,7 +169,8 @@ it('clears incompatible subcategories, preserves errors for retry, and resets on
   expect(await screen.findByRole('alert')).toHaveTextContent('A product with this SKU already exists.')
   expect(within(table).queryByRole('status', { hidden: true })).not.toBeInTheDocument()
   expect(within(table).queryByText('Blue Mug')).not.toBeInTheDocument()
-  expect(screen.getByLabelText('Name')).toHaveValue('Blue Mug')
+  expect(screen.getByLabelText('Name (English)')).toHaveValue('Blue Mug')
+  expect(screen.getByLabelText('Name (Spanish)')).toHaveValue('Taza azul')
   expect(screen.getByLabelText('SKU')).toHaveValue('MUG-1')
   expect(screen.getByLabelText('Price')).toHaveValue(9.99)
   expect(screen.getByRole('combobox', { name: 'Category' })).toHaveTextContent('Office')
@@ -172,7 +178,7 @@ it('clears incompatible subcategories, preserves errors for retry, and resets on
   expect(invalidate).toHaveBeenCalledWith({ queryKey: ['products'] })
   await user.click(screen.getByRole('button', { name: 'Cancel' }))
   await user.click(screen.getByRole('button', { name: 'Create product' }))
-  expect(screen.getByLabelText('Name')).toHaveValue('')
+  expect(screen.getByLabelText('Name (English)')).toHaveValue('')
   expect(screen.queryByRole('alert')).not.toBeInTheDocument()
 })
 

@@ -11,12 +11,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { AllergensApiError, listAllergens, type Allergen } from '@/lib/allergens-api'
 import { createProduct, updateProduct, listCategories, listSubcategories, ProductsApiError, type Category, type Product, type ProductInput, type Subcategory } from '@/lib/products-api'
 import { buildLinkWithRedirect } from '@/lib/redirect'
+import { localizedName } from '@/lib/localized-name'
 
 function ProductForm({ categories, subcategories, allergens, initial, editing, pending, error, onSubmit }: {
   categories: Category[]
   subcategories: Subcategory[]
   allergens: Allergen[]
-  initial: ProductInput | undefined
+  initial: Product | ProductInput | undefined
   editing: boolean
   pending: boolean
   error: unknown
@@ -26,7 +27,9 @@ function ProductForm({ categories, subcategories, allergens, initial, editing, p
   const [categoryId, setCategoryId] = useState<number | null>(initial?.categoryId ?? null)
   const [subcategoryId, setSubcategoryId] = useState<number | null>(initial?.subcategoryId ?? null)
   const [allergenIds, setAllergenIds] = useState(initial?.allergenIds ?? [])
-  const allergenName = (allergen: Allergen) => i18n.locale === 'es' ? allergen.nameEs : allergen.name
+  const allergenName = (allergen: Allergen) => localizedName(allergen.name, allergen.nameEs, i18n.locale)
+  const selectedCategory = categories.find((category) => category.id === categoryId)
+  const selectedSubcategory = subcategories.find((subcategory) => subcategory.id === subcategoryId)
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -34,6 +37,7 @@ function ProductForm({ categories, subcategories, allergens, initial, editing, p
     const data = new FormData(event.currentTarget)
     onSubmit({
       name: String(data.get('name')).trim(),
+      nameEs: String(data.get('nameEs')).trim(),
       sku: String(data.get('sku')).trim(),
       description: String(data.get('description')).trim() || null,
       categoryId,
@@ -47,8 +51,12 @@ function ProductForm({ categories, subcategories, allergens, initial, editing, p
     <form onSubmit={submit} className="mt-5">
       <fieldset disabled={pending} className="flex flex-col gap-4">
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="product-name">{t`Name`}</Label>
+          <Label htmlFor="product-name">{t`Name (English)`}</Label>
           <Input id="product-name" name="name" defaultValue={initial?.name} required maxLength={255} pattern={'.*\\S.*'} autoComplete="off" />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="product-name-es">{t`Name (Spanish)`}</Label>
+          <Input id="product-name-es" name="nameEs" defaultValue={initial?.nameEs ?? ''} required maxLength={255} pattern={'.*\\S.*'} autoComplete="off" />
         </div>
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="product-sku">{t`SKU`}</Label>
@@ -68,10 +76,14 @@ function ProductForm({ categories, subcategories, allergens, initial, editing, p
                 setSubcategoryId(null)
               }}>
               <SelectTrigger id="product-category" className="w-full">
-                <SelectValue>{categories.find((category) => category.id === categoryId)?.name ?? t`Select a category`}</SelectValue>
+                <SelectValue>{selectedCategory
+                  ? localizedName(selectedCategory.name, selectedCategory.nameEs, i18n.locale)
+                  : t`Select a category`}</SelectValue>
               </SelectTrigger>
               <SelectContent>
-                {categories.map((category) => <SelectItem key={category.id} value={String(category.id)}>{category.name}</SelectItem>)}
+                {categories.map((category) => <SelectItem key={category.id} value={String(category.id)}>
+                  {localizedName(category.name, category.nameEs, i18n.locale)}
+                </SelectItem>)}
               </SelectContent>
             </Select>
           </div>
@@ -80,12 +92,16 @@ function ProductForm({ categories, subcategories, allergens, initial, editing, p
             <Select value={subcategoryId === null ? '' : String(subcategoryId)} disabled={pending || categoryId === null}
               onValueChange={(value) => setSubcategoryId(value ? Number(value) : null)}>
               <SelectTrigger id="product-subcategory" className="w-full">
-                <SelectValue>{subcategories.find((subcategory) => subcategory.id === subcategoryId)?.name ?? t`None`}</SelectValue>
+                <SelectValue>{selectedSubcategory
+                  ? localizedName(selectedSubcategory.name, selectedSubcategory.nameEs, i18n.locale)
+                  : t`None`}</SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="">{t`None`}</SelectItem>
                 {subcategories.filter((subcategory) => subcategory.categoryId === categoryId).map((subcategory) =>
-                  <SelectItem key={subcategory.id} value={String(subcategory.id)}>{subcategory.name}</SelectItem>,
+                  <SelectItem key={subcategory.id} value={String(subcategory.id)}>
+                    {localizedName(subcategory.name, subcategory.nameEs, i18n.locale)}
+                  </SelectItem>,
                 )}
               </SelectContent>
             </Select>

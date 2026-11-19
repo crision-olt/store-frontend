@@ -3,12 +3,15 @@ import { createProductsApi, ProductsApiError } from './products-api'
 const product = {
   id: 1,
   name: 'Blue Mug',
+  nameEs: 'Taza azul',
   description: null,
   sku: 'MUG-1',
   categoryId: 1,
   categoryName: 'Kitchen',
+  categoryNameEs: 'Cocina',
   subcategoryId: 2,
   subcategoryName: 'Mugs',
+  subcategoryNameEs: 'Tazas',
   allergenIds: [],
   price: 9.99,
   created_at: '2026-01-01T00:00:00.000Z',
@@ -35,7 +38,7 @@ describe('products API', () => {
 
   it('updates the chosen product with cookies and validates the server response', async () => {
     const input = {
-      name: 'New mug', sku: 'MUG-2', description: null,
+      name: 'New mug', nameEs: 'Taza nueva', sku: 'MUG-2', description: null,
       categoryId: 1, subcategoryId: null, price: 0, allergenIds: [7],
     }
     const updated = { ...product, ...input, subcategoryName: null }
@@ -56,7 +59,7 @@ describe('products API', () => {
 
   it('creates a product with cookies and validates the returned product', async () => {
     const input = {
-      name: 'Blue Mug', sku: 'MUG-1', description: null,
+      name: 'Blue Mug', nameEs: 'Taza azul', sku: 'MUG-1', description: null,
       categoryId: 1, subcategoryId: 2, price: 9.99, allergenIds: [],
     }
     const fetch = vi.fn().mockResolvedValue(new Response(JSON.stringify(product), { status: 201 }))
@@ -179,11 +182,13 @@ describe('products API', () => {
   })
 
   it('lists subcategories, optionally within a category', async () => {
-    const fetch = vi.fn().mockImplementation(() => Promise.resolve(new Response(JSON.stringify([{ id: 2, name: 'Mugs', categoryId: 1 }]))))
+    const fetch = vi.fn().mockImplementation(() => Promise.resolve(new Response(JSON.stringify([
+      { id: 2, name: 'Mugs', nameEs: 'Tazas', categoryId: 1 },
+    ]))))
     vi.stubGlobal('fetch', fetch)
     const api = createProductsApi('https://api.example.com')
 
-    await expect(api.listSubcategories('1')).resolves.toEqual([{ id: 2, name: 'Mugs', categoryId: 1 }])
+    await expect(api.listSubcategories('1')).resolves.toEqual([{ id: 2, name: 'Mugs', nameEs: 'Tazas', categoryId: 1 }])
     await api.listSubcategories()
 
     expect(fetch.mock.calls.map(([url]) => url)).toEqual([
@@ -193,24 +198,39 @@ describe('products API', () => {
   })
 
   it('lists categories', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify([{ id: 1, name: 'Kitchen' }]))))
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify([
+      { id: 1, name: 'Kitchen', nameEs: 'Cocina' },
+    ]))))
 
-    await expect(createProductsApi('https://api.example.com').listCategories()).resolves.toEqual([{ id: 1, name: 'Kitchen' }])
+    await expect(createProductsApi('https://api.example.com').listCategories())
+      .resolves.toEqual([{ id: 1, name: 'Kitchen', nameEs: 'Cocina' }])
   })
 
   it('creates categories and subcategories using their IDs', async () => {
     const fetch = vi.fn()
-      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 1, name: 'Kitchen' }), { status: 201 }))
-      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 2, name: 'Mugs', categoryId: 1 }), { status: 201 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 1, name: 'Kitchen', nameEs: 'Cocina' }), { status: 201 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 2, name: 'Mugs', nameEs: 'Tazas', categoryId: 1 }), { status: 201 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 1, name: 'Kitchen', nameEs: 'Cocina' })))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 2, name: 'Mugs', nameEs: 'Tazas', categoryId: 1 })))
     vi.stubGlobal('fetch', fetch)
     const api = createProductsApi('https://api.example.com')
-    await expect(api.createCategory('Kitchen')).resolves.toEqual({ id: 1, name: 'Kitchen' })
-    await expect(api.createSubcategory('Mugs', 1)).resolves.toEqual({ id: 2, name: 'Mugs', categoryId: 1 })
-    expect(fetch).toHaveBeenLastCalledWith('https://api.example.com/products/subcategories', {
+    await expect(api.createCategory({ name: 'Kitchen', nameEs: 'Cocina' }))
+      .resolves.toEqual({ id: 1, name: 'Kitchen', nameEs: 'Cocina' })
+    await expect(api.createSubcategory({ name: 'Mugs', nameEs: 'Tazas', categoryId: 1 }))
+      .resolves.toEqual({ id: 2, name: 'Mugs', nameEs: 'Tazas', categoryId: 1 })
+    await expect(api.updateCategory(1, { name: 'Kitchen', nameEs: 'Cocina' }))
+      .resolves.toEqual({ id: 1, name: 'Kitchen', nameEs: 'Cocina' })
+    await expect(api.updateSubcategory(2, { name: 'Mugs', nameEs: 'Tazas' }))
+      .resolves.toEqual({ id: 2, name: 'Mugs', nameEs: 'Tazas', categoryId: 1 })
+    expect(fetch.mock.calls.slice(2).map(([url]) => url)).toEqual([
+      'https://api.example.com/products/categories/1',
+      'https://api.example.com/products/subcategories/2',
+    ])
+    expect(fetch).toHaveBeenNthCalledWith(2, 'https://api.example.com/products/subcategories', {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: 'Mugs', categoryId: 1 }),
+      body: JSON.stringify({ name: 'Mugs', nameEs: 'Tazas', categoryId: 1 }),
     })
   })
 })

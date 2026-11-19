@@ -54,12 +54,15 @@ vi.mock('@/lib/allergens-api', async (importOriginal) => ({
 const product: Product = {
   id: 1,
   name: 'Demo product',
+  nameEs: 'Producto demo',
   description: 'A sample product',
   sku: 'DEMO-1',
   categoryId: 1,
   categoryName: 'Accessories',
+  categoryNameEs: 'Accesorios',
   subcategoryId: null,
   subcategoryName: null,
+  subcategoryNameEs: null,
   allergenIds: [7],
   price: 12.5,
   created_at: '2025-01-01T00:00:00.000Z',
@@ -68,12 +71,12 @@ const product: Product = {
 const onSortingChange = vi.fn<(updater: Updater<SortingState>) => void>()
 const onColumnFiltersChange = vi.fn<(updater: Updater<ColumnFiltersState>) => void>()
 const categories = [
-  { id: 1, name: 'Accessories' },
-  { id: 3, name: 'Hardware' },
+  { id: 1, name: 'Accessories', nameEs: 'Accesorios' },
+  { id: 3, name: 'Hardware', nameEs: 'Ferretería' },
 ]
 const subcategories = [
-  { id: 2, name: 'Cases', categoryId: 1 },
-  { id: 4, name: 'Tools', categoryId: 3 },
+  { id: 2, name: 'Cases', nameEs: 'Fundas', categoryId: 1 },
+  { id: 4, name: 'Tools', nameEs: 'Herramientas', categoryId: 3 },
 ]
 
 const defaultProps = {
@@ -290,17 +293,21 @@ describe('ProductsTable', () => {
   test('opens one prefilled editor and saves the chosen product with compatible category selections', async () => {
     let finish!: () => void
     vi.mocked(updateProduct).mockImplementation((id, input) => new Promise((resolve) => {
-      finish = () => resolve({ ...product, ...input, id, categoryName: 'Hardware', subcategoryName: 'Tools' })
+      finish = () => resolve({
+        ...product, ...input, id, categoryName: 'Hardware', categoryNameEs: 'Ferretería',
+        subcategoryName: 'Tools', subcategoryNameEs: 'Herramientas',
+      })
     }))
     const user = userEvent.setup()
     const { client } = renderProductsTable({
-      products: [product, { ...product, id: 7, name: 'Target product', subcategoryId: 2, subcategoryName: 'Cases' }],
+      products: [product, { ...product, id: 7, name: 'Target product', subcategoryId: 2, subcategoryName: 'Cases', subcategoryNameEs: 'Fundas' }],
       categories, subcategories,
     })
     const invalidate = vi.spyOn(client, 'invalidateQueries')
     await user.click(screen.getByRole('button', { name: 'Edit product Target product' }))
     expect(await screen.findByRole('dialog', { name: 'Edit product' })).toBeVisible()
-    expect(screen.getByLabelText('Name')).toHaveValue('Target product')
+    expect(screen.getByLabelText('Name (English)')).toHaveValue('Target product')
+    expect(screen.getByLabelText('Name (Spanish)')).toHaveValue('Producto demo')
     expect(screen.getByLabelText('SKU')).toHaveValue('DEMO-1')
     expect(screen.getByLabelText('Description (optional)')).toHaveValue('A sample product')
     expect(screen.getByLabelText('Price')).toHaveValue(12.5)
@@ -311,8 +318,10 @@ describe('ProductsTable', () => {
     await user.keyboard('{Escape}')
     expect(screen.getByRole('combobox', { name: 'Category' })).toHaveTextContent('Accessories')
     expect(screen.getByRole('combobox', { name: 'Subcategory (optional)' })).toHaveTextContent('Cases')
-    await user.clear(screen.getByLabelText('Name'))
-    await user.type(screen.getByLabelText('Name'), 'Updated product')
+    await user.clear(screen.getByLabelText('Name (English)'))
+    await user.type(screen.getByLabelText('Name (English)'), 'Updated product')
+    await user.clear(screen.getByLabelText('Name (Spanish)'))
+    await user.type(screen.getByLabelText('Name (Spanish)'), 'Producto actualizado')
     await user.clear(screen.getByLabelText('SKU'))
     await user.type(screen.getByLabelText('SKU'), 'NEW-1')
     await user.clear(screen.getByLabelText('Description (optional)'))
@@ -325,7 +334,7 @@ describe('ProductsTable', () => {
     fireEvent.change(screen.getByLabelText('Price'), { target: { value: '0' } })
     await user.click(screen.getByRole('button', { name: 'Save' }))
     expect(updateProduct).toHaveBeenCalledExactlyOnceWith(7, {
-      name: 'Updated product', sku: 'NEW-1', description: null,
+      name: 'Updated product', nameEs: 'Producto actualizado', sku: 'NEW-1', description: null,
       categoryId: 3, subcategoryId: 4, price: 0, allergenIds: [],
     })
     expect(screen.getByRole('button', { name: 'Saving…' })).toBeDisabled()
@@ -346,16 +355,16 @@ describe('ProductsTable', () => {
     const trigger = screen.getByRole('button', { name: 'Edit product Demo product' })
     await user.click(trigger)
     await screen.findByRole('dialog', { name: 'Edit product' })
-    await user.clear(screen.getByLabelText('Name'))
-    await user.type(screen.getByLabelText('Name'), 'Unsaved name')
+    await user.clear(screen.getByLabelText('Name (English)'))
+    await user.type(screen.getByLabelText('Name (English)'), 'Unsaved name')
     await user.click(screen.getByRole('button', { name: 'Save' }))
     expect(await screen.findByRole('alert')).toHaveTextContent(message)
-    expect(screen.getByLabelText('Name')).toHaveValue('Unsaved name')
+    expect(screen.getByLabelText('Name (English)')).toHaveValue('Unsaved name')
     expect(screen.getByText('Demo product')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Cancel' }))
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     await user.click(trigger)
-    expect(await screen.findByLabelText('Name')).toHaveValue('Demo product')
+    expect(await screen.findByLabelText('Name (English)')).toHaveValue('Demo product')
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
     expect(updateProduct).toHaveBeenCalledOnce()
   })

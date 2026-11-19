@@ -7,7 +7,7 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 "Language: en\n"
 
-#: src/components/products/create-product-dialog.tsx:122
+#: src/components/products/create-product-dialog.tsx:138
 msgid "A product with this SKU already exists."
 msgstr "A product with this SKU already exists."
 
@@ -19,12 +19,12 @@ msgstr "A user with this email already exists."
 msgid "Active filters"
 msgstr "Active filters"
 
-#: src/components/products/create-product-dialog.tsx:183
+#: src/components/products/create-product-dialog.tsx:199
 msgid "Add a new product to your catalog."
 msgstr "Add a new product to your catalog."
 
-#: src/components/products/products-table-columns.tsx:108
-#: src/components/products/products-table-columns.tsx:158
+#: src/components/products/products-table-columns.tsx:109
+#: src/components/products/products-table-columns.tsx:166
 msgid "All"
 msgstr "All"
 
@@ -37,7 +37,7 @@ msgstr "All users"
 msgid "Allergens"
 msgstr "Allergens"
 
-#: src/components/products/create-product-dialog.tsx:99
+#: src/components/products/create-product-dialog.tsx:115
 msgid "Allergens (optional)"
 msgstr "Allergens (optional)"
 
@@ -46,30 +46,30 @@ msgid "Already have an account?"
 msgstr "Already have an account?"
 
 #. placeholder {0}: offer.minimumDistinctProducts
-#: src/pages/offers.tsx:228
+#: src/pages/offers.tsx:239
 msgid "Any {0} different eligible products"
 msgstr "Any {0} different eligible products"
 
-#: src/components/products/archive-product-dialog.tsx:47
-#: src/components/products/products-table-columns.tsx:240
+#: src/components/products/archive-product-dialog.tsx:48
+#: src/components/products/products-table-columns.tsx:250
 msgid "Archive"
 msgstr "Archive"
 
-#. placeholder {0}: product.name
-#: src/components/products/archive-product-dialog.tsx:34
+#. placeholder {0}: localizedName(product.name, product.nameEs, i18n.locale)
+#: src/components/products/archive-product-dialog.tsx:35
 msgid "Archive {0}? It will be hidden from the catalog, but its data will be kept."
 msgstr "Archive {0}? It will be hidden from the catalog, but its data will be kept."
 
-#: src/components/products/archive-product-dialog.tsx:32
+#: src/components/products/archive-product-dialog.tsx:33
 msgid "Archive product"
 msgstr "Archive product"
 
-#. placeholder {0}: row.original.name
-#: src/components/products/products-table-columns.tsx:239
+#. placeholder {0}: localizedName(row.original.name, row.original.nameEs, i18n.locale)
+#: src/components/products/products-table-columns.tsx:248
 msgid "Archive product {0}"
 msgstr "Archive product {0}"
 
-#: src/components/products/archive-product-dialog.tsx:47
+#: src/components/products/archive-product-dialog.tsx:48
 msgid "Archiving…"
 msgstr "Archiving…"
 
@@ -95,46 +95,54 @@ msgstr "Blocked"
 msgid "Browse and filter the product catalog."
 msgstr "Browse and filter the product catalog."
 
-#: src/pages/offers.tsx:200
+#: src/pages/offers.tsx:211
 msgid "Bundle products with a fixed menu price or a percentage discount."
 msgstr "Bundle products with a fixed menu price or a percentage discount."
 
-#: src/pages/offers.tsx:151
+#: src/pages/offers.tsx:162
 msgid "Bundle total"
 msgstr "Bundle total"
 
 #: src/components/access/permission-list.tsx:55
 #: src/components/access/role-list.tsx:73
-#: src/components/products/archive-product-dialog.tsx:44
-#: src/components/products/create-product-dialog.tsx:130
-#: src/components/products/create-product-dialog.tsx:194
+#: src/components/products/archive-product-dialog.tsx:45
+#: src/components/products/create-product-dialog.tsx:146
+#: src/components/products/create-product-dialog.tsx:210
 #: src/components/users/user-form.tsx:69
-#: src/pages/offers.tsx:156
+#: src/pages/categories.tsx:191
+#: src/pages/categories.tsx:218
+#: src/pages/offers.tsx:167
 msgid "Cancel"
 msgstr "Cancel"
 
 #: src/components/store-layout.tsx:27
-#: src/pages/categories.tsx:104
+#: src/pages/categories.tsx:163
 msgid "Categories"
 msgstr "Categories"
 
-#: src/components/products/create-product-dialog.tsx:64
+#: src/components/products/create-product-dialog.tsx:72
 #: src/components/products/products-table-columns.config.ts:9
-#: src/components/products/products-table-columns.tsx:89
-#: src/components/products/products-table-filters.config.ts:27
-#: src/pages/categories.tsx:83
+#: src/components/products/products-table-columns.tsx:90
+#: src/components/products/products-table-filters.config.ts:28
+#: src/pages/categories.tsx:136
 msgid "Category"
 msgstr "Category"
 
-#: src/pages/categories.tsx:69
-msgid "Category name"
-msgstr "Category name"
+#: src/pages/categories.tsx:120
+#: src/pages/categories.tsx:182
+msgid "Category name (English)"
+msgstr "Category name (English)"
+
+#: src/pages/categories.tsx:122
+#: src/pages/categories.tsx:185
+msgid "Category name (Spanish)"
+msgstr "Category name (Spanish)"
 
 #: src/components/users/user-form.tsx:63
 msgid "Check the email, the password (8 to 72 characters) and the role."
 msgstr "Check the email, the password (8 to 72 characters) and the role."
 
-#: src/components/products/create-product-dialog.tsx:124
+#: src/components/products/create-product-dialog.tsx:140
 msgid "Check the product details, category, and allergens, then try again."
 msgstr "Check the product details, category, and allergens, then try again."
 
@@ -167,7 +175,7 @@ msgstr "Confirm password"
 msgid "Confirm your password"
 msgstr "Confirm your password"
 
-#: src/components/products/archive-product-dialog.tsx:40
+#: src/components/products/archive-product-dialog.tsx:41
 msgid "Could not archive the product. Please try again."
 msgstr "Could not archive the product. Please try again."
 
@@ -175,7 +183,7 @@ msgstr "Could not archive the product. Please try again."
 msgid "Could not change the user status. Please try again."
 msgstr "Could not change the user status. Please try again."
 
-#: src/pages/categories.tsx:73
+#: src/pages/categories.tsx:126
 msgid "Could not create category. Please try again."
 msgstr "Could not create category. Please try again."
 
@@ -187,7 +195,7 @@ msgstr "Could not create permission. Please try again."
 msgid "Could not create role. Please try again."
 msgstr "Could not create role. Please try again."
 
-#: src/pages/categories.tsx:96
+#: src/pages/categories.tsx:155
 msgid "Could not create subcategory. Please try again."
 msgstr "Could not create subcategory. Please try again."
 
@@ -195,7 +203,7 @@ msgstr "Could not create subcategory. Please try again."
 msgid "Could not create the account"
 msgstr "Could not create the account"
 
-#: src/components/products/create-product-dialog.tsx:127
+#: src/components/products/create-product-dialog.tsx:143
 msgid "Could not create the product. Please try again."
 msgstr "Could not create the product. Please try again."
 
@@ -203,18 +211,18 @@ msgstr "Could not create the product. Please try again."
 msgid "Could not download Excel. Please try again."
 msgstr "Could not download Excel. Please try again."
 
-#: src/components/products/create-product-dialog.tsx:187
+#: src/components/products/create-product-dialog.tsx:203
 #: src/pages/allergens.tsx:29
 msgid "Could not load allergens."
 msgstr "Could not load allergens."
 
-#: src/components/products/create-product-dialog.tsx:188
-#: src/pages/categories.tsx:62
+#: src/components/products/create-product-dialog.tsx:204
+#: src/pages/categories.tsx:113
 #: src/pages/products.tsx:87
 msgid "Could not load categories. Please try again."
 msgstr "Could not load categories. Please try again."
 
-#: src/pages/offers.tsx:204
+#: src/pages/offers.tsx:215
 msgid "Could not load offers or products."
 msgstr "Could not load offers or products."
 
@@ -235,7 +243,7 @@ msgstr "Could not load roles. Please try again."
 msgid "Could not load users. Please try again."
 msgstr "Could not load users. Please try again."
 
-#: src/components/products/create-product-dialog.tsx:127
+#: src/components/products/create-product-dialog.tsx:143
 msgid "Could not save the product. Please try again."
 msgstr "Could not save the product. Please try again."
 
@@ -243,7 +251,7 @@ msgstr "Could not save the product. Please try again."
 msgid "Could not save the user. Please try again."
 msgstr "Could not save the user. Please try again."
 
-#: src/pages/offers.tsx:154
+#: src/pages/offers.tsx:165
 msgid "Could not save this offer. Check the price and selected products, then try again."
 msgstr "Could not save this offer. Check the price and selected products, then try again."
 
@@ -255,6 +263,10 @@ msgstr "Could not sign in. Please try again."
 msgid "Could not sign out. Please try again."
 msgstr "Could not sign out. Please try again."
 
+#: src/pages/categories.tsx:188
+msgid "Could not update category. Please try again."
+msgstr "Could not update category. Please try again."
+
 #: src/components/access/permission-list.tsx:62
 msgid "Could not update permission. Please try again."
 msgstr "Could not update permission. Please try again."
@@ -263,11 +275,15 @@ msgstr "Could not update permission. Please try again."
 msgid "Could not update role. Please try again."
 msgstr "Could not update role. Please try again."
 
+#: src/pages/categories.tsx:215
+msgid "Could not update subcategory. Please try again."
+msgstr "Could not update subcategory. Please try again."
+
 #: src/components/auth/require-auth.tsx:27
 msgid "Could not verify your session."
 msgstr "Could not verify your session."
 
-#: src/components/products/create-product-dialog.tsx:119
+#: src/components/products/create-product-dialog.tsx:135
 msgid "Create a category on the Categories page before adding products."
 msgstr "Create a category on the Categories page before adding products."
 
@@ -279,17 +295,17 @@ msgstr "Create account"
 msgid "Create an account"
 msgstr "Create an account"
 
-#: src/pages/categories.tsx:59
+#: src/pages/categories.tsx:110
 msgid "Create categories and assign subcategories to them."
 msgstr "Create categories and assign subcategories to them."
 
-#: src/pages/categories.tsx:66
-#: src/pages/categories.tsx:75
+#: src/pages/categories.tsx:117
+#: src/pages/categories.tsx:128
 msgid "Create category"
 msgstr "Create category"
 
-#: src/pages/offers.tsx:71
-#: src/pages/offers.tsx:157
+#: src/pages/offers.tsx:76
+#: src/pages/offers.tsx:168
 msgid "Create offer"
 msgstr "Create offer"
 
@@ -298,9 +314,9 @@ msgstr "Create offer"
 msgid "Create permission"
 msgstr "Create permission"
 
-#: src/components/products/create-product-dialog.tsx:132
-#: src/components/products/create-product-dialog.tsx:177
-#: src/components/products/create-product-dialog.tsx:182
+#: src/components/products/create-product-dialog.tsx:148
+#: src/components/products/create-product-dialog.tsx:193
+#: src/components/products/create-product-dialog.tsx:198
 msgid "Create product"
 msgstr "Create product"
 
@@ -309,8 +325,8 @@ msgstr "Create product"
 msgid "Create role"
 msgstr "Create role"
 
-#: src/pages/categories.tsx:80
-#: src/pages/categories.tsx:98
+#: src/pages/categories.tsx:133
+#: src/pages/categories.tsx:157
 msgid "Create subcategory"
 msgstr "Create subcategory"
 
@@ -328,7 +344,7 @@ msgid "Create, edit and delete roles and permissions."
 msgstr "Create, edit and delete roles and permissions."
 
 #: src/components/products/products-table-columns.config.ts:12
-#: src/components/products/products-table-columns.tsx:219
+#: src/components/products/products-table-columns.tsx:227
 msgid "Created"
 msgstr "Created"
 
@@ -336,9 +352,9 @@ msgstr "Created"
 msgid "Creating account…"
 msgstr "Creating account…"
 
-#: src/components/products/create-product-dialog.tsx:132
-#: src/components/products/create-product-dialog.tsx:177
-#: src/components/products/products-table-columns.tsx:63
+#: src/components/products/create-product-dialog.tsx:148
+#: src/components/products/create-product-dialog.tsx:193
+#: src/components/products/products-table-columns.tsx:64
 msgid "Creating product…"
 msgstr "Creating product…"
 
@@ -367,11 +383,11 @@ msgstr "Delete role {0}"
 msgid "Delete role {0}?"
 msgstr "Delete role {0}?"
 
-#: src/components/products/create-product-dialog.tsx:58
+#: src/components/products/create-product-dialog.tsx:66
 msgid "Description (optional)"
 msgstr "Description (optional)"
 
-#: src/pages/offers.tsx:99
+#: src/pages/offers.tsx:108
 msgid "Discount (%)"
 msgstr "Discount (%)"
 
@@ -389,18 +405,20 @@ msgstr "Drag handles to reorder columns. Or focus a handle, press Space, then us
 
 #: src/components/access/permission-list.tsx:41
 #: src/components/access/role-list.tsx:47
-#: src/components/products/products-table-columns.tsx:236
+#: src/components/products/products-table-columns.tsx:245
 #: src/components/users/user-list.tsx:53
-#: src/pages/offers.tsx:233
+#: src/pages/categories.tsx:178
+#: src/pages/categories.tsx:205
+#: src/pages/offers.tsx:244
 msgid "Edit"
 msgstr "Edit"
 
-#. placeholder {0}: offer.name
-#: src/pages/offers.tsx:232
+#. placeholder {0}: localizedName(offer.name, offer.nameEs, i18n.locale)
+#: src/pages/offers.tsx:243
 msgid "Edit {0}"
 msgstr "Edit {0}"
 
-#: src/pages/offers.tsx:71
+#: src/pages/offers.tsx:76
 msgid "Edit offer"
 msgstr "Edit offer"
 
@@ -409,12 +427,12 @@ msgstr "Edit offer"
 msgid "Edit permission {0}"
 msgstr "Edit permission {0}"
 
-#: src/components/products/create-product-dialog.tsx:182
+#: src/components/products/create-product-dialog.tsx:198
 msgid "Edit product"
 msgstr "Edit product"
 
-#. placeholder {0}: row.original.name
-#: src/components/products/products-table-columns.tsx:235
+#. placeholder {0}: localizedName(row.original.name, row.original.nameEs, i18n.locale)
+#: src/components/products/products-table-columns.tsx:243
 msgid "Edit product {0}"
 msgstr "Edit product {0}"
 
@@ -428,7 +446,7 @@ msgstr "Edit role {0}"
 msgid "Edit user {0}"
 msgstr "Edit user {0}"
 
-#: src/pages/offers.tsx:105
+#: src/pages/offers.tsx:114
 msgid "Eligible products"
 msgstr "Eligible products"
 
@@ -447,7 +465,7 @@ msgstr "Enter a valid email"
 msgid "Enter a valid price range: the minimum cannot exceed the maximum."
 msgstr "Enter a valid price range: the minimum cannot exceed the maximum."
 
-#: src/pages/offers.tsx:139
+#: src/pages/offers.tsx:150
 msgid "Enter a whole number between 1 and the number of eligible products."
 msgstr "Enter a whole number between 1 and the number of eligible products."
 
@@ -460,11 +478,11 @@ msgstr "Enter your details to get started"
 msgid "Filter"
 msgstr "Filter"
 
-#: src/components/products/products-table-columns.tsx:105
+#: src/components/products/products-table-columns.tsx:106
 msgid "Filter by category"
 msgstr "Filter by category"
 
-#: src/components/products/products-table-columns.tsx:155
+#: src/components/products/products-table-columns.tsx:163
 msgid "Filter by subcategory"
 msgstr "Filter by subcategory"
 
@@ -472,12 +490,12 @@ msgstr "Filter by subcategory"
 msgid "Filters"
 msgstr "Filters"
 
-#: src/pages/offers.tsx:107
-#: src/pages/offers.tsx:107
+#: src/pages/offers.tsx:116
+#: src/pages/offers.tsx:116
 msgid "Find products"
 msgstr "Find products"
 
-#: src/pages/offers.tsx:99
+#: src/pages/offers.tsx:108
 msgid "Fixed price (€)"
 msgstr "Fixed price (€)"
 
@@ -489,7 +507,7 @@ msgstr "Invalid email or password"
 msgid "Language"
 msgstr "Language"
 
-#: src/pages/offers.tsx:138
+#: src/pages/offers.tsx:149
 msgid "Leave blank to require every selected product. Extra units of the same product do not count toward the minimum."
 msgstr "Leave blank to require every selected product. Extra units of the same product do not count toward the minimum."
 
@@ -501,11 +519,11 @@ msgstr "Loading"
 msgid "Loading allergens…"
 msgstr "Loading allergens…"
 
-#: src/pages/categories.tsx:106
+#: src/pages/categories.tsx:165
 msgid "Loading categories…"
 msgstr "Loading categories…"
 
-#: src/pages/offers.tsx:211
+#: src/pages/offers.tsx:222
 msgid "Loading offers and products…"
 msgstr "Loading offers and products…"
 
@@ -514,7 +532,7 @@ msgstr "Loading offers and products…"
 msgid "Loading permissions…"
 msgstr "Loading permissions…"
 
-#: src/components/products/create-product-dialog.tsx:197
+#: src/components/products/create-product-dialog.tsx:213
 msgid "Loading product options…"
 msgstr "Loading product options…"
 
@@ -527,51 +545,59 @@ msgstr "Loading roles…"
 msgid "Loading users…"
 msgstr "Loading users…"
 
-#: src/pages/categories.tsx:58
+#: src/pages/categories.tsx:109
 msgid "Manage categories"
 msgstr "Manage categories"
 
-#: src/components/products/products-table-columns.tsx:208
-#: src/components/products/products-table-filters.config.ts:46
+#: src/components/products/products-table-columns.tsx:216
+#: src/components/products/products-table-filters.config.ts:52
 msgid "Max"
 msgstr "Max"
 
-#: src/components/products/products-table-columns.tsx:209
+#: src/components/products/products-table-columns.tsx:217
 msgid "Maximum price"
 msgstr "Maximum price"
 
-#: src/pages/offers.tsx:90
-#: src/pages/offers.tsx:93
-#: src/pages/offers.tsx:224
+#: src/pages/offers.tsx:99
+#: src/pages/offers.tsx:102
+#: src/pages/offers.tsx:235
 msgid "Menu"
 msgstr "Menu"
 
 #: src/components/store-layout.tsx:29
-#: src/pages/offers.tsx:199
+#: src/pages/offers.tsx:210
 msgid "Menus and promotions"
 msgstr "Menus and promotions"
 
-#: src/components/products/products-table-columns.tsx:198
-#: src/components/products/products-table-filters.config.ts:45
+#: src/components/products/products-table-columns.tsx:206
+#: src/components/products/products-table-filters.config.ts:51
 msgid "Min"
 msgstr "Min"
 
-#: src/pages/offers.tsx:132
+#: src/pages/offers.tsx:143
 msgid "Minimum different products (optional)"
 msgstr "Minimum different products (optional)"
 
-#: src/components/products/products-table-columns.tsx:199
+#: src/components/products/products-table-columns.tsx:207
 msgid "Minimum price"
 msgstr "Minimum price"
 
-#: src/components/products/create-product-dialog.tsx:50
 #: src/components/products/products-table-columns.config.ts:7
-#: src/components/products/products-table-columns.tsx:58
-#: src/pages/offers.tsx:76
+#: src/components/products/products-table-columns.tsx:59
 msgid "Name"
 msgstr "Name"
 
-#: src/components/products/products-table-columns.tsx:75
+#: src/components/products/create-product-dialog.tsx:54
+#: src/pages/offers.tsx:81
+msgid "Name (English)"
+msgstr "Name (English)"
+
+#: src/components/products/create-product-dialog.tsx:58
+#: src/pages/offers.tsx:85
+msgid "Name (Spanish)"
+msgstr "Name (Spanish)"
+
+#: src/components/products/products-table-columns.tsx:76
 msgid "Name, SKU or description"
 msgstr "Name, SKU or description"
 
@@ -583,15 +609,15 @@ msgstr "New password (optional)"
 msgid "No allergens found."
 msgstr "No allergens found."
 
-#: src/pages/categories.tsx:107
+#: src/pages/categories.tsx:166
 msgid "No categories yet."
 msgstr "No categories yet."
 
-#: src/pages/offers.tsx:118
+#: src/pages/offers.tsx:129
 msgid "No matching products."
 msgstr "No matching products."
 
-#: src/pages/offers.tsx:217
+#: src/pages/offers.tsx:228
 msgid "No offers yet."
 msgstr "No offers yet."
 
@@ -604,7 +630,7 @@ msgstr "No permissions assigned."
 msgid "No permissions yet."
 msgstr "No permissions yet."
 
-#: src/components/products/products-table.tsx:100
+#: src/components/products/products-table.tsx:103
 msgid "No products found."
 msgstr "No products found."
 
@@ -612,7 +638,7 @@ msgstr "No products found."
 msgid "No roles yet."
 msgstr "No roles yet."
 
-#: src/pages/categories.tsx:114
+#: src/pages/categories.tsx:224
 msgid "No subcategories yet."
 msgstr "No subcategories yet."
 
@@ -620,12 +646,12 @@ msgstr "No subcategories yet."
 msgid "No users yet."
 msgstr "No users yet."
 
-#: src/components/products/create-product-dialog.tsx:83
-#: src/components/products/create-product-dialog.tsx:86
+#: src/components/products/create-product-dialog.tsx:97
+#: src/components/products/create-product-dialog.tsx:100
 msgid "None"
 msgstr "None"
 
-#: src/pages/offers.tsx:81
+#: src/pages/offers.tsx:90
 msgid "Offer type"
 msgstr "Offer type"
 
@@ -671,14 +697,14 @@ msgstr "Pinned columns cannot be hidden or moved."
 msgid "Preparing Excel…"
 msgstr "Preparing Excel…"
 
-#: src/components/products/create-product-dialog.tsx:94
+#: src/components/products/create-product-dialog.tsx:110
 #: src/components/products/products-table-columns.config.ts:11
-#: src/components/products/products-table-columns.tsx:179
-#: src/components/products/products-table-filters.config.ts:43
+#: src/components/products/products-table-columns.tsx:187
+#: src/components/products/products-table-filters.config.ts:49
 msgid "Price"
 msgstr "Price"
 
-#: src/components/products/products-table.tsx:106
+#: src/components/products/products-table.tsx:109
 msgid "Product filters"
 msgstr "Product filters"
 
@@ -687,21 +713,21 @@ msgstr "Product filters"
 msgid "Products"
 msgstr "Products"
 
-#: src/pages/offers.tsx:105
+#: src/pages/offers.tsx:114
 msgid "Products in this bundle"
 msgstr "Products in this bundle"
 
-#: src/pages/offers.tsx:150
+#: src/pages/offers.tsx:161
 msgid "Products subtotal"
 msgstr "Products subtotal"
 
-#: src/pages/offers.tsx:90
-#: src/pages/offers.tsx:94
-#: src/pages/offers.tsx:225
+#: src/pages/offers.tsx:99
+#: src/pages/offers.tsx:103
+#: src/pages/offers.tsx:236
 msgid "Promotion"
 msgstr "Promotion"
 
-#: src/pages/offers.tsx:145
+#: src/pages/offers.tsx:156
 msgid "Qualifies with any {threshold} different products from the selected list."
 msgstr "Qualifies with any {threshold} different products from the selected list."
 
@@ -709,11 +735,11 @@ msgstr "Qualifies with any {threshold} different products from the selected list
 msgid "Remove filter: {label}"
 msgstr "Remove filter: {label}"
 
-#: src/pages/offers.tsx:126
+#: src/pages/offers.tsx:137
 msgid "Remove unavailable products"
 msgstr "Remove unavailable products"
 
-#: src/pages/offers.tsx:123
+#: src/pages/offers.tsx:134
 msgid "Remove unavailable products before saving."
 msgstr "Remove unavailable products before saving."
 
@@ -745,31 +771,33 @@ msgstr "Roles and permissions"
 
 #: src/components/access/permission-list.tsx:54
 #: src/components/access/role-list.tsx:72
-#: src/components/products/create-product-dialog.tsx:132
+#: src/components/products/create-product-dialog.tsx:148
 #: src/components/users/user-list.tsx:35
-#: src/pages/offers.tsx:157
+#: src/pages/categories.tsx:190
+#: src/pages/categories.tsx:217
+#: src/pages/offers.tsx:168
 msgid "Save"
 msgstr "Save"
 
-#: src/pages/offers.tsx:215
+#: src/pages/offers.tsx:226
 msgid "Saved offers"
 msgstr "Saved offers"
 
-#: src/components/products/create-product-dialog.tsx:132
-#: src/pages/offers.tsx:157
+#: src/components/products/create-product-dialog.tsx:148
+#: src/pages/offers.tsx:168
 msgid "Saving…"
 msgstr "Saving…"
 
-#: src/components/products/products-table-filters.config.ts:24
+#: src/components/products/products-table-filters.config.ts:25
 msgid "Search"
 msgstr "Search"
 
-#: src/components/products/products-table-columns.tsx:76
+#: src/components/products/products-table-columns.tsx:77
 msgid "Search products"
 msgstr "Search products"
 
-#: src/components/products/create-product-dialog.tsx:71
-#: src/pages/categories.tsx:86
+#: src/components/products/create-product-dialog.tsx:81
+#: src/pages/categories.tsx:141
 msgid "Select a category"
 msgstr "Select a category"
 
@@ -777,7 +805,7 @@ msgstr "Select a category"
 msgid "Select a role"
 msgstr "Select a role"
 
-#: src/components/products/create-product-dialog.tsx:103
+#: src/components/products/create-product-dialog.tsx:119
 msgid "Select allergens"
 msgstr "Select allergens"
 
@@ -786,7 +814,7 @@ msgid "Select permissions"
 msgstr "Select permissions"
 
 #. placeholder {0}: selected.size
-#: src/pages/offers.tsx:120
+#: src/pages/offers.tsx:131
 msgid "Selected products: {0} of 100"
 msgstr "Selected products: {0} of 100"
 
@@ -811,9 +839,9 @@ msgstr "Sign up"
 msgid "Signing in…"
 msgstr "Signing in…"
 
-#: src/components/products/create-product-dialog.tsx:54
+#: src/components/products/create-product-dialog.tsx:62
 #: src/components/products/products-table-columns.config.ts:8
-#: src/components/products/products-table-columns.tsx:84
+#: src/components/products/products-table-columns.tsx:85
 msgid "SKU"
 msgstr "SKU"
 
@@ -831,24 +859,30 @@ msgid "Store"
 msgstr "Store"
 
 #: src/components/products/products-table-columns.config.ts:10
-#: src/components/products/products-table-columns.tsx:128
-#: src/components/products/products-table-filters.config.ts:32
+#: src/components/products/products-table-columns.tsx:133
+#: src/components/products/products-table-filters.config.ts:36
 msgid "Subcategory"
 msgstr "Subcategory"
 
-#: src/components/products/create-product-dialog.tsx:79
+#: src/components/products/create-product-dialog.tsx:91
 msgid "Subcategory (optional)"
 msgstr "Subcategory (optional)"
 
-#: src/pages/categories.tsx:92
-msgid "Subcategory name"
-msgstr "Subcategory name"
+#: src/pages/categories.tsx:149
+#: src/pages/categories.tsx:209
+msgid "Subcategory name (English)"
+msgstr "Subcategory name (English)"
+
+#: src/pages/categories.tsx:151
+#: src/pages/categories.tsx:212
+msgid "Subcategory name (Spanish)"
+msgstr "Subcategory name (Spanish)"
 
 #: src/pages/allergens.tsx:22
 msgid "The 14 food allergen categories listed by the European Union."
 msgstr "The 14 food allergen categories listed by the European Union."
 
-#: src/pages/offers.tsx:106
+#: src/pages/offers.tsx:115
 msgid "The bundle includes one of each selected product."
 msgstr "The bundle includes one of each selected product."
 
@@ -856,7 +890,7 @@ msgstr "The bundle includes one of each selected product."
 msgid "This account is blocked. Contact an administrator."
 msgstr "This account is blocked. Contact an administrator."
 
-#: src/pages/categories.tsx:73
+#: src/pages/categories.tsx:126
 msgid "This category already exists."
 msgstr "This category already exists."
 
@@ -868,8 +902,8 @@ msgstr "This permission already exists."
 msgid "This permission is protected, already exists, or is still assigned to a role."
 msgstr "This permission is protected, already exists, or is still assigned to a role."
 
-#: src/components/products/archive-product-dialog.tsx:39
-#: src/components/products/create-product-dialog.tsx:126
+#: src/components/products/archive-product-dialog.tsx:40
+#: src/components/products/create-product-dialog.tsx:142
 msgid "This product no longer exists."
 msgstr "This product no longer exists."
 
@@ -885,16 +919,16 @@ msgstr "This role already exists."
 msgid "This role is protected, already exists, or is assigned to users."
 msgstr "This role is protected, already exists, or is assigned to users."
 
-#: src/pages/categories.tsx:96
+#: src/pages/categories.tsx:155
 msgid "This subcategory already exists in the selected category."
 msgstr "This subcategory already exists in the selected category."
 
 #: src/components/auth/require-auth.tsx:29
-#: src/components/products/create-product-dialog.tsx:193
+#: src/components/products/create-product-dialog.tsx:209
 #: src/pages/access.tsx:89
 #: src/pages/access.tsx:119
 #: src/pages/allergens.tsx:30
-#: src/pages/offers.tsx:208
+#: src/pages/offers.tsx:219
 #: src/pages/products.tsx:100
 #: src/pages/users.tsx:46
 #: src/pages/users.tsx:61
@@ -910,7 +944,7 @@ msgstr "Unblock"
 msgid "Unblock user {0}"
 msgstr "Unblock user {0}"
 
-#: src/components/products/create-product-dialog.tsx:183
+#: src/components/products/create-product-dialog.tsx:199
 msgid "Update the product details."
 msgstr "Update the product details."
 

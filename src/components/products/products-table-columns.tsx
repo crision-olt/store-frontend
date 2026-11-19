@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import type { Category, Product, Subcategory } from '@/lib/products-api'
+import { localizedName } from '@/lib/localized-name'
 
 export type ProductTableRow = Product & { isPending?: boolean }
 
@@ -57,9 +58,9 @@ export function useProductColumns({ categories, subcategories, onCategoryChange,
     columnHelper.accessor('name', {
       header: () => <Trans>Name</Trans>,
       enableHiding: false,
-      cell: ({ cell, row }) => (
+      cell: ({ row }) => (
         <div className="flex min-w-0 flex-col">
-          <span className="font-medium">{cell.getValue()}</span>
+          <span className="font-medium">{localizedName(row.original.name, row.original.nameEs, i18n.locale)}</span>
           {row.original.isPending && <span role="status" className="text-xs text-muted-foreground"><Trans>Creating product…</Trans></span>}
           {row.original.description && (
             <span className="line-clamp-1 text-xs text-muted-foreground">{row.original.description}</span>
@@ -87,7 +88,7 @@ export function useProductColumns({ categories, subcategories, onCategoryChange,
     columnHelper.accessor('categoryName', {
       id: 'category',
       header: () => <Trans>Category</Trans>,
-      cell: ({ cell }) => <Badge variant="secondary">{cell.getValue()}</Badge>,
+      cell: ({ row }) => <Badge variant="secondary">{localizedName(row.original.categoryName, row.original.categoryNameEs, i18n.locale)}</Badge>,
       meta: {
         showFilter: false,
         Filter: ({ header }) => {
@@ -107,14 +108,18 @@ export function useProductColumns({ categories, subcategories, onCategoryChange,
                   {chosen.length === 0
                     ? <span className="text-muted-foreground">{i18n._(msg`All`)}</span>
                     : <span className="flex flex-wrap gap-1">
-                        {chosen.map((category) => <Badge key={category.id} variant="secondary">{category.name}</Badge>)}
+                        {chosen.map((category) => (
+                          <Badge key={category.id} variant="secondary">
+                            {localizedName(category.name, category.nameEs, i18n.locale)}
+                          </Badge>
+                        ))}
                       </span>}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent alignItemWithTrigger={false}>
                 {categories.map((category) => (
                   <SelectItem key={category.id} value={String(category.id)}>
-                    {category.name}
+                    {localizedName(category.name, category.nameEs, i18n.locale)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -126,7 +131,9 @@ export function useProductColumns({ categories, subcategories, onCategoryChange,
     columnHelper.accessor('subcategoryName', {
       id: 'subcategory',
       header: () => <Trans>Subcategory</Trans>,
-      cell: ({ cell }) => cell.getValue() ?? <span className="text-muted-foreground">—</span>,
+      cell: ({ row }) => row.original.subcategoryName === null
+        ? <span className="text-muted-foreground">—</span>
+        : localizedName(row.original.subcategoryName, row.original.subcategoryNameEs, i18n.locale),
       meta: {
         showFilter: false,
         Filter: ({ header }) => {
@@ -141,9 +148,10 @@ export function useProductColumns({ categories, subcategories, onCategoryChange,
           const chosen = availableSubcategories.filter((subcategory) => selected.includes(String(subcategory.id)))
           const subcategoryLabel = (subcategory: Subcategory) => {
             const category = categories.find((item) => item.id === subcategory.categoryId)
+            const name = localizedName(subcategory.name, subcategory.nameEs, i18n.locale)
             return selectedCategories.length === 0 && category
-              ? `${subcategory.name} (${category.name})`
-              : subcategory.name
+              ? `${name} (${localizedName(category.name, category.nameEs, i18n.locale)})`
+              : name
           }
 
           return (
@@ -232,11 +240,13 @@ export function useProductColumns({ categories, subcategories, onCategoryChange,
       cell: ({ row }) => (
         <div className="flex items-center justify-end gap-2">
           <Button type="button" variant="outline" size="sm" disabled={row.original.isPending}
-            aria-label={i18n._(msg`Edit product ${row.original.name}`)} onClick={() => onEditProduct(row.original)}>
+            aria-label={i18n._(msg`Edit product ${localizedName(row.original.name, row.original.nameEs, i18n.locale)}`)}
+            onClick={() => onEditProduct(row.original)}>
             <Trans>Edit</Trans>
           </Button>
           <Button type="button" variant="destructive" size="sm" disabled={row.original.isPending}
-            aria-label={i18n._(msg`Archive product ${row.original.name}`)} onClick={() => onArchiveProduct(row.original)}>
+            aria-label={i18n._(msg`Archive product ${localizedName(row.original.name, row.original.nameEs, i18n.locale)}`)}
+            onClick={() => onArchiveProduct(row.original)}>
             <Trans>Archive</Trans>
           </Button>
         </div>

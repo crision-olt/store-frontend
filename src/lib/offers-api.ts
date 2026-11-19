@@ -4,6 +4,7 @@ import { resolveServiceUrl } from '@/lib/http'
 const offerSchema = z.object({
   id: z.number().int().positive(),
   name: z.string(),
+  nameEs: z.string().nullable(),
   kind: z.enum(['menu', 'promotion']),
   amount: z.number(),
   productIds: z.array(z.number().int().positive()),
@@ -11,7 +12,7 @@ const offerSchema = z.object({
 })
 
 export type Offer = z.infer<typeof offerSchema>
-export type OfferInput = Omit<Offer, 'id'>
+export type OfferInput = Omit<Offer, 'id' | 'nameEs'> & { nameEs: string }
 
 export class OffersApiError extends Error {
   constructor(status: number) {
