@@ -24,6 +24,10 @@ msgstr "Accesible"
 msgid "Accessible for table {0}"
 msgstr "Mesa {0} adaptada"
 
+#: src/components/users/users-table.tsx:31
+msgid "Active"
+msgstr "Activo"
+
 #: src/components/table/components/table-filters.tsx:83
 msgid "Active filters"
 msgstr "Filtros activos"
@@ -36,6 +40,14 @@ msgstr "Añade un nuevo producto a tu catálogo."
 #: src/components/products/products-table-columns.tsx:166
 msgid "All"
 msgstr "Todos"
+
+#: src/components/users/users-table.tsx:33
+msgid "All roles"
+msgstr "Todos los roles"
+
+#: src/components/users/users-table.tsx:34
+msgid "All statuses"
+msgstr "Todos los estados"
 
 #: src/pages/users.tsx:56
 msgid "All users"
@@ -91,21 +103,21 @@ msgstr "Archivando…"
 msgid "Base zone"
 msgstr "Zona base"
 
-#: src/components/users/user-list.tsx:58
+#: src/components/users/user-actions.tsx:56
 msgid "Block"
 msgstr "Bloquear"
 
 #. placeholder {0}: user.email
-#: src/components/users/user-list.tsx:26
+#: src/components/users/user-actions.tsx:26
 msgid "Block {0}? Their session will be closed immediately and they will not be able to sign in."
 msgstr "¿Bloquear a {0}? Su sesión se cerrará de inmediato y no podrá iniciar sesión."
 
 #. placeholder {0}: user.email
-#: src/components/users/user-list.tsx:56
+#: src/components/users/user-actions.tsx:54
 msgid "Block user {0}"
 msgstr "Bloquear usuario {0}"
 
-#: src/components/users/user-list.tsx:49
+#: src/components/users/users-table.tsx:32
 msgid "Blocked"
 msgstr "Bloqueado"
 
@@ -209,7 +221,7 @@ msgstr "Confirma tu contraseña"
 msgid "Could not archive the product. Please try again."
 msgstr "No se pudo archivar el producto. Inténtalo de nuevo."
 
-#: src/components/users/user-list.tsx:66
+#: src/components/users/user-actions.tsx:63
 msgid "Could not change the user status. Please try again."
 msgstr "No se pudo cambiar el estado del usuario. Inténtalo de nuevo."
 
@@ -425,6 +437,7 @@ msgstr "Crea, edita y elimina roles y permisos."
 
 #: src/components/products/products-table-columns.config.ts:12
 #: src/components/products/products-table-columns.tsx:227
+#: src/components/users/users-table.tsx:30
 msgid "Created"
 msgstr "Creado"
 
@@ -504,7 +517,7 @@ msgstr "Arrastra los controles para reordenar las columnas. O enfoca un control,
 #: src/components/access/permission-list.tsx:41
 #: src/components/access/role-list.tsx:47
 #: src/components/products/products-table-columns.tsx:245
-#: src/components/users/user-list.tsx:53
+#: src/components/users/user-actions.tsx:41
 #: src/pages/categories.tsx:178
 #: src/pages/categories.tsx:205
 #: src/pages/discounts.tsx:204
@@ -552,8 +565,12 @@ msgstr "Editar producto {0}"
 msgid "Edit role {0}"
 msgstr "Editar rol {0}"
 
+#: src/components/users/user-actions.tsx:46
+msgid "Edit user"
+msgstr "Editar usuario"
+
 #. placeholder {0}: user.email
-#: src/components/users/user-list.tsx:51
+#: src/components/users/user-actions.tsx:40
 msgid "Edit user {0}"
 msgstr "Editar usuario {0}"
 
@@ -566,6 +583,7 @@ msgid "Eligible products"
 msgstr "Productos elegibles"
 
 #: src/components/users/user-form.tsx:37
+#: src/components/users/users-table.tsx:27
 #: src/pages/login.tsx:55
 #: src/pages/register.tsx:52
 msgid "Email"
@@ -596,6 +614,18 @@ msgstr "Filtrar"
 #: src/components/products/products-table-columns.tsx:106
 msgid "Filter by category"
 msgstr "Filtrar por categoría"
+
+#: src/components/users/users-table.tsx:35
+msgid "Filter by email"
+msgstr "Filtrar por correo electrónico"
+
+#: src/components/users/users-table.tsx:36
+msgid "Filter by role"
+msgstr "Filtrar por rol"
+
+#: src/components/users/users-table.tsx:37
+msgid "Filter by status"
+msgstr "Filtrar por estado"
 
 #: src/components/products/products-table-columns.tsx:163
 msgid "Filter by subcategory"
@@ -681,10 +711,6 @@ msgstr "Cargando roles…"
 #: src/pages/tables.tsx:105
 msgid "Loading tables…"
 msgstr "Cargando mesas…"
-
-#: src/pages/users.tsx:58
-msgid "Loading users…"
-msgstr "Cargando usuarios…"
 
 #: src/pages/zones.tsx:172
 msgid "Loading zones…"
@@ -809,7 +835,11 @@ msgstr "No hay mesas asignadas."
 msgid "No tables configured yet."
 msgstr "Todavía no hay mesas configuradas."
 
-#: src/pages/users.tsx:64
+#: src/components/users/users-table.tsx:139
+msgid "No users found."
+msgstr "No se encontraron usuarios."
+
+#: src/components/users/users-table.tsx:139
 msgid "No users yet."
 msgstr "Todavía no hay usuarios."
 
@@ -953,6 +983,7 @@ msgid "Required"
 msgstr "Obligatoria"
 
 #: src/components/users/user-form.tsx:48
+#: src/components/users/users-table.tsx:28
 msgid "Role"
 msgstr "Rol"
 
@@ -977,7 +1008,7 @@ msgstr "Roles y permisos"
 #: src/components/access/permission-list.tsx:54
 #: src/components/access/role-list.tsx:72
 #: src/components/products/create-product-dialog.tsx:148
-#: src/components/users/user-list.tsx:35
+#: src/components/users/user-actions.tsx:48
 #: src/pages/categories.tsx:190
 #: src/pages/categories.tsx:217
 #: src/pages/discounts.tsx:120
@@ -1084,6 +1115,10 @@ msgstr "Ordenar ascendente"
 #: src/components/table/components/table-header-cell.tsx:78
 msgid "Sort descending"
 msgstr "Ordenar descendente"
+
+#: src/components/users/users-table.tsx:29
+msgid "Status"
+msgstr "Estado"
 
 #: src/components/store-layout.tsx:44
 #: src/components/store-layout.tsx:46
@@ -1205,12 +1240,12 @@ msgstr "Esta subcategoría ya existe en la categoría seleccionada."
 msgid "Try again"
 msgstr "Reintentar"
 
-#: src/components/users/user-list.tsx:58
+#: src/components/users/user-actions.tsx:56
 msgid "Unblock"
 msgstr "Desbloquear"
 
 #. placeholder {0}: user.email
-#: src/components/users/user-list.tsx:56
+#: src/components/users/user-actions.tsx:54
 msgid "Unblock user {0}"
 msgstr "Desbloquear usuario {0}"
 
@@ -1221,6 +1256,10 @@ msgstr "Actualizar número de mesas"
 #: src/components/products/create-product-dialog.tsx:199
 msgid "Update the product details."
 msgstr "Actualiza los datos del producto."
+
+#: src/components/users/users-table.tsx:132
+msgid "User filters"
+msgstr "Filtros de usuarios"
 
 #: src/components/store-layout.tsx:33
 #: src/pages/users.tsx:36
@@ -1235,7 +1274,7 @@ msgstr "Columnas visibles"
 msgid "Welcome back"
 msgstr "Te damos la bienvenida de nuevo"
 
-#: src/components/users/user-list.tsx:65
+#: src/components/users/user-actions.tsx:62
 msgid "You cannot block your own account."
 msgstr "No puedes bloquear tu propia cuenta."
 

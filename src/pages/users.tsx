@@ -7,7 +7,7 @@ import { StoreLayout } from '@/components/store-layout'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { UserForm } from '@/components/users/user-form'
-import { UserList } from '@/components/users/user-list'
+import { UsersTable } from '@/components/users/users-table'
 import { AccessApiError, createUser, listRoles, listUsers } from '@/lib/access-api'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 
@@ -36,8 +36,8 @@ function UsersContent() {
         <h1 className="text-2xl font-semibold tracking-tight">{t`Users`}</h1>
         <p className="text-sm text-muted-foreground">{t`Create users, change their email or password, and assign roles.`}</p>
       </div>
-      <div className="grid items-start gap-4 lg:grid-cols-2">
-        <Card>
+      <div className="flex min-w-0 flex-col gap-4">
+        <Card className="w-full max-w-xl">
           <CardHeader><CardTitle>{t`Create user`}</CardTitle></CardHeader>
           <CardContent>
             {roles.isPending ? <p className="text-sm text-muted-foreground">{t`Loading roles…`}</p> : roles.isError ? (
@@ -55,15 +55,13 @@ function UsersContent() {
         <Card>
           <CardHeader><CardTitle>{t`All users`}</CardTitle></CardHeader>
           <CardContent>
-            {users.isPending ? <p>{t`Loading users…`}</p> : users.isError ? (
+            {users.isError ? (
               <div className="flex flex-col items-start gap-2">
                 <p role="alert" className="text-sm text-destructive">{t`Could not load users. Please try again.`}</p>
                 <Button type="button" variant="outline" size="sm" onClick={() => users.refetch()}>{t`Try again`}</Button>
               </div>
-            ) : users.data.length === 0 ? (
-              <p className="text-sm text-muted-foreground">{t`No users yet.`}</p>
             ) : (
-              <UserList users={users.data} roles={roles.data ?? []} />
+              <UsersTable users={users.data} roles={roles.data} isLoading={users.isPending} />
             )}
           </CardContent>
         </Card>

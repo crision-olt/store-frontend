@@ -89,6 +89,11 @@ buffers the request and completed download before saving; the service still
 parses and generates the workbook incrementally. A failed or interrupted download
 shows an error and can be retried without resetting the table configuration.
 
+On **Users**, use **Filters** to combine an email search with a role or account
+status. Remove individual filters using their chips, or select **Clear filters**.
+Use **Columns** to show, hide, or reorder data columns; email stays pinned and
+user actions remain available.
+
 Use **Roles and permissions** to create permissions and new roles with selected
 permissions. The API requires `access:manage`; see the service's roles and permissions
 setup for bootstrapping an administrator. This page does not assign roles to users.
