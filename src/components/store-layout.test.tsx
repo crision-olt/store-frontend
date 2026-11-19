@@ -16,6 +16,7 @@ function renderLayout(path: string) {
             <Route path="/products" element={<StoreLayout><div>Products content</div></StoreLayout>} />
             <Route path="/categories" element={<StoreLayout><div>Categories content</div></StoreLayout>} />
             <Route path="/allergens" element={<StoreLayout><div>Allergens content</div></StoreLayout>} />
+            <Route path="/discounts" element={<StoreLayout><div>Discounts content</div></StoreLayout>} />
             <Route path="/users" element={<StoreLayout><div>Users content</div></StoreLayout>} />
             <Route path="/access" element={<StoreLayout><div>Access content</div></StoreLayout>} />
           </Routes>
@@ -30,6 +31,7 @@ describe('store navigation', () => {
     ['/products', 'Products content'],
     ['/categories', 'Categories content'],
     ['/allergens', 'Allergens content'],
+    ['/discounts', 'Discounts content'],
     ['/users', 'Users content'],
     ['/access', 'Access content'],
   ])('links to the pages and marks %s as current', (path, content) => {
@@ -38,6 +40,7 @@ describe('store navigation', () => {
     expect(markup).toContain('href="/products"')
     expect(markup).toContain('href="/categories"')
     expect(markup).toContain('href="/allergens"')
+    expect(markup).toContain('href="/discounts"')
     expect(markup).toContain('href="/users"')
     expect(markup).toContain('href="/access"')
     expect(markup.indexOf('href="/users"')).toBeLessThan(markup.indexOf('href="/access"'))

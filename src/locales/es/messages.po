@@ -41,6 +41,10 @@ msgstr "Alérgenos"
 msgid "Allergens (optional)"
 msgstr "Alérgenos (opcional)"
 
+#: src/pages/discounts.tsx:197
+msgid "Allowed roles"
+msgstr "Roles permitidos"
+
 #: src/pages/register.tsx:46
 msgid "Already have an account?"
 msgstr "¿Ya tienes una cuenta?"
@@ -111,6 +115,7 @@ msgstr "Total del paquete"
 #: src/components/users/user-form.tsx:69
 #: src/pages/categories.tsx:191
 #: src/pages/categories.tsx:218
+#: src/pages/discounts.tsx:118
 #: src/pages/offers.tsx:167
 msgid "Cancel"
 msgstr "Cancelar"
@@ -222,6 +227,10 @@ msgstr "No se pudieron cargar los alérgenos."
 msgid "Could not load categories. Please try again."
 msgstr "No se pudieron cargar las categorías. Inténtalo de nuevo."
 
+#: src/pages/discounts.tsx:172
+msgid "Could not load discounts or roles."
+msgstr "No se pudieron cargar los descuentos ni los roles."
+
 #: src/pages/offers.tsx:215
 msgid "Could not load offers or products."
 msgstr "No se pudieron cargar las ofertas o los productos."
@@ -251,6 +260,10 @@ msgstr "No se pudo guardar el producto. Inténtalo de nuevo."
 msgid "Could not save the user. Please try again."
 msgstr "No se pudo guardar el usuario. Inténtalo de nuevo."
 
+#: src/pages/discounts.tsx:116
+msgid "Could not save this discount. Check the amount and selected roles, then try again."
+msgstr "No se pudo guardar este descuento. Revisa el importe y los roles seleccionados e inténtalo de nuevo."
+
 #: src/pages/offers.tsx:165
 msgid "Could not save this offer. Check the price and selected products, then try again."
 msgstr "No se pudo guardar la oferta. Revisa el precio y los productos seleccionados e inténtalo de nuevo."
@@ -259,7 +272,7 @@ msgstr "No se pudo guardar la oferta. Revisa el precio y los productos seleccion
 msgid "Could not sign in. Please try again."
 msgstr "No se pudo iniciar sesión. Inténtalo de nuevo."
 
-#: src/components/store-layout.tsx:74
+#: src/components/store-layout.tsx:75
 msgid "Could not sign out. Please try again."
 msgstr "No se pudo cerrar la sesión. Inténtalo de nuevo."
 
@@ -287,6 +300,10 @@ msgstr "No se pudo verificar tu sesión."
 msgid "Create a category on the Categories page before adding products."
 msgstr "Crea una categoría en la página Categorías antes de añadir productos."
 
+#: src/pages/discounts.tsx:98
+msgid "Create a role"
+msgstr "Crear un rol"
+
 #: src/pages/register.tsx:57
 msgid "Create account"
 msgstr "Crear cuenta"
@@ -303,6 +320,15 @@ msgstr "Crea categorías y asígnales subcategorías."
 #: src/pages/categories.tsx:128
 msgid "Create category"
 msgstr "Crear categoría"
+
+#: src/pages/discounts.tsx:59
+#: src/pages/discounts.tsx:120
+msgid "Create discount"
+msgstr "Crear descuento"
+
+#: src/pages/discounts.tsx:165
+msgid "Create invoice-wide discounts and choose which roles can use them."
+msgstr "Crea descuentos para toda la factura y elige qué roles pueden usarlos."
 
 #: src/pages/offers.tsx:76
 #: src/pages/offers.tsx:168
@@ -387,9 +413,27 @@ msgstr "¿Eliminar el rol {0}?"
 msgid "Description (optional)"
 msgstr "Descripción (opcional)"
 
+#: src/pages/discounts.tsx:89
 #: src/pages/offers.tsx:108
 msgid "Discount (%)"
 msgstr "Descuento (%)"
+
+#: src/pages/discounts.tsx:89
+msgid "Discount amount (€)"
+msgstr "Importe del descuento (€)"
+
+#: src/pages/discounts.tsx:72
+msgid "Discount type"
+msgstr "Tipo de descuento"
+
+#: src/components/store-layout.tsx:30
+#: src/pages/discounts.tsx:164
+msgid "Discounts"
+msgstr "Descuentos"
+
+#: src/pages/discounts.tsx:168
+msgid "Discounts can be configured here, but applying them to invoices is not available yet."
+msgstr "Aquí puedes configurar descuentos, pero todavía no se pueden aplicar a las facturas."
 
 #: src/pages/login.tsx:49
 msgid "Don't have an account?"
@@ -409,6 +453,7 @@ msgstr "Arrastra los controles para reordenar las columnas. O enfoca un control,
 #: src/components/users/user-list.tsx:53
 #: src/pages/categories.tsx:178
 #: src/pages/categories.tsx:205
+#: src/pages/discounts.tsx:204
 #: src/pages/offers.tsx:244
 msgid "Edit"
 msgstr "Editar"
@@ -417,6 +462,15 @@ msgstr "Editar"
 #: src/pages/offers.tsx:243
 msgid "Edit {0}"
 msgstr "Editar {0}"
+
+#. placeholder {0}: localizedName(discount.name, discount.nameEs, i18n.locale)
+#: src/pages/discounts.tsx:203
+msgid "Edit {0} discount"
+msgstr "Editar el descuento {0}"
+
+#: src/pages/discounts.tsx:59
+msgid "Edit discount"
+msgstr "Editar descuento"
 
 #: src/pages/offers.tsx:76
 msgid "Edit offer"
@@ -495,6 +549,11 @@ msgstr "Filtros"
 msgid "Find products"
 msgstr "Buscar productos"
 
+#: src/pages/discounts.tsx:80
+#: src/pages/discounts.tsx:84
+msgid "Fixed amount"
+msgstr "Importe fijo"
+
 #: src/pages/offers.tsx:108
 msgid "Fixed price (€)"
 msgstr "Precio fijo (€)"
@@ -522,6 +581,10 @@ msgstr "Cargando alérgenos…"
 #: src/pages/categories.tsx:165
 msgid "Loading categories…"
 msgstr "Cargando categorías…"
+
+#: src/pages/discounts.tsx:179
+msgid "Loading discounts and roles…"
+msgstr "Cargando descuentos y roles…"
 
 #: src/pages/offers.tsx:222
 msgid "Loading offers and products…"
@@ -588,11 +651,13 @@ msgid "Name"
 msgstr "Nombre"
 
 #: src/components/products/create-product-dialog.tsx:54
+#: src/pages/discounts.tsx:64
 #: src/pages/offers.tsx:81
 msgid "Name (English)"
 msgstr "Nombre (inglés)"
 
 #: src/components/products/create-product-dialog.tsx:58
+#: src/pages/discounts.tsx:68
 #: src/pages/offers.tsx:85
 msgid "Name (Spanish)"
 msgstr "Nombre (español)"
@@ -612,6 +677,10 @@ msgstr "No se encontraron alérgenos."
 #: src/pages/categories.tsx:166
 msgid "No categories yet."
 msgstr "Todavía no hay categorías."
+
+#: src/pages/discounts.tsx:185
+msgid "No discounts yet."
+msgstr "Aún no hay descuentos."
 
 #: src/pages/offers.tsx:129
 msgid "No matching products."
@@ -633,6 +702,10 @@ msgstr "Todavía no hay permisos."
 #: src/components/products/products-table.tsx:103
 msgid "No products found."
 msgstr "No se encontraron productos."
+
+#: src/pages/discounts.tsx:98
+msgid "No roles exist yet."
+msgstr "Aún no hay roles."
 
 #: src/pages/access.tsx:122
 msgid "No roles yet."
@@ -672,6 +745,11 @@ msgstr "La contraseña debe tener al menos 8 caracteres"
 #: src/lib/auth-schemas.ts:21
 msgid "Passwords do not match"
 msgstr "Las contraseñas no coinciden"
+
+#: src/pages/discounts.tsx:80
+#: src/pages/discounts.tsx:83
+msgid "Percentage"
+msgstr "Porcentaje"
 
 #: src/components/access/permission-list.tsx:52
 #: src/pages/access.tsx:69
@@ -764,7 +842,11 @@ msgstr "Nombre del rol"
 msgid "Roles"
 msgstr "Roles"
 
-#: src/components/store-layout.tsx:31
+#: src/pages/discounts.tsx:95
+msgid "Roles allowed to use this discount"
+msgstr "Roles que pueden usar este descuento"
+
+#: src/components/store-layout.tsx:32
 #: src/pages/access.tsx:61
 msgid "Roles and permissions"
 msgstr "Roles y permisos"
@@ -775,15 +857,21 @@ msgstr "Roles y permisos"
 #: src/components/users/user-list.tsx:35
 #: src/pages/categories.tsx:190
 #: src/pages/categories.tsx:217
+#: src/pages/discounts.tsx:120
 #: src/pages/offers.tsx:168
 msgid "Save"
 msgstr "Guardar"
+
+#: src/pages/discounts.tsx:183
+msgid "Saved discounts"
+msgstr "Descuentos guardados"
 
 #: src/pages/offers.tsx:226
 msgid "Saved offers"
 msgstr "Ofertas guardadas"
 
 #: src/components/products/create-product-dialog.tsx:148
+#: src/pages/discounts.tsx:120
 #: src/pages/offers.tsx:168
 msgid "Saving…"
 msgstr "Guardando…"
@@ -809,6 +897,10 @@ msgstr "Selecciona un rol"
 msgid "Select allergens"
 msgstr "Seleccionar alérgenos"
 
+#: src/pages/discounts.tsx:112
+msgid "Select at least one role."
+msgstr "Selecciona al menos un rol."
+
 #: src/components/access/permission-multiselect.tsx:25
 msgid "Select permissions"
 msgstr "Selecciona permisos"
@@ -827,7 +919,7 @@ msgstr "Iniciar sesión"
 msgid "Sign in to your account"
 msgstr "Inicia sesión en tu cuenta"
 
-#: src/components/store-layout.tsx:70
+#: src/components/store-layout.tsx:71
 msgid "Sign out"
 msgstr "Cerrar sesión"
 
@@ -853,8 +945,8 @@ msgstr "Ordenar ascendente"
 msgid "Sort descending"
 msgstr "Ordenar descendente"
 
-#: src/components/store-layout.tsx:41
-#: src/components/store-layout.tsx:43
+#: src/components/store-layout.tsx:42
+#: src/components/store-layout.tsx:44
 msgid "Store"
 msgstr "Tienda"
 
@@ -894,6 +986,10 @@ msgstr "Esta cuenta está bloqueada. Contacta con un administrador."
 msgid "This category already exists."
 msgstr "Esta categoría ya existe."
 
+#: src/pages/discounts.tsx:115
+msgid "This discount applies to the invoice total, regardless of purchased products."
+msgstr "Este descuento se aplica al total de la factura, independientemente de los productos comprados."
+
 #: src/pages/access.tsx:73
 msgid "This permission already exists."
 msgstr "Este permiso ya existe."
@@ -928,6 +1024,7 @@ msgstr "Esta subcategoría ya existe en la categoría seleccionada."
 #: src/pages/access.tsx:89
 #: src/pages/access.tsx:119
 #: src/pages/allergens.tsx:30
+#: src/pages/discounts.tsx:176
 #: src/pages/offers.tsx:219
 #: src/pages/products.tsx:100
 #: src/pages/users.tsx:46
@@ -948,7 +1045,7 @@ msgstr "Desbloquear usuario {0}"
 msgid "Update the product details."
 msgstr "Actualiza los datos del producto."
 
-#: src/components/store-layout.tsx:30
+#: src/components/store-layout.tsx:31
 #: src/pages/users.tsx:36
 msgid "Users"
 msgstr "Usuarios"
