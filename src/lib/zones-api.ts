@@ -7,6 +7,7 @@ const zoneSchema = z.object({
   id: z.number().int().positive(),
   name: z.string(),
   hasOutside: z.boolean(),
+  isBase: z.boolean(),
   tableNumbers: z.array(z.number().int().min(1).max(50)),
 })
 

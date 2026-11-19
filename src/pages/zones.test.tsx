@@ -25,8 +25,8 @@ vi.mock('@/lib/zones-api', async (importOriginal) => ({
 }))
 
 test('creates and edits a zone without offering tables assigned to another zone', async () => {
-  const existing = { id: 1, name: 'Dining room', hasOutside: false, tableNumbers: [1] }
-  const input = { name: 'Gallery', hasOutside: true, tableNumbers: [2, 3] }
+  const existing = { id: 1, name: 'Dining room', hasOutside: false, tableNumbers: [1], isBase: true }
+  const input = { name: 'Gallery', hasOutside: true, tableNumbers: [2, 3], isBase: true }
   let zones = [existing]
   vi.mocked(listZones).mockImplementation(async () => zones)
   vi.mocked(listTables).mockResolvedValue([1, 2, 3].map((number) => ({
@@ -34,7 +34,8 @@ test('creates and edits a zone without offering tables assigned to another zone'
   })))
   vi.mocked(saveZone).mockImplementation(async (id, values) => {
     const saved = { id: id ?? 2, ...values }
-    zones = [...zones.filter((zone) => zone.id !== saved.id), saved]
+    zones = [...zones.filter((zone) => zone.id !== saved.id)
+      .map((zone) => saved.isBase ? { ...zone, isBase: false } : zone), saved]
     return saved
   })
   const user = userEvent.setup()
@@ -43,6 +44,8 @@ test('creates and edits a zone without offering tables assigned to another zone'
   </MemoryRouter></QueryClientProvider></AppWrapper>)
 
   await user.click(await screen.findByRole('button', { name: 'Create zone' }))
+  expect(screen.getByText('Saving this zone as the base will replace Dining room.')).toBeVisible()
+  await user.click(screen.getByRole('checkbox', { name: 'Base zone' }))
   const trigger = () => screen.getByRole('combobox', { name: 'Tables' })
   const picker = () => within(screen.getByRole('listbox'))
   const openPicker = async () => {
@@ -66,7 +69,10 @@ test('creates and edits a zone without offering tables assigned to another zone'
   await user.click(accessible)
   await user.keyboard('{Escape}')
   await user.click(screen.getByRole('button', { name: 'Save zone' }))
-  await user.click(await screen.findByRole('button', { name: 'Edit Gallery' }))
+  const editGallery = await screen.findByRole('button', { name: 'Edit Gallery' })
+  expect(screen.getAllByText('Base zone')).toHaveLength(1)
+  await user.click(editGallery)
+  expect(screen.getByRole('checkbox', { name: 'Base zone' })).toBeChecked()
   expect(saveZone).toHaveBeenNthCalledWith(1, undefined, input)
   await openPicker()
   expect(picker().getByRole('option', { name: 'Table 2, Outdoor', selected: true })).toBeInTheDocument()
@@ -80,6 +86,7 @@ test('creates and edits a zone without offering tables assigned to another zone'
   expect(saveZone).toHaveBeenNthCalledWith(2, 2, { ...input, hasOutside: false, tableNumbers: [3] })
   const diningRoom = await screen.findByRole('button', { name: 'Edit Dining room' })
   await user.click(diningRoom)
+  expect(screen.getByRole('checkbox', { name: 'Base zone' })).not.toBeChecked()
   await user.click(screen.getByLabelText('Has an outdoor area'))
   await openPicker()
   expect(picker().getByRole('option', { name: 'Table 1', selected: true })).toBeInTheDocument()

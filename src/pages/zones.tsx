@@ -31,8 +31,9 @@ function ZoneTableLabel({ number, isOutside, isAccessible }: { number: number } 
   )
 }
 
-function ZoneForm({ zone, tables, busy, onSave, onCancel }: {
+function ZoneForm({ zone, currentBaseName, tables, busy, onSave, onCancel }: {
   zone?: Zone
+  currentBaseName?: string
   tables: RestaurantTable[]
   busy: boolean
   onSave: (input: ZoneInput) => void
@@ -41,6 +42,7 @@ function ZoneForm({ zone, tables, busy, onSave, onCancel }: {
   const { t } = useLingui()
   const [name, setName] = useState(zone?.name ?? '')
   const [hasOutside, setHasOutside] = useState(zone?.hasOutside ?? false)
+  const [isBase, setIsBase] = useState(zone?.isBase ?? false)
   const [selected, setSelected] = useState(() => new Set(zone?.tableNumbers))
   const eligible = hasOutside ? tables : tables.filter((table) => !table.isOutside)
   const selectedTables = eligible.filter((table) => selected.has(table.number))
@@ -52,7 +54,7 @@ function ZoneForm({ zone, tables, busy, onSave, onCancel }: {
         <form className="flex flex-col gap-4" onSubmit={(event) => {
           event.preventDefault()
           if (!busy && name.trim()) {
-            onSave({ name: name.trim(), hasOutside, tableNumbers: selectedTables.map((table) => table.number) })
+            onSave({ name: name.trim(), hasOutside, isBase, tableNumbers: selectedTables.map((table) => table.number) })
           }
         }}>
           <div className="flex flex-col gap-2">
@@ -69,6 +71,17 @@ function ZoneForm({ zone, tables, busy, onSave, onCancel }: {
             }} />
             {t`Has an outdoor area`}
           </label>
+          <div className="space-y-1">
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={isBase} disabled={busy}
+                aria-describedby={currentBaseName ? 'zone-base-help' : undefined}
+                onChange={(event) => setIsBase(event.target.checked)} />
+              {t`Base zone`}
+            </label>
+            {currentBaseName && <p id="zone-base-help" className="text-sm text-muted-foreground">
+              {t`Saving this zone as the base will replace ${currentBaseName}.`}
+            </p>}
+          </div>
           <div className="flex flex-col gap-2">
             <Label id="zone-tables-label" htmlFor="zone-tables">{t`Tables`}</Label>
             <p id="zone-tables-help" className="text-sm text-muted-foreground">{t`Tables in another zone are not shown. Turning off the outdoor area clears outdoor selections.`}</p>
@@ -108,6 +121,7 @@ function ZonesContent() {
   const [editor, setEditor] = useState<number | 'new'>()
   const zones = useQuery({ queryKey: zonesQueryKey, queryFn: ({ signal }) => listZones(signal), retry: false })
   const tables = useQuery({ queryKey: tablesQueryKey, queryFn: ({ signal }) => listTables(signal), retry: false })
+  const currentBase = zones.data?.find((zone) => zone.isBase)
   const tablesByNumber = useMemo(() => new Map(tables.data?.map((table) => [table.number, table])), [tables.data])
   const assignedElsewhere = useMemo(() => new Set(zones.data?.flatMap((zone) =>
     zone.id === editor ? [] : zone.tableNumbers)), [zones.data, editor])
@@ -115,10 +129,13 @@ function ZonesContent() {
     mutationFn: (input: ZoneInput) => saveZone(typeof editor === 'number' ? editor : undefined, input),
     onSuccess: async (saved) => {
       await client.cancelQueries({ queryKey: zonesQueryKey })
-      client.setQueryData<Zone[]>(zonesQueryKey, (previous = []) =>
-        previous.some((zone) => zone.id === saved.id)
-          ? previous.map((zone) => zone.id === saved.id ? saved : zone)
-          : [...previous, saved])
+      client.setQueryData<Zone[]>(zonesQueryKey, (previous = []) => {
+        const updated = previous.map((zone) => {
+          if (zone.id === saved.id) return saved
+          return saved.isBase && zone.isBase ? { ...zone, isBase: false } : zone
+        })
+        return previous.some((zone) => zone.id === saved.id) ? updated : [...updated, saved]
+      })
       setEditor(undefined)
       void client.invalidateQueries({ queryKey: zonesQueryKey })
     },
@@ -161,6 +178,7 @@ function ZonesContent() {
           </p>}
           {editor !== undefined && (
             <ZoneForm key={editor} zone={zones.data.find((zone) => zone.id === editor)}
+              currentBaseName={currentBase?.id !== editor ? currentBase?.name : undefined}
               tables={tables.data.filter((table) => !assignedElsewhere.has(table.number))}
               busy={save.isPending} onSave={save.mutate} onCancel={() => openEditor()} />
           )}
@@ -169,7 +187,10 @@ function ZonesContent() {
             <Card key={zone.id}>
               <CardHeader className="flex flex-row items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <CardTitle className="wrap-break-word">{zone.name}</CardTitle>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <CardTitle className="wrap-break-word">{zone.name}</CardTitle>
+                    {zone.isBase && <span className="rounded-md bg-muted px-2 py-0.5 text-xs font-medium">{t`Base zone`}</span>}
+                  </div>
                   <p className="text-sm text-muted-foreground">{zone.hasOutside ? t`Has an outdoor area` : t`Indoor only`}</p>
                 </div>
                 <Button variant="outline" disabled={editor !== undefined} aria-label={t`Edit ${zone.name}`}

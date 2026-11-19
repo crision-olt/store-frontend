@@ -17,6 +17,8 @@ restaurant tables, then open **Zones** to create or edit a zone. Use the
 zone's current tables remain selectable. A sun marks outdoor tables, and an
 accessibility icon marks accessible tables. Enable **Has an outdoor area** to
 include outdoor tables. Turning it off clears outdoor selections when you save.
+Mark **Base zone** to designate a zone as the base. Saving a new base zone
+automatically removes that designation from the previous one.
 
 After setting up the service's database, use **Categories** in the navigation
 to create categories and subcategories. Product filters use their IDs
