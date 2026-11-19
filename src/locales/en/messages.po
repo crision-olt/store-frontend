@@ -15,6 +15,10 @@ msgstr "A product with this SKU already exists."
 msgid "A user with this email already exists."
 msgstr "A user with this email already exists."
 
+#: src/pages/zones.tsx:21
+msgid "Accessible"
+msgstr "Accessible"
+
 #. placeholder {0}: table.number
 #: src/pages/tables.tsx:51
 msgid "Accessible for table {0}"
@@ -123,7 +127,7 @@ msgstr "Bundle total"
 #: src/pages/discounts.tsx:118
 #: src/pages/offers.tsx:167
 #: src/pages/tables.tsx:123
-#: src/pages/zones.tsx:76
+#: src/pages/zones.tsx:96
 msgid "Cancel"
 msgstr "Cancel"
 
@@ -272,7 +276,7 @@ msgstr "Could not load tables."
 msgid "Could not load users. Please try again."
 msgstr "Could not load users. Please try again."
 
-#: src/pages/zones.tsx:131
+#: src/pages/zones.tsx:152
 msgid "Could not load zones or tables."
 msgstr "Could not load zones or tables."
 
@@ -288,11 +292,11 @@ msgstr "Could not save the product. Please try again."
 msgid "Could not save the user. Please try again."
 msgstr "Could not save the user. Please try again."
 
-#: src/pages/zones.tsx:139
+#: src/pages/zones.tsx:160
 msgid "Could not save the zone. Please try again."
 msgstr "Could not save the zone. Please try again."
 
-#: src/pages/zones.tsx:138
+#: src/pages/zones.tsx:159
 msgid "Could not save the zone. Review the current table options and try again."
 msgstr "Could not save the zone. Review the current table options and try again."
 
@@ -405,8 +409,8 @@ msgstr "Create user"
 msgid "Create users, change their email or password, and assign roles."
 msgstr "Create users, change their email or password, and assign roles."
 
-#: src/pages/zones.tsx:30
-#: src/pages/zones.tsx:127
+#: src/pages/zones.tsx:50
+#: src/pages/zones.tsx:148
 msgid "Create zone"
 msgstr "Create zone"
 
@@ -500,14 +504,14 @@ msgstr "Drag handles to reorder columns. Or focus a handle, press Space, then us
 #: src/pages/categories.tsx:205
 #: src/pages/discounts.tsx:204
 #: src/pages/offers.tsx:244
-#: src/pages/zones.tsx:155
+#: src/pages/zones.tsx:176
 msgid "Edit"
 msgstr "Edit"
 
 #. placeholder {0}: localizedName(offer.name, offer.nameEs, i18n.locale)
 #. placeholder {0}: zone.name
 #: src/pages/offers.tsx:243
-#: src/pages/zones.tsx:154
+#: src/pages/zones.tsx:175
 msgid "Edit {0}"
 msgstr "Edit {0}"
 
@@ -548,7 +552,7 @@ msgstr "Edit role {0}"
 msgid "Edit user {0}"
 msgstr "Edit user {0}"
 
-#: src/pages/zones.tsx:30
+#: src/pages/zones.tsx:50
 msgid "Edit zone"
 msgstr "Edit zone"
 
@@ -610,16 +614,16 @@ msgstr "Fixed amount"
 msgid "Fixed price (€)"
 msgstr "Fixed price (€)"
 
-#: src/pages/zones.tsx:125
+#: src/pages/zones.tsx:146
 msgid "Group your restaurant tables into zones."
 msgstr "Group your restaurant tables into zones."
 
-#: src/pages/zones.tsx:50
-#: src/pages/zones.tsx:152
+#: src/pages/zones.tsx:70
+#: src/pages/zones.tsx:173
 msgid "Has an outdoor area"
 msgstr "Has an outdoor area"
 
-#: src/pages/zones.tsx:152
+#: src/pages/zones.tsx:173
 msgid "Indoor only"
 msgstr "Indoor only"
 
@@ -677,7 +681,7 @@ msgstr "Loading tables…"
 msgid "Loading users…"
 msgstr "Loading users…"
 
-#: src/pages/zones.tsx:134
+#: src/pages/zones.tsx:155
 msgid "Loading zones…"
 msgstr "Loading zones…"
 
@@ -755,7 +759,7 @@ msgstr "No categories yet."
 msgid "No discounts yet."
 msgstr "No discounts yet."
 
-#: src/pages/zones.tsx:55
+#: src/pages/zones.tsx:78
 msgid "No eligible tables available."
 msgstr "No eligible tables available."
 
@@ -792,7 +796,7 @@ msgstr "No roles yet."
 msgid "No subcategories yet."
 msgstr "No subcategories yet."
 
-#: src/pages/zones.tsx:158
+#: src/pages/zones.tsx:179
 msgid "No tables assigned."
 msgstr "No tables assigned."
 
@@ -804,7 +808,7 @@ msgstr "No tables configured yet."
 msgid "No users yet."
 msgstr "No users yet."
 
-#: src/pages/zones.tsx:146
+#: src/pages/zones.tsx:167
 msgid "No zones configured yet."
 msgstr "No zones configured yet."
 
@@ -820,6 +824,10 @@ msgstr "Number of tables"
 #: src/pages/offers.tsx:90
 msgid "Offer type"
 msgstr "Offer type"
+
+#: src/pages/zones.tsx:20
+msgid "Outdoor"
+msgstr "Outdoor"
 
 #. placeholder {0}: table.number
 #: src/pages/tables.tsx:46
@@ -977,7 +985,7 @@ msgstr "Save"
 msgid "Save table {0}"
 msgstr "Save table {0}"
 
-#: src/pages/zones.tsx:75
+#: src/pages/zones.tsx:95
 msgid "Save zone"
 msgstr "Save zone"
 
@@ -1023,6 +1031,10 @@ msgstr "Select at least one role."
 #: src/components/access/permission-multiselect.tsx:25
 msgid "Select permissions"
 msgstr "Select permissions"
+
+#: src/pages/zones.tsx:78
+msgid "Select tables"
+msgstr "Select tables"
 
 #. placeholder {0}: selected.size
 #: src/pages/offers.tsx:131
@@ -1094,14 +1106,9 @@ msgstr "Subcategory name (Spanish)"
 msgid "Table {0}"
 msgstr "Table {0}"
 
-#: src/pages/zones.tsx:68
-#: src/pages/zones.tsx:160
+#: src/pages/zones.tsx:19
 msgid "Table {number}"
 msgstr "Table {number}"
-
-#: src/pages/zones.tsx:68
-msgid "Table {number} (outdoor)"
-msgstr "Table {number} (outdoor)"
 
 #: src/pages/tables.tsx:108
 msgid "Table count"
@@ -1113,7 +1120,7 @@ msgstr "Table settings"
 
 #: src/components/store-layout.tsx:31
 #: src/pages/tables.tsx:97
-#: src/pages/zones.tsx:53
+#: src/pages/zones.tsx:73
 msgid "Tables"
 msgstr "Tables"
 
@@ -1121,7 +1128,7 @@ msgstr "Tables"
 msgid "Tables above the new count will be permanently removed."
 msgstr "Tables above the new count will be permanently removed."
 
-#: src/pages/zones.tsx:54
+#: src/pages/zones.tsx:74
 msgid "Tables in another zone are not shown. Turning off the outdoor area clears outdoor selections."
 msgstr "Tables in another zone are not shown. Turning off the outdoor area clears outdoor selections."
 
@@ -1185,7 +1192,7 @@ msgstr "This subcategory already exists in the selected category."
 #: src/pages/tables.tsx:103
 #: src/pages/users.tsx:46
 #: src/pages/users.tsx:61
-#: src/pages/zones.tsx:132
+#: src/pages/zones.tsx:153
 msgid "Try again"
 msgstr "Try again"
 
@@ -1227,11 +1234,11 @@ msgstr "You cannot block your own account."
 msgid "Your account has been blocked. Contact an administrator."
 msgstr "Your account has been blocked. Contact an administrator."
 
-#: src/pages/zones.tsx:39
+#: src/pages/zones.tsx:59
 msgid "Zone name"
 msgstr "Zone name"
 
 #: src/components/store-layout.tsx:32
-#: src/pages/zones.tsx:124
+#: src/pages/zones.tsx:145
 msgid "Zones"
 msgstr "Zones"

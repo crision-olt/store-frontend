@@ -15,6 +15,10 @@ msgstr "Ya existe un producto con este SKU."
 msgid "A user with this email already exists."
 msgstr "Ya existe un usuario con este correo."
 
+#: src/pages/zones.tsx:21
+msgid "Accessible"
+msgstr "Accesible"
+
 #. placeholder {0}: table.number
 #: src/pages/tables.tsx:51
 msgid "Accessible for table {0}"
@@ -123,7 +127,7 @@ msgstr "Total del paquete"
 #: src/pages/discounts.tsx:118
 #: src/pages/offers.tsx:167
 #: src/pages/tables.tsx:123
-#: src/pages/zones.tsx:76
+#: src/pages/zones.tsx:96
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -272,7 +276,7 @@ msgstr "No se pudieron cargar las mesas."
 msgid "Could not load users. Please try again."
 msgstr "No se pudieron cargar los usuarios. Inténtalo de nuevo."
 
-#: src/pages/zones.tsx:131
+#: src/pages/zones.tsx:152
 msgid "Could not load zones or tables."
 msgstr "No se pudieron cargar las zonas o las mesas."
 
@@ -288,11 +292,11 @@ msgstr "No se pudo guardar el producto. Inténtalo de nuevo."
 msgid "Could not save the user. Please try again."
 msgstr "No se pudo guardar el usuario. Inténtalo de nuevo."
 
-#: src/pages/zones.tsx:139
+#: src/pages/zones.tsx:160
 msgid "Could not save the zone. Please try again."
 msgstr "No se pudo guardar la zona. Inténtalo de nuevo."
 
-#: src/pages/zones.tsx:138
+#: src/pages/zones.tsx:159
 msgid "Could not save the zone. Review the current table options and try again."
 msgstr "No se pudo guardar la zona. Revisa las mesas disponibles e inténtalo de nuevo."
 
@@ -405,8 +409,8 @@ msgstr "Crear usuario"
 msgid "Create users, change their email or password, and assign roles."
 msgstr "Crea usuarios, cambia su correo o contraseña y asígnales roles."
 
-#: src/pages/zones.tsx:30
-#: src/pages/zones.tsx:127
+#: src/pages/zones.tsx:50
+#: src/pages/zones.tsx:148
 msgid "Create zone"
 msgstr "Crear zona"
 
@@ -500,14 +504,14 @@ msgstr "Arrastra los controles para reordenar las columnas. O enfoca un control,
 #: src/pages/categories.tsx:205
 #: src/pages/discounts.tsx:204
 #: src/pages/offers.tsx:244
-#: src/pages/zones.tsx:155
+#: src/pages/zones.tsx:176
 msgid "Edit"
 msgstr "Editar"
 
 #. placeholder {0}: localizedName(offer.name, offer.nameEs, i18n.locale)
 #. placeholder {0}: zone.name
 #: src/pages/offers.tsx:243
-#: src/pages/zones.tsx:154
+#: src/pages/zones.tsx:175
 msgid "Edit {0}"
 msgstr "Editar {0}"
 
@@ -548,7 +552,7 @@ msgstr "Editar rol {0}"
 msgid "Edit user {0}"
 msgstr "Editar usuario {0}"
 
-#: src/pages/zones.tsx:30
+#: src/pages/zones.tsx:50
 msgid "Edit zone"
 msgstr "Editar zona"
 
@@ -610,16 +614,16 @@ msgstr "Importe fijo"
 msgid "Fixed price (€)"
 msgstr "Precio fijo (€)"
 
-#: src/pages/zones.tsx:125
+#: src/pages/zones.tsx:146
 msgid "Group your restaurant tables into zones."
 msgstr "Agrupa las mesas de tu restaurante en zonas."
 
-#: src/pages/zones.tsx:50
-#: src/pages/zones.tsx:152
+#: src/pages/zones.tsx:70
+#: src/pages/zones.tsx:173
 msgid "Has an outdoor area"
 msgstr "Tiene una zona al aire libre"
 
-#: src/pages/zones.tsx:152
+#: src/pages/zones.tsx:173
 msgid "Indoor only"
 msgstr "Solo interior"
 
@@ -677,7 +681,7 @@ msgstr "Cargando mesas…"
 msgid "Loading users…"
 msgstr "Cargando usuarios…"
 
-#: src/pages/zones.tsx:134
+#: src/pages/zones.tsx:155
 msgid "Loading zones…"
 msgstr "Cargando zonas…"
 
@@ -755,7 +759,7 @@ msgstr "Todavía no hay categorías."
 msgid "No discounts yet."
 msgstr "Aún no hay descuentos."
 
-#: src/pages/zones.tsx:55
+#: src/pages/zones.tsx:78
 msgid "No eligible tables available."
 msgstr "No hay mesas disponibles para esta zona."
 
@@ -792,7 +796,7 @@ msgstr "Todavía no hay roles."
 msgid "No subcategories yet."
 msgstr "Todavía no hay subcategorías."
 
-#: src/pages/zones.tsx:158
+#: src/pages/zones.tsx:179
 msgid "No tables assigned."
 msgstr "No hay mesas asignadas."
 
@@ -804,7 +808,7 @@ msgstr "Todavía no hay mesas configuradas."
 msgid "No users yet."
 msgstr "Todavía no hay usuarios."
 
-#: src/pages/zones.tsx:146
+#: src/pages/zones.tsx:167
 msgid "No zones configured yet."
 msgstr "Todavía no hay zonas configuradas."
 
@@ -820,6 +824,10 @@ msgstr "Número de mesas"
 #: src/pages/offers.tsx:90
 msgid "Offer type"
 msgstr "Tipo de oferta"
+
+#: src/pages/zones.tsx:20
+msgid "Outdoor"
+msgstr "Exterior"
 
 #. placeholder {0}: table.number
 #: src/pages/tables.tsx:46
@@ -977,7 +985,7 @@ msgstr "Guardar"
 msgid "Save table {0}"
 msgstr "Guardar mesa {0}"
 
-#: src/pages/zones.tsx:75
+#: src/pages/zones.tsx:95
 msgid "Save zone"
 msgstr "Guardar zona"
 
@@ -1023,6 +1031,10 @@ msgstr "Selecciona al menos un rol."
 #: src/components/access/permission-multiselect.tsx:25
 msgid "Select permissions"
 msgstr "Selecciona permisos"
+
+#: src/pages/zones.tsx:78
+msgid "Select tables"
+msgstr "Seleccionar mesas"
 
 #. placeholder {0}: selected.size
 #: src/pages/offers.tsx:131
@@ -1094,14 +1106,9 @@ msgstr "Nombre de subcategoría (español)"
 msgid "Table {0}"
 msgstr "Mesa {0}"
 
-#: src/pages/zones.tsx:68
-#: src/pages/zones.tsx:160
+#: src/pages/zones.tsx:19
 msgid "Table {number}"
 msgstr "Mesa {number}"
-
-#: src/pages/zones.tsx:68
-msgid "Table {number} (outdoor)"
-msgstr "Mesa {number} (exterior)"
 
 #: src/pages/tables.tsx:108
 msgid "Table count"
@@ -1113,7 +1120,7 @@ msgstr "Características de las mesas"
 
 #: src/components/store-layout.tsx:31
 #: src/pages/tables.tsx:97
-#: src/pages/zones.tsx:53
+#: src/pages/zones.tsx:73
 msgid "Tables"
 msgstr "Mesas"
 
@@ -1121,7 +1128,7 @@ msgstr "Mesas"
 msgid "Tables above the new count will be permanently removed."
 msgstr "Las mesas por encima del nuevo número se eliminarán permanentemente."
 
-#: src/pages/zones.tsx:54
+#: src/pages/zones.tsx:74
 msgid "Tables in another zone are not shown. Turning off the outdoor area clears outdoor selections."
 msgstr "No se muestran las mesas de otras zonas. Al desactivar el área al aire libre, se desmarcan las mesas exteriores."
 
@@ -1185,7 +1192,7 @@ msgstr "Esta subcategoría ya existe en la categoría seleccionada."
 #: src/pages/tables.tsx:103
 #: src/pages/users.tsx:46
 #: src/pages/users.tsx:61
-#: src/pages/zones.tsx:132
+#: src/pages/zones.tsx:153
 msgid "Try again"
 msgstr "Reintentar"
 
@@ -1227,11 +1234,11 @@ msgstr "No puedes bloquear tu propia cuenta."
 msgid "Your account has been blocked. Contact an administrator."
 msgstr "Tu cuenta ha sido bloqueada. Contacta con un administrador."
 
-#: src/pages/zones.tsx:39
+#: src/pages/zones.tsx:59
 msgid "Zone name"
 msgstr "Nombre de la zona"
 
 #: src/components/store-layout.tsx:32
-#: src/pages/zones.tsx:124
+#: src/pages/zones.tsx:145
 msgid "Zones"
 msgstr "Zonas"

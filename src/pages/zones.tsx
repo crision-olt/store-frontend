@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react/macro'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Accessibility, Sun } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { RequireAuth } from '@/components/auth/require-auth'
@@ -8,9 +9,27 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 import { listTables, tablesQueryKey, TablesApiError, type RestaurantTable } from '@/lib/tables-api'
 import { listZones, saveZone, zonesQueryKey, ZonesApiError, type Zone, type ZoneInput } from '@/lib/zones-api'
+
+function ZoneTableLabel({ number, isOutside, isAccessible }: { number: number } & Partial<Pick<RestaurantTable, 'isOutside' | 'isAccessible'>>) {
+  const { t } = useLingui()
+  const name = t`Table ${number}`
+  const outdoor = isOutside ? t`Outdoor` : ''
+  const accessible = isAccessible ? t`Accessible` : ''
+  return (
+    <span>
+      <span className="sr-only">{[name, outdoor, accessible].filter(Boolean).join(', ')}</span>
+      <span aria-hidden="true" className="inline-flex items-center gap-1.5">
+        {name}
+        {outdoor && <span title={outdoor}><Sun className="size-4 text-amber-700 dark:text-amber-400" /></span>}
+        {accessible && <span title={accessible}><Accessibility className="size-4 text-sky-700 dark:text-sky-400" /></span>}
+      </span>
+    </span>
+  )
+}
 
 function ZoneForm({ zone, tables, busy, onSave, onCancel }: {
   zone?: Zone
@@ -24,6 +43,7 @@ function ZoneForm({ zone, tables, busy, onSave, onCancel }: {
   const [hasOutside, setHasOutside] = useState(zone?.hasOutside ?? false)
   const [selected, setSelected] = useState(() => new Set(zone?.tableNumbers))
   const eligible = hasOutside ? tables : tables.filter((table) => !table.isOutside)
+  const selectedTables = eligible.filter((table) => selected.has(table.number))
 
   return (
     <Card>
@@ -32,7 +52,7 @@ function ZoneForm({ zone, tables, busy, onSave, onCancel }: {
         <form className="flex flex-col gap-4" onSubmit={(event) => {
           event.preventDefault()
           if (!busy && name.trim()) {
-            onSave({ name: name.trim(), hasOutside, tableNumbers: eligible.filter((table) => selected.has(table.number)).map((table) => table.number) })
+            onSave({ name: name.trim(), hasOutside, tableNumbers: selectedTables.map((table) => table.number) })
           }
         }}>
           <div className="flex flex-col gap-2">
@@ -49,28 +69,28 @@ function ZoneForm({ zone, tables, busy, onSave, onCancel }: {
             }} />
             {t`Has an outdoor area`}
           </label>
-          <fieldset className="space-y-2" disabled={busy}>
-            <legend className="text-sm font-medium">{t`Tables`}</legend>
-            <p className="text-sm text-muted-foreground">{t`Tables in another zone are not shown. Turning off the outdoor area clears outdoor selections.`}</p>
-            {eligible.length === 0 ? <p className="text-sm">{t`No eligible tables available.`}</p> : (
-              <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                {eligible.map(({ number, isOutside }) => (
-                  <label key={number} className="flex items-center gap-2 rounded-md border p-2 text-sm">
-                    <input type="checkbox" checked={selected.has(number)} onChange={(event) => {
-                      const checked = event.target.checked
-                      setSelected((previous) => {
-                        const next = new Set(previous)
-                        if (checked) next.add(number)
-                        else next.delete(number)
-                        return next
-                      })
-                    }} />
-                    {isOutside ? t`Table ${number} (outdoor)` : t`Table ${number}`}
-                  </label>
+          <div className="flex flex-col gap-2">
+            <Label id="zone-tables-label" htmlFor="zone-tables">{t`Tables`}</Label>
+            <p id="zone-tables-help" className="text-sm text-muted-foreground">{t`Tables in another zone are not shown. Turning off the outdoor area clears outdoor selections.`}</p>
+            <Select multiple value={selectedTables.map(({ number }) => String(number))} disabled={busy || eligible.length === 0}
+              onValueChange={(values) => setSelected(new Set(values.map(Number)))}>
+              <SelectTrigger id="zone-tables" aria-labelledby="zone-tables-label" aria-describedby="zone-tables-help" className="w-full sm:max-w-sm">
+                <SelectValue>{eligible.length === 0 ? t`No eligible tables available.` : t`Select tables`}</SelectValue>
+              </SelectTrigger>
+              <SelectContent alignItemWithTrigger={false}>
+                {eligible.map((table) => (
+                  <SelectItem key={table.number} value={String(table.number)}><ZoneTableLabel {...table} /></SelectItem>
                 ))}
-              </div>
+              </SelectContent>
+            </Select>
+            {selectedTables.length > 0 && (
+              <ul role="list" className="flex flex-wrap gap-2 text-sm">
+                {selectedTables.map((table) => (
+                  <li key={table.number} className="rounded-md bg-muted px-2 py-1"><ZoneTableLabel {...table} /></li>
+                ))}
+              </ul>
             )}
-          </fieldset>
+          </div>
           <div className="flex gap-2">
             <Button type="submit" disabled={busy || !name.trim()}>{t`Save zone`}</Button>
             <Button type="button" variant="outline" disabled={busy} onClick={onCancel}>{t`Cancel`}</Button>
@@ -88,6 +108,7 @@ function ZonesContent() {
   const [editor, setEditor] = useState<number | 'new'>()
   const zones = useQuery({ queryKey: zonesQueryKey, queryFn: ({ signal }) => listZones(signal), retry: false })
   const tables = useQuery({ queryKey: tablesQueryKey, queryFn: ({ signal }) => listTables(signal), retry: false })
+  const tablesByNumber = useMemo(() => new Map(tables.data?.map((table) => [table.number, table])), [tables.data])
   const assignedElsewhere = useMemo(() => new Set(zones.data?.flatMap((zone) =>
     zone.id === editor ? [] : zone.tableNumbers)), [zones.data, editor])
   const save = useMutation({
@@ -157,7 +178,11 @@ function ZonesContent() {
               <CardContent className="text-sm">
                 {zone.tableNumbers.length === 0 ? t`No tables assigned.` : (
                   <ul className="flex flex-wrap gap-2">
-                    {zone.tableNumbers.map((number) => <li key={number} className="rounded-md border px-2 py-1">{t`Table ${number}`}</li>)}
+                    {zone.tableNumbers.map((number) => (
+                      <li key={number} className="rounded-md border px-2 py-1">
+                        <ZoneTableLabel {...tablesByNumber.get(number)} number={number} />
+                      </li>
+                    ))}
                   </ul>
                 )}
               </CardContent>
