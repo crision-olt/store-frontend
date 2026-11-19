@@ -9,6 +9,7 @@ import { ProductsPage } from '@/pages/products'
 import { RegisterPage } from '@/pages/register'
 import { TablesPage } from '@/pages/tables'
 import { UsersPage } from '@/pages/users'
+import { ZonesPage } from '@/pages/zones'
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
       <Route path="/allergens" element={<AllergensPage />} />
       <Route path="/discounts" element={<DiscountsPage />} />
       <Route path="/tables" element={<TablesPage />} />
+      <Route path="/zones" element={<ZonesPage />} />
       <Route path="/offers" element={<OffersPage />} />
       <Route path="/users" element={<UsersPage />} />
       <Route path="/access" element={<AccessPage />} />

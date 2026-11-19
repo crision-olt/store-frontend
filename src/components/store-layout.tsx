@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Boxes, FolderTree, LogOut, Percent, ShieldCheck, Store, Table, Tags, Users, Wheat } from 'lucide-react'
+import { Boxes, FolderTree, Layers, LogOut, Percent, ShieldCheck, Store, Table, Tags, Users, Wheat } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { LanguageSwitcher } from '@/components/language-switcher'
@@ -29,6 +29,7 @@ export function StoreLayout({ children }: { children: ReactNode }) {
     { to: '/offers', label: t`Menus and promotions`, icon: Tags },
     { to: '/discounts', label: t`Discounts`, icon: Percent },
     { to: '/tables', label: t`Tables`, icon: Table },
+    { to: '/zones', label: t`Zones`, icon: Layers },
     { to: '/users', label: t`Users`, icon: Users },
     { to: '/access', label: t`Roles and permissions`, icon: ShieldCheck },
   ]

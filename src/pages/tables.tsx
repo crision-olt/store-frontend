@@ -8,10 +8,9 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { listTables, resizeTables, saveTable, TablesApiError, type RestaurantTable, type TableInput } from '@/lib/tables-api'
 import { buildLinkWithRedirect } from '@/lib/redirect'
-
-const key = ['restaurant-tables'] as const
+import { listTables, resizeTables, saveTable, tablesQueryKey, TablesApiError, type RestaurantTable, type TableInput } from '@/lib/tables-api'
+import { zonesQueryKey } from '@/lib/zones-api'
 
 function TableForm({ table, busy, onSave }: {
   table: RestaurantTable
@@ -62,18 +61,19 @@ function TablesContent() {
   const client = useQueryClient()
   const [count, setCount] = useState('')
   const [confirmation, setConfirmation] = useState<{ count: number, expectedCount: number }>()
-  const tables = useQuery({ queryKey: key, queryFn: ({ signal }) => listTables(signal), retry: false })
+  const tables = useQuery({ queryKey: tablesQueryKey, queryFn: ({ signal }) => listTables(signal), retry: false })
   const resize = useMutation({
     mutationFn: ({ count, expectedCount }: { count: number, expectedCount: number }) => resizeTables(count, expectedCount),
     onSuccess: (data) => {
-      client.setQueryData(key, data)
+      client.setQueryData(tablesQueryKey, data)
+      void client.invalidateQueries({ queryKey: zonesQueryKey })
       setConfirmation(undefined)
     },
   })
   const save = useMutation({
     mutationFn: ({ number, input }: { number: number, input: TableInput }) => saveTable(number, input),
     onSuccess: (updated) => {
-      client.setQueryData<RestaurantTable[]>(key, (previous) =>
+      client.setQueryData<RestaurantTable[]>(tablesQueryKey, (previous) =>
         previous?.map((table) => table.number === updated.number ? updated : table))
     },
   })
@@ -139,7 +139,11 @@ function TablesContent() {
             <CardHeader><CardTitle>{t`Table settings`}</CardTitle></CardHeader>
             <CardContent>
               {tables.data.length === 0 && <p>{t`No tables configured yet.`}</p>}
-              {save.isError && <p role="alert" className="text-sm text-destructive">{t`Could not save table settings.`}</p>}
+              {save.isError && <p role="alert" className="text-sm text-destructive">
+                {save.error instanceof TablesApiError && save.error.status === 409
+                  ? t`Remove this table from its zone or enable the zone’s outdoor area before marking the table as outdoor.`
+                  : t`Could not save table settings.`}
+              </p>}
               {tables.data.map((table) => (
                 <TableForm key={`${table.number}-${table.capacity}-${table.isOutside}-${table.isAccessible}`}
                   table={table} busy={busy} onSave={(number, input) => save.mutate({ number, input })} />

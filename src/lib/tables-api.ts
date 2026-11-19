@@ -1,6 +1,8 @@
 import { z } from 'zod'
 import { resolveServiceUrl } from '@/lib/http'
 
+export const tablesQueryKey = ['restaurant-tables'] as const
+
 const tableSchema = z.object({
   number: z.number().int().min(1).max(50),
   capacity: z.union([z.literal(2), z.literal(4), z.literal(6), z.literal(8)]),
