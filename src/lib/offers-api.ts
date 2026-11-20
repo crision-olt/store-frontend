@@ -1,5 +1,8 @@
 import { z } from 'zod'
 import { resolveServiceUrl } from '@/lib/http'
+import type { OfferInput } from '@/features/offers/domain/offer'
+
+export type { Offer, OfferInput } from '@/features/offers/domain/offer'
 
 const offerSchema = z.object({
   id: z.number().int().positive(),
@@ -10,9 +13,6 @@ const offerSchema = z.object({
   productIds: z.array(z.number().int().positive()),
   minimumDistinctProducts: z.number().int().positive().optional(),
 })
-
-export type Offer = z.infer<typeof offerSchema>
-export type OfferInput = Omit<Offer, 'id' | 'nameEs'> & { nameEs: string }
 
 export class OffersApiError extends Error {
   constructor(status: number) {

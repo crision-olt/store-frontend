@@ -1,5 +1,8 @@
 import { z } from 'zod'
 import { resolveServiceUrl } from '@/lib/http'
+import type { DiscountInput } from '@/features/discounts/domain/discount'
+
+export type { Discount, DiscountInput } from '@/features/discounts/domain/discount'
 
 const discountSchema = z.object({
   id: z.number().int().positive(),
@@ -9,9 +12,6 @@ const discountSchema = z.object({
   amount: z.number(),
   roleIds: z.array(z.number().int().positive()),
 })
-
-export type Discount = z.infer<typeof discountSchema>
-export type DiscountInput = Omit<Discount, 'id'>
 
 export class DiscountsApiError extends Error {
   constructor(status: number) {

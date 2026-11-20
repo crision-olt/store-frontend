@@ -9,8 +9,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { listOffers, OffersApiError, saveOffer, type Offer, type OfferInput } from '@/lib/offers-api'
-import { listAllProducts, ProductsApiError, type Product } from '@/lib/products-api'
+import { calculateOfferPricing, isOfferAmountValid, isOfferMinimumValid } from '@/features/offers/domain/offer-pricing'
+import { listOffersUseCase, saveOfferUseCase } from '@/features/offers/operations'
+import { getOfferErrorStatus } from '@/features/offers/application/error-status'
+import type { Offer, OfferInput } from '@/features/offers/domain/offer'
+import { listAllProductsUseCase } from '@/features/products/catalog'
+import { getProductErrorStatus } from '@/features/products/application/error-status'
+import type { Product } from '@/features/products/domain/product'
 import { localizedName } from '@/lib/localized-name'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 
@@ -42,20 +47,18 @@ function OfferForm({ offer, products, saving, error, onCancel, onSave }: {
   }, [products, search])
   const selectedIds = [...selected]
   const unavailable = selectedIds.filter((id) => !byId.has(id))
-  const subtotalCents = selectedIds.reduce((sum, id) => sum + Math.round((byId.get(id)?.price ?? 0) * 100), 0)
+  const value = Number(amount)
+  const validAmount = isOfferAmountValid(kind, amount)
+  const { subtotalCents, total: calculatedTotal } = calculateOfferPricing(
+    kind, value, selectedIds.map((id) => byId.get(id)?.price ?? 0),
+  )
   const fixed = kind === 'menu'
   const threshold = !fixed && minimum !== '' ? Number(minimum) : undefined
-  const validThreshold = threshold === undefined ||
-    (Number.isInteger(threshold) && threshold >= 1 && threshold <= selected.size)
-  const value = Number(amount)
-  const validAmount = amount.trim() !== '' && Number.isFinite(value) && Math.round(value * 100) / 100 === value &&
-    (fixed ? value >= 0 && value <= 99999999.99 : value > 0 && value <= 100)
+  const validThreshold = threshold === undefined || isOfferMinimumValid(minimum, selected.size)
   const valid = name.trim().length > 0 && nameEs.trim().length > 0 &&
     selected.size > 0 && unavailable.length === 0 && validAmount && validThreshold
   const money = formatMoney(i18n.locale)
-  const total = validAmount
-    ? fixed ? value : Number((BigInt(subtotalCents) * BigInt(10000 - Math.round(value * 100)) + 5000n) / 10000n) / 100
-    : undefined
+  const total = validAmount ? calculatedTotal : undefined
 
   const toggle = (id: number) => setSelected((previous) => {
     const next = new Set(previous)
@@ -180,19 +183,18 @@ function OffersContent() {
   const client = useQueryClient()
   const [editing, setEditing] = useState<Offer>()
   const [formVersion, setFormVersion] = useState(0)
-  const offers = useQuery({ queryKey: key, queryFn: ({ signal }) => listOffers(signal), retry: false })
-  const catalog = useQuery({ queryKey: ['offer-product-catalog'], queryFn: ({ signal }) => listAllProducts({}, signal), retry: false })
+  const offers = useQuery({ queryKey: key, queryFn: ({ signal }) => listOffersUseCase(signal), retry: false })
+  const catalog = useQuery({ queryKey: ['offer-product-catalog'], queryFn: ({ signal }) => listAllProductsUseCase({}, signal), retry: false })
   const save = useMutation({
-    mutationFn: (input: OfferInput) => saveOffer(input, editing?.id),
+    mutationFn: (input: OfferInput) => saveOfferUseCase(input, editing?.id),
     onSuccess: async () => {
       await client.invalidateQueries({ queryKey: key })
       setEditing(undefined)
       setFormVersion((current) => current + 1)
     },
   })
-  if ([offers.error, catalog.error, save.error].some((error) =>
-    (error instanceof OffersApiError || error instanceof ProductsApiError) && error.status === 401,
-  )) {
+  if ([offers.error, save.error].some((error) => getOfferErrorStatus(error) === 401)
+    || getProductErrorStatus(catalog.error) === 401) {
     return <Navigate to={buildLinkWithRedirect('/login', location.pathname + location.search)} replace />
   }
   const products = catalog.data

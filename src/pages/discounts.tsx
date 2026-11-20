@@ -9,8 +9,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { AccessApiError, listRoles, type Role } from '@/lib/access-api'
-import { DiscountsApiError, listDiscounts, saveDiscount, type Discount, type DiscountInput } from '@/lib/discounts-api'
+import { isDiscountAmountValid } from '@/features/discounts/domain/discount-rules'
+import { getDiscountErrorStatus } from '@/features/discounts/application/error-status'
+import { listDiscountsUseCase, listRolesUseCase, saveDiscountUseCase } from '@/features/discounts/operations'
+import type { Discount, DiscountInput, DiscountRole } from '@/features/discounts/domain/discount'
 import { localizedName } from '@/lib/localized-name'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 
@@ -19,7 +21,7 @@ const formatMoney = (locale: string) => new Intl.NumberFormat(locale, { style: '
 
 function DiscountForm({ discount, roles, saving, error, onCancel, onSave }: {
   discount?: Discount
-  roles: Role[]
+  roles: DiscountRole[]
   saving: boolean
   error: unknown
   onCancel: () => void
@@ -32,9 +34,7 @@ function DiscountForm({ discount, roles, saving, error, onCancel, onSave }: {
   const [amount, setAmount] = useState(discount ? String(discount.amount) : '')
   const [roleIds, setRoleIds] = useState<number[]>(discount?.roleIds ?? [])
   const value = Number(amount)
-  const validAmount = amount.trim() !== '' && Number.isFinite(value) &&
-    Math.round(value * 100) / 100 === value &&
-    (kind === 'percentage' ? value > 0 && value <= 100 : value > 0 && value <= 99999999.99)
+  const validAmount = isDiscountAmountValid(kind, amount)
   const roleSet = new Set(roles.map((role) => role.id))
   const valid = name.trim().length > 0 && nameEs.trim().length > 0 && validAmount &&
     roleIds.length > 0 && roleIds.every((id) => roleSet.has(id))
@@ -133,10 +133,10 @@ function DiscountsContent() {
   const client = useQueryClient()
   const [editing, setEditing] = useState<Discount>()
   const [formVersion, setFormVersion] = useState(0)
-  const discounts = useQuery({ queryKey: key, queryFn: ({ signal }) => listDiscounts(signal), retry: false })
-  const roles = useQuery({ queryKey: ['roles'], queryFn: listRoles, retry: false })
+  const discounts = useQuery({ queryKey: key, queryFn: ({ signal }) => listDiscountsUseCase(signal), retry: false })
+  const roles = useQuery({ queryKey: ['roles'], queryFn: listRolesUseCase, retry: false })
   const save = useMutation({
-    mutationFn: (input: DiscountInput) => saveDiscount(input, editing?.id),
+    mutationFn: (input: DiscountInput) => saveDiscountUseCase(input, editing?.id),
     onSuccess: async () => {
       await client.invalidateQueries({ queryKey: key })
       setEditing(undefined)
@@ -144,9 +144,7 @@ function DiscountsContent() {
     },
   })
 
-  if ([discounts.error, roles.error, save.error].some((error) =>
-    (error instanceof DiscountsApiError || error instanceof AccessApiError) && error.status === 401,
-  )) {
+  if ([discounts.error, roles.error, save.error].some((error) => getDiscountErrorStatus(error) === 401)) {
     return <Navigate to={buildLinkWithRedirect('/login', location.pathname + location.search)} replace />
   }
 
