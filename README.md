@@ -1,158 +1,116 @@
 # Store frontend
 
-A React and Vite frontend for the store service.
+A React and Vite application for managing a store. The frontend is organized around
+feature boundaries so presentation, application workflows, domain rules, and network
+details can change independently.
 
-## Source layout
+## Architecture
 
-- `src/pages`: routes and page-level flows.
-- `src/components`: shared UI, tables and feature components.
-- `src/lib`: service clients, schemas and data helpers.
-- `src/hooks` and `src/providers`: shared behavior and application state.
-- `src/locales`: English and Spanish translations.
+| Layer | Location | Responsibility |
+| --- | --- | --- |
+| Presentation | `src/pages`, `src/components` | Render views, collect input, and show loading, success, and error states. |
+| Application | `src/features/<feature>/application` | Expose use cases and feature workflows to the UI. |
+| Domain | `src/features/<feature>/domain` | Define feature types, rules, and repository contracts without React or network dependencies. |
+| Infrastructure | `src/features/<feature>/infrastructure`, `src/lib/*-api.ts` | Implement repository contracts and handle HTTP, response validation, and service errors. |
+| Composition | Feature entry points under `src/features` | Connect application use cases to concrete infrastructure adapters. |
+| Shared platform | `src/providers`, `src/hooks`, `src/components/ui` | Configure routing, localization, session/query state, and reusable UI. |
+
+The dependency direction is inward:
+
+```text
+pages and components → feature application → domain contracts
+infrastructure adapters → domain contracts
+feature composition → application + infrastructure
+```
+
+Views should call a feature's application operations, not its transport API. Use cases
+depend on repository interfaces; adapters implement those interfaces and reuse the
+existing API modules instead of duplicating requests or validation. Keep domain rules
+independent of React, TanStack Query, and `fetch`. Add an interface when it protects a
+real feature boundary or makes the workflow independently testable.
+
+For example, product creation flows from the dialog through a create-product use case
+and repository contract to an API adapter. The adapter delegates to the existing
+products API, which owns HTTP and response validation. The view remains responsible
+for form interaction and rendering the result.
 
 ## Local development
 
 1. Install dependencies with `pnpm install`.
-2. Copy `.env.example` to `.env.local`. Set `AUTH_SERVICE_URL` to the browser-accessible
-   service origin; the example matches the service's default `http://localhost:3000`.
-3. Start `store-service` with its database prepared.
-   The service's `.env.example` sets `AUTH_FRONTEND_URL` to `http://localhost:5173`.
-   Change it if Vite uses a different origin, and use the same hostname for both apps.
+2. Copy `.env.example` to `.env.local` and set `AUTH_SERVICE_URL` to the browser-
+   accessible service origin. The example uses `http://localhost:3000`.
+3. Start `store-service` with its database prepared. The service's `.env.example`
+   sets `AUTH_FRONTEND_URL` to `http://localhost:5173`; update it if Vite uses a
+   different origin, and use the same hostname for both applications.
 4. Run `pnpm dev` and open the URL reported by Vite.
 
-The service database must include the `user` role for registration. The service's
-documented initial schema currently does not create that role.
-
-Vite embeds `AUTH_SERVICE_URL` at build time; rebuild when it changes. Do not put
-secrets in it.
+The service database must include the `user` role for registration; the documented
+initial schema currently does not create it. Vite embeds `AUTH_SERVICE_URL` at build
+time, so rebuild when it changes. Do not put secrets in this variable.
 
 ## Session and deployment
 
 Login and registration call `/auth/login` and `/auth/register` with cookies enabled.
 `AUTH_FRONTEND_URL` must match this application's origin for CORS. The service uses a
 `SameSite=Lax` cookie, so the applications must be deployed on compatible sites for
-the browser to send the session cookie. The service sets `Secure` on production cookies,
-which requires HTTPS.
+the browser to send the session cookie. Production cookies use `Secure` and require
+HTTPS.
 
-While a user is inside the authenticated layout (`StoreLayout`), `useSessionGuard`
-(`watchSession` in `src/lib/auth-api.ts`) keeps an `EventSource` connection open to
-`GET /auth/events` with credentials. If an administrator blocks the account, the server
-pushes a `blocked` event; the frontend immediately calls `/auth/logout`, clears the
-TanStack Query cache, and redirects to `/login` with a blocked-account notice.
+Inside the authenticated layout, `useSessionGuard` keeps an `EventSource` connection
+open to `GET /auth/events` with credentials. A `blocked` event triggers logout, query
+cache clearing, and a redirect with a blocked-account notice. A protected request
+returning `401` clears cached data and redirects to login with the current path as the
+return destination. Unsaved changes are lost. The frontend does not refresh tokens or
+poll for expiry; a reverse proxy must allow the service's SSE connection to stay open.
 
-When a protected query or mutation returns `401`, the frontend clears cached data and
-redirects to login with the current path as the return destination. Unsaved changes are
-lost. The session is checked on requests; the frontend does not refresh tokens or poll
-for expiry. A reverse proxy must allow the service's SSE connection to stay open.
+The redirect parameter accepts only paths on this frontend's origin and cannot send
+users to external applications.
 
-## Features
+## Feature behavior
 
-**Bilingual names:** When creating or editing categories, subcategories, products,
-menus, or promotions, enter both the English (`name`) and Spanish (`nameEs`)
-names. Older records with `nameEs: null` display their English name in Spanish
-until you add a translation; saving an edit requires both names.
+- **Catalog:** Categories and subcategories organize products; names support English
+  and Spanish. Older records with no Spanish name fall back to English, but saving an
+  edit requires both names. Product creation supports optional descriptions and
+  allergens. An empty allergen selection means none were recorded, not that a product
+  is allergen-free.
+- **Products:** Creation shows a pending row while saving without inserting it into
+  the catalog cache; failed saves remove the row and reopen the form with entered
+  values. Editing preserves filters and sorting. Archiving hides a product while
+  retaining its data and SKU; there is no restore screen. Existing databases need
+  `sql/products-archived.sql`.
+- **Tables and zones:** Apply the service's zones migration, configure tables, then
+  create zones. Zones can include multiple tables, designate a base zone, and
+  represent outdoor and accessible tables. Saving a new base zone removes that
+  designation from the previous one; disabling outdoor seating clears outdoor
+  selections when saved.
+- **Allergens:** The page is a read-only reference to the 14 EU food allergen
+  categories in English and Spanish.
+- **Menus and promotions:** Bundles contain selected products. Menus use a fixed
+  price or a percentage discount; promotions allow eligible subsets that meet a
+  minimum number of different products. Repeated units count once. These pages
+  preview offer totals; they do not apply offers to orders. Remove archived products
+  from a bundle before saving.
+- **Discounts:** `/discounts` manages invoice-wide discount definitions; it does not
+  apply them to invoices. Apply `sql/discounts.sql` in `store-service` first.
+- **Users and access:** Users can be filtered by email, role, or account status.
+  Roles and permissions can be created, but this page does not assign roles to users.
+  The access API requires `access:manage`; see the service README for administrator
+  bootstrapping.
+- **Product export:** Download Excel exports all loaded results for the current
+  filters and sort, not only visible rows. It includes visible data columns in their
+  displayed order, excludes actions and unsaved products, and preserves numeric
+  prices and ISO creation dates. The service's `/exports/xlsx` endpoint provides the
+  styled workbook. Failed or interrupted downloads can be retried without resetting
+  the table configuration.
 
-After applying the service's zones migration, use **Tables** to configure your
-restaurant tables, then open **Zones** to create or edit a zone. Use the
-**Tables** dropdown to select multiple unassigned tables. When editing, the
-zone's current tables remain selectable. A sun marks outdoor tables, and an
-accessibility icon marks accessible tables. Enable **Has an outdoor area** to
-include outdoor tables. Turning it off clears outdoor selections when you save.
-Mark **Base zone** to designate a zone as the base. Saving a new base zone
-automatically removes that designation from the previous one.
+For existing service database setup and migrations, see the `store-service` README.
 
-After setting up the service's database, use **Categories** in the navigation
-to create categories and subcategories. Product filters use their IDs
-while displaying their names.
+## Verification
 
-Use **Allergens** to view the 14 EU food allergen categories in English or Spanish.
-The page is a read-only reference. To assign allergens, use the optional
-**Allergens** multiselect when creating or editing a product. An empty selection
-means no allergens have been recorded, not that the product is allergen-free.
+- `pnpm test` runs Vitest. Tests use jsdom and mocked service calls where appropriate;
+  they do not replace browser tests against a running service.
+- `pnpm lint` checks import aliases and runs Oxlint.
+- `pnpm build` runs strict TypeScript checks and creates the production build.
 
-Use **Menus and promotions** to create or edit bundles containing one of each
-selected product. Set a fixed menu price or apply a percentage discount to the
-selected products' current subtotal. For a promotion, set **Minimum different
-products** to allow any subset of the eligible list that meets the minimum.
-For example, select six coffees, set the minimum to four, and enter a 10% discount.
-Repeated units of the same coffee count as one. The page previews fixed bundle
-totals; it does not apply offers to orders. If a product is archived, remove it from the bundle
-before saving changes.
-
-Use **Discounts** (`/discounts`) to list, create, or edit invoice-wide discount
-definitions. Enter both names, choose a percentage or fixed amount, and select at
-least one eligible role (`roleIds`). The page uses `GET /discounts`,
-`POST /discounts`, and `PUT /discounts/:id`; it does not apply discounts to
-invoices. Apply `sql/discounts.sql` in `store-service` before using this page.
-
-On **Products**, select **Create product** above the table. Enter both names, a unique SKU,
-category, and price; description and subcategory are optional. Subcategories
-belong to the selected category. Saving immediately closes the dialog and shows a
-pending product as the first row inside the table, independently of its filters
-and sorting. Pending rows show a saving status and cannot be edited or archived until saved.
-The row remains pending until the request and catalog refresh finish; the table
-then shows the server results using the existing filters and sorting.
-Failed saves remove the pending row and reopen the form with your entries and an error
-message. Pending products use TanStack Query mutation state, not the product cache.
-
-Select **Edit** in a product's actions column to open the same form with its current
-details. **Save** persists your changes and refreshes the catalog without resetting
-filters or sorting. Failed saves keep your edits and display an error; **Cancel**
-discards unsaved changes.
-The actions column is always visible, has an empty header, and is omitted from **Columns** settings.
-
-Select **Archive** in the actions column and confirm to hide a product from the catalog.
-Its data and SKU are retained, not deleted. The row stays until archiving and the
-catalog refresh finish; failed requests show an error and allow retrying.
-There is no restore screen yet. Existing service databases need the
-`sql/products-archived.sql` migration before using this feature; see the service README.
-
-On **Products**, use **Filters** above the table to open a dropdown without moving
-the table. Close it with Escape, the close button, or a click outside.
-Controls start hidden unless filters are already active. Active filter chips remain
-visible when controls are hidden; remove a chip to clear that filter or use **Clear
-filters** to reset all filters. Removing or changing a category also clears the
-subcategory selection.
-
-Product prices are displayed in euros using the selected language's number format.
-The table fits its rows and scrolls vertically when its content exceeds 24rem.
-The product-name column stays pinned on the left when the table scrolls horizontally.
-Drag a column's right header edge to resize it live as you move the pointer.
-Use **Columns** to show, hide, or reorder other columns by their drag handles.
-The dropdown lists both visible and hidden columns; the pinned product name cannot
-be hidden or moved. To reorder with the keyboard, focus a handle, press Space,
-use the arrow keys, then press Space to drop or Escape to cancel.
-
-Select **Download Excel** beside **Columns** to save `Products_{timestamp}.xlsx`,
-where the timestamp is the current Unix time in milliseconds. The export uses all
-loaded results for the current filters and sort, not just rows visible in the
-scroll viewport. Only visible data columns are included, in their displayed order,
-with translated headers; actions and unsaved products are excluded. Prices stay
-numeric, and creation dates retain their ISO timestamps.
-Downloading is disabled while filters are debouncing, results are loading or
-refreshing, filters are invalid, loading failed, or there are no saved results.
-The service's `/exports/xlsx` endpoint supplies the styled workbook. The browser
-buffers the request and completed download before saving; the service still
-parses and generates the workbook incrementally. A failed or interrupted download
-shows an error and can be retried without resetting the table configuration.
-
-On **Users**, use **Filters** to combine an email search with a role or account
-status. Remove individual filters using their chips, or select **Clear filters**.
-Use **Columns** to show, hide, or reorder data columns; email stays pinned and
-user actions remain available.
-
-Use **Roles and permissions** to create permissions and new roles with selected
-permissions. The API requires `access:manage`; see the service's roles and permissions
-setup for bootstrapping an administrator. This page does not assign roles to users.
-
-The existing redirect parameter accepts only paths on this frontend's origin; it does
-not redirect to external applications.
-
-## Tests
-
-Run `pnpm test` for Vitest tests, `pnpm lint` for alias checks and Oxlint, and
-`pnpm build` for strict TypeScript checks and the production build. Vitest globals,
-including `describe`, `it`, `expect`, hooks, and `vi`, are available without imports.
-
-Tests use jsdom and mocked service calls where appropriate; they do not replace
-browser tests against a running service.
+Vitest globals (`describe`, `it`, `expect`, hooks, and `vi`) are available without
+imports.
