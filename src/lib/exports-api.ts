@@ -1,7 +1,7 @@
 import { resolveServiceUrl } from '@/lib/http'
+import type { ExcelTable } from '@/features/exports/domain/excel-export'
 
-export type ExcelCell = string | number | boolean | null
-export type ExcelTable = { headers: string[]; rows: ExcelCell[][] }
+export type { ExcelCell, ExcelTable } from '@/features/exports/domain/excel-export'
 const XLSX_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 
 export class ExportsApiError extends Error {

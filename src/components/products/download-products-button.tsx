@@ -5,8 +5,9 @@ import type { ProductTableRow } from '@/components/products/products-table-colum
 import { getProductColumnLabels } from '@/components/products/products-table-columns.config'
 import type { DataTable } from '@/components/table/features'
 import { Button } from '@/components/ui/button'
+import { getExportErrorStatus } from '@/features/exports/application/error-status'
 import { useDownloadExcel } from '@/hooks/use-download-excel'
-import { ExportsApiError, type ExcelCell } from '@/lib/exports-api'
+import type { ExcelCell } from '@/features/exports/domain/excel-export'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 
 export function DownloadProductsButton({ table, disabled }: { table: DataTable<ProductTableRow>; disabled: boolean }) {
@@ -14,7 +15,7 @@ export function DownloadProductsButton({ table, disabled }: { table: DataTable<P
   const location = useLocation()
   const download = useDownloadExcel()
 
-  if (download.error instanceof ExportsApiError && download.error.status === 401) {
+  if (getExportErrorStatus(download.error) === 401) {
     return <Navigate to={buildLinkWithRedirect('/login', location.pathname + location.search)} replace />
   }
 
