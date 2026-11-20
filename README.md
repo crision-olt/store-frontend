@@ -15,8 +15,9 @@ A React and Vite frontend for the store service.
 1. Install dependencies with `pnpm install`.
 2. Copy `.env.example` to `.env.local`. Set `AUTH_SERVICE_URL` to the browser-accessible
    service origin; the example matches the service's default `http://localhost:3000`.
-3. Configure the service's `AUTH_FRONTEND_URL` to the frontend origin, normally
-   `http://localhost:5173`, and start the service with its database prepared.
+3. Start `store-service` with its database prepared.
+   The service's `.env.example` sets `AUTH_FRONTEND_URL` to `http://localhost:5173`.
+   Change it if Vite uses a different origin, and use the same hostname for both apps.
 4. Run `pnpm dev` and open the URL reported by Vite.
 
 The service database must include the `user` role for registration. The service's
@@ -46,6 +47,11 @@ for expiry. A reverse proxy must allow the service's SSE connection to stay open
 
 ## Features
 
+**Bilingual names:** When creating or editing categories, subcategories, products,
+menus, or promotions, enter both the English (`name`) and Spanish (`nameEs`)
+names. Older records with `nameEs: null` display their English name in Spanish
+until you add a translation; saving an edit requires both names.
+
 After applying the service's zones migration, use **Tables** to configure your
 restaurant tables, then open **Zones** to create or edit a zone. Use the
 **Tables** dropdown to select multiple unassigned tables. When editing, the
@@ -73,7 +79,13 @@ Repeated units of the same coffee count as one. The page previews fixed bundle
 totals; it does not apply offers to orders. If a product is archived, remove it from the bundle
 before saving changes.
 
-On **Products**, select **Create product** above the table. Enter a name, unique SKU,
+Use **Discounts** (`/discounts`) to list, create, or edit invoice-wide discount
+definitions. Enter both names, choose a percentage or fixed amount, and select at
+least one eligible role (`roleIds`). The page uses `GET /discounts`,
+`POST /discounts`, and `PUT /discounts/:id`; it does not apply discounts to
+invoices. Apply `sql/discounts.sql` in `store-service` before using this page.
+
+On **Products**, select **Create product** above the table. Enter both names, a unique SKU,
 category, and price; description and subcategory are optional. Subcategories
 belong to the selected category. Saving immediately closes the dialog and shows a
 pending product as the first row inside the table, independently of its filters
