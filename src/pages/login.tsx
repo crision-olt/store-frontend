@@ -8,7 +8,8 @@ import { AuthCard } from '@/components/auth/auth-card'
 import { TextField } from '@/components/auth/text-field'
 import { Button } from '@/components/ui/button'
 import { FieldError, FieldGroup } from '@/components/ui/field'
-import { AuthApiError, login } from '@/lib/auth-api'
+import { authUseCases } from '@/features/auth/auth'
+import { hasHttpStatus } from '@/features/auth/application/http-error'
 import { getLoginSchema, type LoginValues } from '@/lib/auth-schemas'
 import { getRedirectParam, buildLinkWithRedirect } from '@/lib/redirect'
 
@@ -18,7 +19,7 @@ export function LoginPage() {
   const { i18n, t } = useLingui()
   const redirect = getRedirectParam(location)
   const schema = getLoginSchema(i18n)
-  const loginMutation = useMutation({ mutationFn: login })
+  const loginMutation = useMutation({ mutationFn: authUseCases.login })
   const { control, handleSubmit, setError, trigger, formState } = useForm<LoginValues>({
     resolver: zodResolver(schema),
     defaultValues: { email: '', password: '' },
@@ -31,9 +32,9 @@ export function LoginPage() {
       await loginMutation.mutateAsync(values)
       navigate(redirect || '/')
     } catch (error) {
-      if (error instanceof AuthApiError && error.status === 401) {
+      if (hasHttpStatus(error, 401)) {
         setError('root', { type: 'invalid-credentials' })
-      } else if (error instanceof AuthApiError && error.status === 403) {
+      } else if (hasHttpStatus(error, 403)) {
         setError('root', { type: 'blocked' })
       } else {
         console.error('Sign-in request failed', error)

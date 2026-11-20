@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { logout, watchSession } from '@/lib/auth-api'
+import { authUseCases } from '@/features/auth/auth'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 import { useResetSession } from '@/providers/session-query-context'
 
@@ -11,8 +11,8 @@ export function useSessionGuard() {
   const queryClient = useQueryClient()
   const resetSession = useResetSession()
 
-  useEffect(() => watchSession(() => {
-    logout().catch((error: unknown) => console.error('Blocked session logout failed', error))
+  useEffect(() => authUseCases.watchSession(() => {
+    authUseCases.logout().catch((error: unknown) => console.error('Blocked session logout failed', error))
     resetSession()
     navigate('/login', { replace: true, state: { blocked: true } })
   }), [navigate, resetSession])

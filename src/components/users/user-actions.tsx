@@ -4,14 +4,17 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { UserForm } from '@/components/users/user-form'
 import { Button } from '@/components/ui/button'
-import { AccessApiError, blockUser, unblockUser, updateUser, type AccessUser, type Role } from '@/lib/access-api'
+import { userUseCases } from '@/features/users/users'
+import type { User } from '@/features/users/domain/user'
+import type { Role } from '@/features/access/domain/access'
+import { hasHttpStatus } from '@/features/users/application/http-error'
 
-export function UserActions({ user, roles }: { user: AccessUser; roles: Role[] }) {
+export function UserActions({ user, roles }: { user: User; roles: Role[] }) {
   const { t } = useLingui()
   const queryClient = useQueryClient()
   const [editing, setEditing] = useState(false)
   const update = useMutation({
-    mutationFn: (input: Parameters<typeof updateUser>[1]) => updateUser(user.id, input),
+    mutationFn: (input: Parameters<typeof userUseCases.updateUser>[1]) => userUseCases.updateUser(user.id, input),
     onSuccess: async () => {
       setEditing(false)
       await queryClient.invalidateQueries({ queryKey: ['users'] })
@@ -19,7 +22,7 @@ export function UserActions({ user, roles }: { user: AccessUser; roles: Role[] }
   })
 
   const toggleBlock = useMutation({
-    mutationFn: () => (user.blocked ? unblockUser(user.id) : blockUser(user.id)),
+    mutationFn: () => (user.blocked ? userUseCases.unblockUser(user.id) : userUseCases.blockUser(user.id)),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['users'] }),
   })
   const confirmBlock = () => {
@@ -58,7 +61,7 @@ export function UserActions({ user, roles }: { user: AccessUser; roles: Role[] }
       </div>
       {toggleBlock.isError && (
         <p role="alert" className="text-sm text-destructive">
-          {toggleBlock.error instanceof AccessApiError && toggleBlock.error.status === 409
+          {hasHttpStatus(toggleBlock.error, 409)
             ? t`You cannot block your own account.`
             : t`Could not change the user status. Please try again.`}
         </p>

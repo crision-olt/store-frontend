@@ -8,7 +8,7 @@ import { AuthCard } from '@/components/auth/auth-card'
 import { TextField } from '@/components/auth/text-field'
 import { Button } from '@/components/ui/button'
 import { FieldError, FieldGroup } from '@/components/ui/field'
-import { registerUser } from '@/lib/auth-api'
+import { authUseCases } from '@/features/auth/auth'
 import { getRegisterSchema, type RegisterValues } from '@/lib/auth-schemas'
 import { getRedirectParam, buildLinkWithRedirect } from '@/lib/redirect'
 
@@ -18,7 +18,7 @@ export function RegisterPage() {
   const { i18n, t } = useLingui()
   const redirect = getRedirectParam(location)
   const schema = getRegisterSchema(i18n)
-  const registerMutation = useMutation({ mutationFn: registerUser })
+  const registerMutation = useMutation({ mutationFn: authUseCases.registerUser })
   const { control, handleSubmit, setError, trigger, formState } = useForm<RegisterValues>({
     resolver: zodResolver(schema),
     defaultValues: { email: '', password: '', confirmPassword: '' },

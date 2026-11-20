@@ -10,9 +10,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { restaurantUseCases, tablesQueryKey, zonesQueryKey, type RestaurantTable, type Zone, type ZoneInput } from '@/features/restaurant/restaurant'
+import { hasHttpStatus } from '@/features/restaurant/application/http-error'
 import { buildLinkWithRedirect } from '@/lib/redirect'
-import { listTables, tablesQueryKey, TablesApiError, type RestaurantTable } from '@/lib/tables-api'
-import { listZones, saveZone, zonesQueryKey, ZonesApiError, type Zone, type ZoneInput } from '@/lib/zones-api'
 
 function ZoneTableLabel({ number, isOutside, isAccessible }: { number: number } & Partial<Pick<RestaurantTable, 'isOutside' | 'isAccessible'>>) {
   const { t } = useLingui()
@@ -119,14 +119,14 @@ function ZonesContent() {
   const location = useLocation()
   const client = useQueryClient()
   const [editor, setEditor] = useState<number | 'new'>()
-  const zones = useQuery({ queryKey: zonesQueryKey, queryFn: ({ signal }) => listZones(signal), retry: false })
-  const tables = useQuery({ queryKey: tablesQueryKey, queryFn: ({ signal }) => listTables(signal), retry: false })
+  const zones = useQuery({ queryKey: zonesQueryKey, queryFn: ({ signal }) => restaurantUseCases.listZones(signal), retry: false })
+  const tables = useQuery({ queryKey: tablesQueryKey, queryFn: ({ signal }) => restaurantUseCases.listTables(signal), retry: false })
   const currentBase = zones.data?.find((zone) => zone.isBase)
   const tablesByNumber = useMemo(() => new Map(tables.data?.map((table) => [table.number, table])), [tables.data])
   const assignedElsewhere = useMemo(() => new Set(zones.data?.flatMap((zone) =>
     zone.id === editor ? [] : zone.tableNumbers)), [zones.data, editor])
   const save = useMutation({
-    mutationFn: (input: ZoneInput) => saveZone(typeof editor === 'number' ? editor : undefined, input),
+    mutationFn: (input: ZoneInput) => restaurantUseCases.saveZone(typeof editor === 'number' ? editor : undefined, input),
     onSuccess: async (saved) => {
       await client.cancelQueries({ queryKey: zonesQueryKey })
       client.setQueryData<Zone[]>(zonesQueryKey, (previous = []) => {
@@ -140,13 +140,12 @@ function ZonesContent() {
       void client.invalidateQueries({ queryKey: zonesQueryKey })
     },
     onError: async (error) => {
-      if (error instanceof ZonesApiError && (error.status === 409 || error.status === 400)) {
+      if (hasHttpStatus(error, 409) || hasHttpStatus(error, 400)) {
         await Promise.all([zones.refetch(), tables.refetch()])
       }
     },
   })
-  if ([zones.error, tables.error, save.error].some((error) =>
-    (error instanceof ZonesApiError || error instanceof TablesApiError) && error.status === 401)) {
+  if ([zones.error, tables.error, save.error].some((error) => hasHttpStatus(error, 401))) {
     return <Navigate to={buildLinkWithRedirect('/login', location.pathname + location.search)} replace />
   }
 
@@ -172,7 +171,7 @@ function ZonesContent() {
       ) : !zones.data || !tables.data ? <p role="status">{t`Loading zones…`}</p> : (
         <>
           {save.isError && <p role="alert" className="text-sm text-destructive">
-            {save.error instanceof ZonesApiError && [400, 409].includes(save.error.status)
+            {[400, 409].some((status) => hasHttpStatus(save.error, status))
               ? t`Could not save the zone. Review the current table options and try again.`
               : t`Could not save the zone. Please try again.`}
           </p>}

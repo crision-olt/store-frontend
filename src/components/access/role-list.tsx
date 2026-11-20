@@ -5,7 +5,9 @@ import { PermissionMultiSelect } from '@/components/access/permission-multiselec
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { AccessApiError, deleteRole, updateRole, type Permission, type Role } from '@/lib/access-api'
+import { accessUseCases } from '@/features/access/access'
+import type { Permission, Role } from '@/features/access/domain/access'
+import { hasHttpStatus } from '@/features/access/application/http-error'
 
 type Draft = { name: string; permissionIds: number[] }
 
@@ -18,13 +20,13 @@ function RoleRow({ role, permissions }: { role: Role; permissions: Permission[] 
     queryClient.invalidateQueries({ queryKey: ['users'] }),
   ])
   const update = useMutation({
-    mutationFn: (value: Draft) => updateRole(role.id, value.name, value.permissionIds),
+    mutationFn: (value: Draft) => accessUseCases.updateRole(role.id, value.name, value.permissionIds),
     onSuccess: async () => {
       setDraft(null)
       await refresh()
     },
   })
-  const remove = useMutation({ mutationFn: () => deleteRole(role.id), onSuccess: refresh })
+  const remove = useMutation({ mutationFn: () => accessUseCases.deleteRole(role.id), onSuccess: refresh })
   const error = update.error ?? remove.error
   const submit = (event: FormEvent) => {
     event.preventDefault()
@@ -76,7 +78,7 @@ function RoleRow({ role, permissions }: { role: Role; permissions: Permission[] 
       )}
       {error && (
         <p role="alert" className="text-sm text-destructive">
-          {error instanceof AccessApiError && error.status === 409
+          {hasHttpStatus(error, 409)
             ? t`This role is protected, already exists, or is assigned to users.`
             : t`Could not update role. Please try again.`}
         </p>

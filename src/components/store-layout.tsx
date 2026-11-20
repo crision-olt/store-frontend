@@ -6,7 +6,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { useSessionGuard } from '@/hooks/use-session-guard'
 import { Button } from '@/components/ui/button'
-import { logout } from '@/lib/auth-api'
+import { authUseCases } from '@/features/auth/auth'
 import { cn } from '@/lib/utils'
 
 export function StoreLayout({ children }: { children: ReactNode }) {
@@ -15,7 +15,7 @@ export function StoreLayout({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient()
   useSessionGuard()
   const logoutMutation = useMutation({
-    mutationFn: logout,
+    mutationFn: authUseCases.logout,
     onSuccess: () => {
       queryClient.clear()
       navigate('/login')

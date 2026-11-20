@@ -8,16 +8,17 @@ import { tableFeatureSet, type TableFeatureSet } from '@/components/table/featur
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { UserActions } from '@/components/users/user-actions'
-import type { AccessUser, Role } from '@/lib/access-api'
+import type { User } from '@/features/users/domain/user'
+import type { Role } from '@/features/access/domain/access'
 
-const columnHelper = createColumnHelper<TableFeatureSet, AccessUser>()
-const emptyUsers: AccessUser[] = []
+const columnHelper = createColumnHelper<TableFeatureSet, User>()
+const emptyUsers: User[] = []
 const emptyRoles: Role[] = []
 const actionColumns = ['actions']
 const selectClassName = 'h-7 w-full rounded-md border border-input bg-background px-2 text-xs'
 
 export function UsersTable({ users = emptyUsers, roles = emptyRoles, isLoading }: {
-  users?: AccessUser[]
+  users?: User[]
   roles?: Role[]
   isLoading: boolean
 }) {

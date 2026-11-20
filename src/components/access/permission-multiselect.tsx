@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import type { Permission } from '@/lib/access-api'
+import type { Permission } from '@/features/access/domain/access'
 
 type Props = {
   permissions: Permission[]

@@ -4,7 +4,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { AccessApiError, type Role, type UserInput } from '@/lib/access-api'
+import { hasHttpStatus } from '@/features/users/application/http-error'
+import type { Role } from '@/features/access/domain/access'
+import type { UserInput } from '@/features/users/domain/user'
 
 type Props = {
   idPrefix: string
@@ -57,9 +59,9 @@ export function UserForm({ idPrefix, roles, initial, passwordRequired, submitLab
       </div>
       {error ? (
         <p role="alert" className="text-sm text-destructive">
-          {error instanceof AccessApiError && error.status === 409
+          {hasHttpStatus(error, 409)
             ? t`A user with this email already exists.`
-            : error instanceof AccessApiError && error.status === 400
+            : hasHttpStatus(error, 400)
               ? t`Check the email, the password (8 to 72 characters) and the role.`
               : t`Could not save the user. Please try again.`}
         </p>

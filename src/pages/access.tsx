@@ -11,7 +11,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { AccessApiError, createPermission, createRole, listPermissions, listRoles } from '@/lib/access-api'
+import { accessUseCases } from '@/features/access/access'
+import { hasHttpStatus } from '@/features/access/application/http-error'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 
 function AccessContent() {
@@ -21,17 +22,17 @@ function AccessContent() {
   const [permissionName, setPermissionName] = useState('')
   const [roleName, setRoleName] = useState('')
   const [permissionIds, setPermissionIds] = useState<number[]>([])
-  const permissions = useQuery({ queryKey: ['permissions'], queryFn: listPermissions, retry: false })
-  const roles = useQuery({ queryKey: ['roles'], queryFn: listRoles, retry: false })
+  const permissions = useQuery({ queryKey: ['permissions'], queryFn: accessUseCases.listPermissions, retry: false })
+  const roles = useQuery({ queryKey: ['roles'], queryFn: accessUseCases.listRoles, retry: false })
   const permissionMutation = useMutation({
-    mutationFn: createPermission,
+    mutationFn: accessUseCases.createPermission,
     onSuccess: async () => {
       setPermissionName('')
       await queryClient.invalidateQueries({ queryKey: ['permissions'] })
     },
   })
   const roleMutation = useMutation({
-    mutationFn: ({ name, ids }: { name: string; ids: number[] }) => createRole(name, ids),
+    mutationFn: ({ name, ids }: { name: string; ids: number[] }) => accessUseCases.createRole(name, ids),
     onSuccess: async () => {
       setRoleName('')
       setPermissionIds([])
@@ -40,7 +41,7 @@ function AccessContent() {
   })
 
   const errors = [permissions.error, roles.error, permissionMutation.error, roleMutation.error]
-  if (errors.some((error) => error instanceof AccessApiError && error.status === 401)) {
+  if (errors.some((error) => hasHttpStatus(error, 401))) {
     return <Navigate to={buildLinkWithRedirect('/login', location.pathname + location.search)} replace />
   }
 
@@ -69,7 +70,7 @@ function AccessContent() {
               <Label htmlFor="permission-name">{t`Permission name`}</Label>
               <Input id="permission-name" value={permissionName} onChange={(event) => setPermissionName(event.target.value)} maxLength={100} required placeholder="products:read" />
               {permissionMutation.isError && <p role="alert" className="text-sm text-destructive">
-                {permissionMutation.error instanceof AccessApiError && permissionMutation.error.status === 409
+                {hasHttpStatus(permissionMutation.error, 409)
                   ? t`This permission already exists.` : t`Could not create permission. Please try again.`}
               </p>}
               <Button type="submit" disabled={!permissionName.trim() || permissionMutation.isPending}>{t`Create permission`}</Button>
@@ -91,7 +92,7 @@ function AccessContent() {
                 {permissions.data && <PermissionMultiSelect permissions={permissions.data} selected={permissionIds} onChange={setPermissionIds} />}
               </fieldset>
               {roleMutation.isError && <p role="alert" className="text-sm text-destructive">
-                {roleMutation.error instanceof AccessApiError && roleMutation.error.status === 409
+                {hasHttpStatus(roleMutation.error, 409)
                   ? t`This role already exists.` : t`Could not create role. Please try again.`}
               </p>}
               <Button type="submit" disabled={!roleName.trim() || roleMutation.isPending || !permissions.isSuccess}>{t`Create role`}</Button>

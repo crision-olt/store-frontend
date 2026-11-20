@@ -4,7 +4,8 @@ import type { ReactNode } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { AuthApiError, getCurrentUser } from '@/lib/auth-api'
+import { authUseCases } from '@/features/auth/auth'
+import { hasHttpStatus } from '@/features/auth/application/http-error'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 
 export function RequireAuth({ children }: { children: ReactNode }) {
@@ -12,12 +13,12 @@ export function RequireAuth({ children }: { children: ReactNode }) {
   const location = useLocation()
   const { isPending, error, refetch } = useQuery({
     queryKey: ['current-user'],
-    queryFn: getCurrentUser,
+    queryFn: authUseCases.getCurrentUser,
     retry: false,
     staleTime: 60_000,
   })
 
-  if (error instanceof AuthApiError && error.status === 401) {
+  if (hasHttpStatus(error, 401)) {
     return <Navigate to={buildLinkWithRedirect('/login', location.pathname + location.search)} replace />
   }
 

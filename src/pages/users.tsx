@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { UserForm } from '@/components/users/user-form'
 import { UsersTable } from '@/components/users/users-table'
-import { AccessApiError, createUser, listRoles, listUsers } from '@/lib/access-api'
+import { userUseCases } from '@/features/users/users'
+import { hasHttpStatus } from '@/features/users/application/http-error'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 
 function UsersContent() {
@@ -16,17 +17,17 @@ function UsersContent() {
   const location = useLocation()
   const queryClient = useQueryClient()
   const [formKey, setFormKey] = useState(0)
-  const users = useQuery({ queryKey: ['users'], queryFn: listUsers, retry: false })
-  const roles = useQuery({ queryKey: ['roles'], queryFn: listRoles, retry: false })
+  const users = useQuery({ queryKey: ['users'], queryFn: userUseCases.listUsers, retry: false })
+  const roles = useQuery({ queryKey: ['roles'], queryFn: userUseCases.listRoles, retry: false })
   const create = useMutation({
-    mutationFn: createUser,
+    mutationFn: userUseCases.createUser,
     onSuccess: async () => {
       setFormKey((key) => key + 1)
       await queryClient.invalidateQueries({ queryKey: ['users'] })
     },
   })
 
-  if ([users.error, roles.error, create.error].some((error) => error instanceof AccessApiError && error.status === 401)) {
+  if ([users.error, roles.error, create.error].some((error) => hasHttpStatus(error, 401))) {
     return <Navigate to={buildLinkWithRedirect('/login', location.pathname + location.search)} replace />
   }
 

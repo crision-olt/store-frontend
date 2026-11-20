@@ -3,7 +3,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState, type FormEvent } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { AccessApiError, deletePermission, updatePermission, type Permission } from '@/lib/access-api'
+import { accessUseCases } from '@/features/access/access'
+import type { Permission } from '@/features/access/domain/access'
+import { hasHttpStatus } from '@/features/access/application/http-error'
 
 function PermissionRow({ permission }: { permission: Permission }) {
   const { t } = useLingui()
@@ -14,14 +16,14 @@ function PermissionRow({ permission }: { permission: Permission }) {
     queryClient.invalidateQueries({ queryKey: ['roles'] }),
   ])
   const update = useMutation({
-    mutationFn: (value: string) => updatePermission(permission.id, value),
+    mutationFn: (value: string) => accessUseCases.updatePermission(permission.id, value),
     onSuccess: async () => {
       setName(null)
       await refresh()
     },
   })
   const remove = useMutation({
-    mutationFn: () => deletePermission(permission.id),
+    mutationFn: () => accessUseCases.deletePermission(permission.id),
     onSuccess: refresh,
   })
   const error = update.error ?? remove.error
@@ -57,7 +59,7 @@ function PermissionRow({ permission }: { permission: Permission }) {
       )}
       {error && (
         <p role="alert" className="text-sm text-destructive">
-          {error instanceof AccessApiError && error.status === 409
+          {hasHttpStatus(error, 409)
             ? t`This permission is protected, already exists, or is still assigned to a role.`
             : t`Could not update permission. Please try again.`}
         </p>
