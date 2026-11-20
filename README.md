@@ -11,6 +11,12 @@ Configure the auth service's `AUTH_FRONTEND_URL` to match this application's ori
 CORS. The service uses a `SameSite=Lax` cookie, so the applications must be deployed
 on compatible sites for the browser to send the session cookie.
 
+While a user is inside the authenticated layout (`StoreLayout`), `useSessionGuard`
+(`watchSession` in `src/lib/auth-api.ts`) keeps an `EventSource` connection open to
+`GET /auth/events` with credentials. If an administrator blocks the account, the server
+pushes a `blocked` event; the frontend immediately calls `/auth/logout`, clears the
+TanStack Query cache, and redirects to `/login` with a blocked-account notice.
+
 After applying the service's zones migration, use **Tables** to configure your
 restaurant tables, then open **Zones** to create or edit a zone. Use the
 **Tables** dropdown to select multiple unassigned tables. When editing, the
