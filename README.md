@@ -1,21 +1,50 @@
-# React + TypeScript + Vite
+# Store frontend
 
-## Auth service
+A React and Vite frontend for the store service.
 
-Copy `.env.example` to `.env.local` and set `AUTH_SERVICE_URL` to the browser-accessible
-origin of the auth service, for example `http://localhost:3001`. Vite embeds this value
-at build time; rebuild when it changes. Do not put secrets in it.
+## Source layout
+
+- `src/pages`: routes and page-level flows.
+- `src/components`: shared UI, tables and feature components.
+- `src/lib`: service clients, schemas and data helpers.
+- `src/hooks` and `src/providers`: shared behavior and application state.
+- `src/locales`: English and Spanish translations.
+
+## Local development
+
+1. Install dependencies with `pnpm install`.
+2. Copy `.env.example` to `.env.local`. Set `AUTH_SERVICE_URL` to the browser-accessible
+   service origin; the example matches the service's default `http://localhost:3000`.
+3. Configure the service's `AUTH_FRONTEND_URL` to the frontend origin, normally
+   `http://localhost:5173`, and start the service with its database prepared.
+4. Run `pnpm dev` and open the URL reported by Vite.
+
+The service database must include the `user` role for registration. The service's
+documented initial schema currently does not create that role.
+
+Vite embeds `AUTH_SERVICE_URL` at build time; rebuild when it changes. Do not put
+secrets in it.
+
+## Session and deployment
 
 Login and registration call `/auth/login` and `/auth/register` with cookies enabled.
-Configure the auth service's `AUTH_FRONTEND_URL` to match this application's origin for
-CORS. The service uses a `SameSite=Lax` cookie, so the applications must be deployed
-on compatible sites for the browser to send the session cookie.
+`AUTH_FRONTEND_URL` must match this application's origin for CORS. The service uses a
+`SameSite=Lax` cookie, so the applications must be deployed on compatible sites for
+the browser to send the session cookie. The service sets `Secure` on production cookies,
+which requires HTTPS.
 
 While a user is inside the authenticated layout (`StoreLayout`), `useSessionGuard`
 (`watchSession` in `src/lib/auth-api.ts`) keeps an `EventSource` connection open to
 `GET /auth/events` with credentials. If an administrator blocks the account, the server
 pushes a `blocked` event; the frontend immediately calls `/auth/logout`, clears the
 TanStack Query cache, and redirects to `/login` with a blocked-account notice.
+
+When a protected query or mutation returns `401`, the frontend clears cached data and
+redirects to login with the current path as the return destination. Unsaved changes are
+lost. The session is checked on requests; the frontend does not refresh tokens or poll
+for expiry. A reverse proxy must allow the service's SSE connection to stay open.
+
+## Features
 
 After applying the service's zones migration, use **Tables** to configure your
 restaurant tables, then open **Zones** to create or edit a zone. Use the
@@ -109,35 +138,9 @@ not redirect to external applications.
 
 ## Tests
 
-Run `pnpm test`. Vitest globals, including `describe`, `it`, `expect`, hooks, and `vi`, are available without imports.
+Run `pnpm test` for Vitest tests, `pnpm lint` for alias checks and Oxlint, and
+`pnpm build` for strict TypeScript checks and the production build. Vitest globals,
+including `describe`, `it`, `expect`, hooks, and `vi`, are available without imports.
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
-
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Tests use jsdom and mocked service calls where appropriate; they do not replace
+browser tests against a running service.

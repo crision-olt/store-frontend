@@ -1,17 +1,16 @@
 import { i18n } from '@lingui/core'
 import { I18nProvider } from '@lingui/react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
+import { SessionQueryProvider } from '@/providers/session-query-provider'
 import { StoreLayout } from './store-layout'
 
 function renderLayout(path: string) {
   i18n.activate('en')
-  const queryClient = new QueryClient()
   return renderToStaticMarkup(
     <I18nProvider i18n={i18n}>
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter initialEntries={[path]}>
+      <MemoryRouter initialEntries={[path]}>
+        <SessionQueryProvider>
           <Routes>
             <Route path="/products" element={<StoreLayout><div>Products content</div></StoreLayout>} />
             <Route path="/categories" element={<StoreLayout><div>Categories content</div></StoreLayout>} />
@@ -20,8 +19,8 @@ function renderLayout(path: string) {
             <Route path="/users" element={<StoreLayout><div>Users content</div></StoreLayout>} />
             <Route path="/access" element={<StoreLayout><div>Access content</div></StoreLayout>} />
           </Routes>
-        </MemoryRouter>
-      </QueryClientProvider>
+        </SessionQueryProvider>
+      </MemoryRouter>
     </I18nProvider>,
   )
 }

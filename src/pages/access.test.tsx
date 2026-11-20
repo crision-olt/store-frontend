@@ -5,6 +5,8 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { MemoryRouter } from 'react-router-dom'
 import { AccessPage } from './access'
 
+vi.mock('@/hooks/use-session-guard', () => ({ useSessionGuard: vi.fn() }))
+
 function renderAccess(queryClient: QueryClient) {
   i18n.activate('en')
   queryClient.setQueryData(['current-user'], { id: 1, email: 'admin@example.com', created_at: '2026-01-01' })
