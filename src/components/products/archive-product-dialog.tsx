@@ -3,8 +3,10 @@ import { useLingui } from '@lingui/react/macro'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Navigate, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
+import { getProductErrorStatus } from '@/features/products/application/error-status'
 import { localizedName } from '@/lib/localized-name'
-import { archiveProduct, ProductsApiError, type Product } from '@/lib/products-api'
+import { archiveProductUseCase } from '@/features/products/catalog'
+import type { Product } from '@/features/products/domain/product'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 
 export function ArchiveProductDialog({ product, onClose }: { product: Product; onClose: () => void }) {
@@ -12,14 +14,14 @@ export function ArchiveProductDialog({ product, onClose }: { product: Product; o
   const location = useLocation()
   const queryClient = useQueryClient()
   const archive = useMutation({
-    mutationFn: () => archiveProduct(product.id),
+    mutationFn: () => archiveProductUseCase(product.id),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['products'] })
       onClose()
     },
   })
 
-  if (archive.error instanceof ProductsApiError && archive.error.status === 401) {
+  if (getProductErrorStatus(archive.error) === 401) {
     return <Navigate to={buildLinkWithRedirect('/login', location.pathname + location.search)} replace />
   }
 
@@ -36,7 +38,7 @@ export function ArchiveProductDialog({ product, onClose }: { product: Product; o
           </Dialog.Description>
           {archive.error && (
             <p role="alert" className="mt-4 text-sm text-destructive">
-              {archive.error instanceof ProductsApiError && archive.error.status === 404
+              {getProductErrorStatus(archive.error) === 404
                 ? t`This product no longer exists.`
                 : t`Could not archive the product. Please try again.`}
             </p>

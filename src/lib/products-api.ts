@@ -1,5 +1,10 @@
 import { z } from 'zod'
 import { resolveServiceUrl } from '@/lib/http'
+import type { Product, ProductInput } from '@/features/products/domain/product'
+import { SORTABLE_COLUMNS, type ProductsQuery } from '@/features/products/domain/catalog-types'
+
+export type { Product, ProductInput } from '@/features/products/domain/product'
+export type { Category, ProductsPage, ProductsQuery, SortableColumn, Subcategory } from '@/features/products/domain/catalog-types'
 
 const productSchema = z.object({
   id: z.number(),
@@ -28,26 +33,7 @@ const productsPageSchema = z.object({
 const categorySchema = z.object({ id: z.number().int().positive(), name: z.string(), nameEs: z.string().nullable() })
 const subcategorySchema = categorySchema.extend({ categoryId: z.number().int().positive() })
 
-export type Product = z.infer<typeof productSchema>
-export type ProductInput = Pick<Product, 'name' | 'description' | 'sku' | 'categoryId' | 'subcategoryId' | 'price' | 'allergenIds'> & { nameEs: string }
-export type ProductsPage = z.infer<typeof productsPageSchema>
-export type Category = z.infer<typeof categorySchema>
-export type Subcategory = z.infer<typeof subcategorySchema>
-
-export const SORTABLE_COLUMNS = ['name', 'sku', 'category', 'subcategory', 'price', 'created_at'] as const
-export type SortableColumn = (typeof SORTABLE_COLUMNS)[number]
-
-export type ProductsQuery = {
-  search?: string
-  category?: string | string[]
-  subcategory?: string | string[]
-  minPrice?: number
-  maxPrice?: number
-  sortBy?: SortableColumn
-  sortOrder?: 'asc' | 'desc'
-  page?: number
-  pageSize?: number
-}
+export { SORTABLE_COLUMNS }
 
 export class ProductsApiError extends Error {
   readonly status: number

@@ -10,9 +10,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import {
-  createCategory, createSubcategory, listCategories, listSubcategories,
-  ProductsApiError, updateCategory, updateSubcategory, type Category, type Subcategory,
-} from '@/lib/products-api'
+  createCategoryUseCase, createSubcategoryUseCase, listCategoriesUseCase, listSubcategoriesUseCase,
+  updateCategoryUseCase, updateSubcategoryUseCase,
+} from '@/features/products/catalog'
+import { getProductErrorStatus } from '@/features/products/application/error-status'
+import type { Category, Subcategory } from '@/features/products/domain/catalog-types'
 import { localizedName } from '@/lib/localized-name'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 
@@ -31,10 +33,10 @@ function CategoriesContent() {
   const [editingSubcategory, setEditingSubcategory] = useState<Subcategory>()
   const [editingSubcategoryName, setEditingSubcategoryName] = useState('')
   const [editingSubcategoryNameEs, setEditingSubcategoryNameEs] = useState('')
-  const categories = useQuery({ queryKey: ['product-categories'], queryFn: listCategories, retry: false })
-  const subcategories = useQuery({ queryKey: ['product-subcategories'], queryFn: () => listSubcategories(), retry: false })
+  const categories = useQuery({ queryKey: ['product-categories'], queryFn: listCategoriesUseCase, retry: false })
+  const subcategories = useQuery({ queryKey: ['product-subcategories'], queryFn: () => listSubcategoriesUseCase(), retry: false })
   const categoryMutation = useMutation({
-    mutationFn: () => createCategory({ name: categoryName.trim(), nameEs: categoryNameEs.trim() }),
+    mutationFn: () => createCategoryUseCase({ name: categoryName.trim(), nameEs: categoryNameEs.trim() }),
     onSuccess: async () => {
       setCategoryName('')
       setCategoryNameEs('')
@@ -42,7 +44,7 @@ function CategoriesContent() {
     },
   })
   const subcategoryMutation = useMutation({
-    mutationFn: () => createSubcategory({
+    mutationFn: () => createSubcategoryUseCase({
       name: subcategoryName.trim(), nameEs: subcategoryNameEs.trim(), categoryId: Number(categoryId),
     }),
     onSuccess: async () => {
@@ -53,7 +55,7 @@ function CategoriesContent() {
   })
   const updateCategoryMutation = useMutation({
     mutationFn: ({ id, name, nameEs }: { id: number; name: string; nameEs: string }) =>
-      updateCategory(id, { name, nameEs }),
+      updateCategoryUseCase(id, { name, nameEs }),
     onSuccess: async () => {
       setEditingCategory(undefined)
       await queryClient.invalidateQueries({ queryKey: ['product-categories'] })
@@ -61,7 +63,7 @@ function CategoriesContent() {
   })
   const updateSubcategoryMutation = useMutation({
     mutationFn: (input: { id: number; name: string; nameEs: string }) =>
-      updateSubcategory(input.id, input),
+      updateSubcategoryUseCase(input.id, input),
     onSuccess: async () => {
       setEditingSubcategory(undefined)
       await queryClient.invalidateQueries({ queryKey: ['product-subcategories'] })
@@ -72,7 +74,7 @@ function CategoriesContent() {
     categories.error, subcategories.error, categoryMutation.error, subcategoryMutation.error,
     updateCategoryMutation.error, updateSubcategoryMutation.error,
   ]
-  if (errors.some((error) => error instanceof ProductsApiError && error.status === 401)) {
+  if (errors.some((error) => getProductErrorStatus(error) === 401)) {
     return <Navigate to={buildLinkWithRedirect('/login', location.pathname + location.search)} replace />
   }
 
@@ -122,7 +124,7 @@ function CategoriesContent() {
                 <Label htmlFor="category-name-es">{t`Category name (Spanish)`}</Label>
                 <Input id="category-name-es" value={categoryNameEs} onChange={(event) => setCategoryNameEs(event.target.value)} maxLength={100} required />
                 {categoryMutation.isError && <p role="alert" className="text-sm text-destructive">
-                  {categoryMutation.error instanceof ProductsApiError && categoryMutation.error.status === 409
+                  {getProductErrorStatus(categoryMutation.error) === 409
                     ? t`This category already exists.` : t`Could not create category. Please try again.`}
                 </p>}
                 <Button type="submit" disabled={!categoryName.trim() || !categoryNameEs.trim() || categoryMutation.isPending}>{t`Create category`}</Button>
@@ -151,7 +153,7 @@ function CategoriesContent() {
                 <Label htmlFor="subcategory-name-es">{t`Subcategory name (Spanish)`}</Label>
                 <Input id="subcategory-name-es" value={subcategoryNameEs} onChange={(event) => setSubcategoryNameEs(event.target.value)} maxLength={100} required />
                 {subcategoryMutation.isError && <p role="alert" className="text-sm text-destructive">
-                  {subcategoryMutation.error instanceof ProductsApiError && subcategoryMutation.error.status === 409
+                  {getProductErrorStatus(subcategoryMutation.error) === 409
                     ? t`This subcategory already exists in the selected category.` : t`Could not create subcategory. Please try again.`}
                 </p>}
                 <Button type="submit" disabled={!subcategoryName.trim() || !subcategoryNameEs.trim() || !categoryId || subcategoryMutation.isPending}>{t`Create subcategory`}</Button>

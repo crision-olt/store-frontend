@@ -1,14 +1,14 @@
 import { z } from 'zod'
 import { resolveServiceUrl } from '@/lib/http'
 
+export type { Allergen } from '@/features/allergens/domain/allergen'
+
 const allergensSchema = z.array(z.object({
   id: z.number().int().positive(),
   code: z.string().min(1),
   name: z.string().min(1),
   nameEs: z.string().min(1),
 }))
-
-export type Allergen = z.infer<typeof allergensSchema>[number]
 
 export class AllergensApiError extends Error {
   readonly status: number

@@ -4,7 +4,7 @@ import type { ColumnFiltersState } from '@tanstack/react-table'
 import type { TableFilterField } from '@/components/table'
 import { localizedName } from '@/lib/localized-name'
 import { columnFiltersToProductFilters } from '@/lib/product-filters'
-import type { Category, Subcategory } from '@/lib/products-api'
+import type { Category, Subcategory } from '@/features/products/domain/catalog-types'
 
 type ProductFilterFieldOptions = {
   columnFilters: ColumnFiltersState

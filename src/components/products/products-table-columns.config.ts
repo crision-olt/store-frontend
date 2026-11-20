@@ -1,6 +1,6 @@
 import type { I18n } from '@lingui/core'
 import { msg } from '@lingui/core/macro'
-import type { SortableColumn } from '@/lib/products-api'
+import type { SortableColumn } from '@/features/products/domain/catalog-types'
 
 export function getProductColumnLabels(i18n: I18n): Record<SortableColumn, string> {
   return {

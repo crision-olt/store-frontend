@@ -8,10 +8,18 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { AllergensApiError, listAllergens, type Allergen } from '@/lib/allergens-api'
-import { createProduct, updateProduct, listCategories, listSubcategories, ProductsApiError, type Category, type Product, type ProductInput, type Subcategory } from '@/lib/products-api'
+import { getAllergenErrorStatus } from '@/features/allergens/application/error-status'
+import { listAllergensUseCase } from '@/features/allergens/list-allergens'
+import type { Allergen } from '@/features/allergens/domain/allergen'
+import { getProductErrorStatus } from '@/features/products/application/error-status'
+import {
+  listCategoriesUseCase, listSubcategoriesUseCase, updateProductUseCase,
+} from '@/features/products/catalog'
+import type { Category, Subcategory } from '@/features/products/domain/catalog-types'
+import type { Product, ProductInput } from '@/features/products/domain/product'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 import { localizedName } from '@/lib/localized-name'
+import { createProductUseCase } from '@/features/products/create-product'
 
 function ProductForm({ categories, subcategories, allergens, initial, editing, pending, error, onSubmit }: {
   categories: Category[]
@@ -134,11 +142,11 @@ function ProductForm({ categories, subcategories, allergens, initial, editing, p
         </div>
         {categories.length === 0 && <p role="alert" className="text-sm text-muted-foreground">{t`Create a category on the Categories page before adding products.`}</p>}
         {error ? <p role="alert" className="text-sm text-destructive">
-          {error instanceof ProductsApiError && error.status === 409
+          {getProductErrorStatus(error) === 409
             ? t`A product with this SKU already exists.`
-            : error instanceof ProductsApiError && error.status === 400
+            : getProductErrorStatus(error) === 400
               ? t`Check the product details, category, and allergens, then try again.`
-              : editing && error instanceof ProductsApiError && error.status === 404
+              : editing && getProductErrorStatus(error) === 404
                 ? t`This product no longer exists.`
                 : editing ? t`Could not save the product. Please try again.` : t`Could not create the product. Please try again.`}
         </p> : null}
@@ -158,12 +166,12 @@ function ProductDialog({ product, onClose }: { product?: Product; onClose?: () =
   const [open, setOpen] = useState(product !== undefined)
   const queryClient = useQueryClient()
   const location = useLocation()
-  const categories = useQuery({ queryKey: ['product-categories'], queryFn: listCategories, enabled: open, retry: false })
-  const subcategories = useQuery({ queryKey: ['product-subcategories'], queryFn: () => listSubcategories(), enabled: open, retry: false })
-  const allergens = useQuery({ queryKey: ['allergens'], queryFn: ({ signal }) => listAllergens(signal), enabled: open, retry: false })
+  const categories = useQuery({ queryKey: ['product-categories'], queryFn: listCategoriesUseCase, enabled: open, retry: false })
+  const subcategories = useQuery({ queryKey: ['product-subcategories'], queryFn: () => listSubcategoriesUseCase(), enabled: open, retry: false })
+  const allergens = useQuery({ queryKey: ['allergens'], queryFn: ({ signal }) => listAllergensUseCase(signal), enabled: open, retry: false })
   const save = useMutation({
     mutationKey: [product ? 'update-product' : 'create-product'],
-    mutationFn: (input: ProductInput) => product ? updateProduct(product.id, input) : createProduct(input),
+    mutationFn: (input: ProductInput) => product ? updateProductUseCase(product.id, input) : createProductUseCase(input),
     onMutate: () => { if (!product) setOpen(false) },
     onSuccess: () => {
       if (product) {
@@ -176,7 +184,7 @@ function ProductDialog({ product, onClose }: { product?: Product; onClose?: () =
   })
 
   if ([categories.error, subcategories.error, allergens.error, save.error].some((error) =>
-    (error instanceof ProductsApiError || error instanceof AllergensApiError) && error.status === 401,
+    getProductErrorStatus(error) === 401 || getAllergenErrorStatus(error) === 401,
   )) {
     return <Navigate to={buildLinkWithRedirect('/login', location.pathname + location.search)} replace />
   }

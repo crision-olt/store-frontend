@@ -15,7 +15,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import type { Category, Product, Subcategory } from '@/lib/products-api'
+import type { Category, Subcategory } from '@/features/products/domain/catalog-types'
+import type { Product } from '@/features/products/domain/product'
 import { localizedName } from '@/lib/localized-name'
 
 export type ProductTableRow = Product & { isPending?: boolean }

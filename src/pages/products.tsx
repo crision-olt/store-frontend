@@ -9,19 +9,14 @@ import { CreateProductDialog } from '@/components/products/create-product-dialog
 import { StoreLayout } from '@/components/store-layout'
 import { Button } from '@/components/ui/button'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
+import { listAllProductsUseCase, listCategoriesUseCase, listSubcategoriesUseCase } from '@/features/products/catalog'
+import { getProductErrorStatus } from '@/features/products/application/error-status'
+import type { ProductsQuery, SortableColumn } from '@/features/products/domain/catalog-types'
 import {
   columnFiltersToProductFilters,
   hasInvalidPriceRange,
   toProductsQuery,
 } from '@/lib/product-filters'
-import {
-  listCategories,
-  listAllProducts,
-  listSubcategories,
-  ProductsApiError,
-  type ProductsQuery,
-  type SortableColumn,
-} from '@/lib/products-api'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 
 const SEARCH_DEBOUNCE_MS = 300
@@ -44,19 +39,19 @@ function ProductsContent() {
 
   const products = useQuery({
     queryKey: ['products', query],
-    queryFn: ({ signal }) => listAllProducts(query, signal),
+    queryFn: ({ signal }) => listAllProductsUseCase(query, signal),
     placeholderData: keepPreviousData,
     retry: false,
     enabled: !hasInvalidPriceRange(appliedFilters),
   })
   const categories = useQuery({
     queryKey: ['product-categories'],
-    queryFn: listCategories,
+    queryFn: listCategoriesUseCase,
     retry: false,
   })
   const subcategories = useQuery({
     queryKey: ['product-subcategories'],
-    queryFn: () => listSubcategories(),
+    queryFn: () => listSubcategoriesUseCase(),
     retry: false,
   })
   const clearSubcategoryFilter = useCallback(
@@ -69,7 +64,7 @@ function ProductsContent() {
     [],
   )
 
-  if (products.error instanceof ProductsApiError && products.error.status === 401) {
+  if (getProductErrorStatus(products.error) === 401) {
     return <Navigate to={buildLinkWithRedirect('/login', location.pathname + location.search)} replace />
   }
 
