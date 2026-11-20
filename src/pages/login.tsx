@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useLingui } from '@lingui/react/macro'
-import { useMutation } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useRevalidateOnLocale } from '@/hooks/use-revalidate-on-locale'
@@ -8,7 +7,7 @@ import { AuthCard } from '@/components/auth/auth-card'
 import { TextField } from '@/components/auth/text-field'
 import { Button } from '@/components/ui/button'
 import { FieldError, FieldGroup } from '@/components/ui/field'
-import { authUseCases } from '@/features/auth/auth'
+import { useLogin } from '@/features/auth/hooks'
 import { hasHttpStatus } from '@/features/auth/application/http-error'
 import { getLoginSchema, type LoginValues } from '@/lib/auth-schemas'
 import { getRedirectParam, buildLinkWithRedirect } from '@/lib/redirect'
@@ -19,7 +18,7 @@ export function LoginPage() {
   const { i18n, t } = useLingui()
   const redirect = getRedirectParam(location)
   const schema = getLoginSchema(i18n)
-  const loginMutation = useMutation({ mutationFn: authUseCases.login })
+  const loginMutation = useLogin()
   const { control, handleSubmit, setError, trigger, formState } = useForm<LoginValues>({
     resolver: zodResolver(schema),
     defaultValues: { email: '', password: '' },

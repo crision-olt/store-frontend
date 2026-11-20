@@ -1,7 +1,8 @@
 import { z } from 'zod'
 import { resolveServiceUrl } from '@/lib/http'
+import { queryKeys } from '@/lib/query-keys'
 
-export const tablesQueryKey = ['restaurant-tables'] as const
+export const tablesQueryKey = queryKeys.tables
 
 const tableSchema = z.object({
   number: z.number().int().min(1).max(50),

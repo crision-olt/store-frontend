@@ -7,6 +7,7 @@ import type { ReactNode } from 'react'
 import '@/test/setup-dom'
 import { AppWrapper } from '@/test/utils'
 import { listTables, resizeTables, saveTable } from '@/lib/tables-api'
+import { queryKeys } from '@/lib/query-keys'
 import { TablesPage } from '@/pages/tables'
 
 vi.mock('@/components/auth/require-auth', () => ({
@@ -30,11 +31,12 @@ test('resizes tables and confirms removal before reducing the count', async () =
     <TablesPage />
   </MemoryRouter></QueryClientProvider></AppWrapper>)
   const count = await screen.findByLabelText('Number of tables')
+  await waitFor(() => expect(client.getQueryData(queryKeys.tables)).toEqual(tables))
   await user.clear(count)
   await user.type(count, '1')
   await user.click(screen.getByRole('button', { name: 'Update table count' }))
   expect(resizeTables).not.toHaveBeenCalled()
-  act(() => client.setQueryData(['restaurant-tables'], [...tables, { ...tables[0], number: 3 }]))
+  act(() => client.setQueryData(queryKeys.tables, [...tables, { ...tables[0], number: 3 }]))
   await user.click(screen.getByRole('button', { name: 'Remove tables' }))
   await waitFor(() => expect(resizeTables).toHaveBeenCalledWith(1, 2))
 })

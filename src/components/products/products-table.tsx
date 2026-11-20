@@ -21,6 +21,7 @@ import { DownloadProductsButton } from '@/components/products/download-products-
 import { getProductColumnLabels } from '@/components/products/products-table-columns.config'
 import { getProductFilterFields } from '@/components/products/products-table-filters.config'
 import { isNotEmptyArray } from '@/utils/is-not-empty-array'
+import { mutationKeys } from '@/lib/query-keys'
 
 const emptyProducts: Product[] = []
 
@@ -55,7 +56,7 @@ export function ProductsTable({
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [archivingProduct, setArchivingProduct] = useState<Product | null>(null)
   const pending = useMutationState({
-    filters: { mutationKey: ['create-product'], status: 'pending' },
+    filters: { mutationKey: mutationKeys.createProduct, exact: true, status: 'pending' },
     select: (mutation: Mutation<unknown, Error, ProductInput>) => ({
       input: mutation.state.variables,
       submittedAt: mutation.state.submittedAt,

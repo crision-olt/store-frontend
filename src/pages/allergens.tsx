@@ -1,17 +1,16 @@
 import { useLingui } from '@lingui/react/macro'
-import { useQuery } from '@tanstack/react-query'
 import { Navigate, useLocation } from 'react-router-dom'
 import { RequireAuth } from '@/components/auth/require-auth'
 import { StoreLayout } from '@/components/store-layout'
 import { Button } from '@/components/ui/button'
 import { getAllergenErrorStatus } from '@/features/allergens/application/error-status'
-import { listAllergensUseCase } from '@/features/allergens/list-allergens'
+import { useAllergens } from '@/features/allergens/hooks'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 
 function AllergensContent() {
   const { t, i18n } = useLingui()
   const { pathname, search } = useLocation()
-  const allergens = useQuery({ queryKey: ['allergens'], queryFn: ({ signal }) => listAllergensUseCase(signal), retry: false })
+  const allergens = useAllergens({ retry: false })
   if (getAllergenErrorStatus(allergens.error) === 401) {
     return <Navigate to={buildLinkWithRedirect('/login', pathname + search)} replace />
   }

@@ -1,22 +1,18 @@
 import { Dialog } from '@base-ui/react/dialog'
 import { useLingui } from '@lingui/react/macro'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Navigate, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { getProductErrorStatus } from '@/features/products/application/error-status'
 import { localizedName } from '@/lib/localized-name'
-import { archiveProductUseCase } from '@/features/products/catalog'
+import { useArchiveProduct } from '@/features/products/hooks'
 import type { Product } from '@/features/products/domain/product'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 
 export function ArchiveProductDialog({ product, onClose }: { product: Product; onClose: () => void }) {
   const { t, i18n } = useLingui()
   const location = useLocation()
-  const queryClient = useQueryClient()
-  const archive = useMutation({
-    mutationFn: () => archiveProductUseCase(product.id),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['products'] })
+  const archive = useArchiveProduct(product.id, {
+    onSuccess: () => {
       onClose()
     },
   })

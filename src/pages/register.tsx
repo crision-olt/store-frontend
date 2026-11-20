@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useLingui } from '@lingui/react/macro'
-import { useMutation } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useRevalidateOnLocale } from '@/hooks/use-revalidate-on-locale'
@@ -8,7 +7,7 @@ import { AuthCard } from '@/components/auth/auth-card'
 import { TextField } from '@/components/auth/text-field'
 import { Button } from '@/components/ui/button'
 import { FieldError, FieldGroup } from '@/components/ui/field'
-import { authUseCases } from '@/features/auth/auth'
+import { useRegister } from '@/features/auth/hooks'
 import { getRegisterSchema, type RegisterValues } from '@/lib/auth-schemas'
 import { getRedirectParam, buildLinkWithRedirect } from '@/lib/redirect'
 
@@ -18,7 +17,7 @@ export function RegisterPage() {
   const { i18n, t } = useLingui()
   const redirect = getRedirectParam(location)
   const schema = getRegisterSchema(i18n)
-  const registerMutation = useMutation({ mutationFn: authUseCases.registerUser })
+  const registerMutation = useRegister()
   const { control, handleSubmit, setError, trigger, formState } = useForm<RegisterValues>({
     resolver: zodResolver(schema),
     defaultValues: { email: '', password: '', confirmPassword: '' },

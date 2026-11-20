@@ -9,6 +9,7 @@ import { archiveProduct, createProduct, ProductsApiError, type Product } from '@
 import { CreateProductDialog } from '@/components/products/create-product-dialog'
 import { ProductsTable } from '@/components/products/products-table'
 import { defineBoundingClientRect, defineClientDimensions } from '@/test/dom'
+import { mutationKeys, queryKeys } from '@/lib/query-keys'
 
 defineBoundingClientRect()
 defineClientDimensions()
@@ -34,7 +35,7 @@ vi.mock('@/lib/products-api', async (importOriginal) => ({
   ]),
 }))
 
-const queryKey = ['products', { search: 'Existing', sortBy: 'price', sortOrder: 'desc' }] as const
+const queryKey = queryKeys.productList({ search: 'Existing', sortBy: 'price', sortOrder: 'desc' })
 const existingProduct: Product = {
   id: 8, name: 'Existing product', nameEs: 'Producto existente', sku: 'OLD-1', description: null,
   categoryId: 1, categoryName: 'Kitchen', categoryNameEs: 'Cocina', subcategoryId: null,
@@ -120,6 +121,9 @@ it('shows a pending product inside the table without changing the cache and keep
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   const table = screen.getByRole('table')
   const pendingRow = await within(table).findByRole('row', { name: /Blue Mug/ })
+  expect(client.getMutationCache().findAll({
+    mutationKey: mutationKeys.createProduct, exact: true, status: 'pending',
+  })).toHaveLength(1)
   expect(within(table).getAllByRole('row')[1]).toBe(pendingRow)
   expect(within(pendingRow).getByRole('status')).toHaveTextContent('Creating product…')
   expect(within(pendingRow).getByRole('cell', { name: 'MUG-1' })).toBeInTheDocument()
@@ -143,7 +147,7 @@ it('shows a pending product inside the table without changing the cache and keep
   expect(within(table).getByRole('button', { name: 'Edit product Blue Mug' })).toBeEnabled()
   expect(client.getQueryData(queryKey)).toEqual([existingProduct, savedProduct])
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-  expect(invalidate).toHaveBeenCalledWith({ queryKey: ['products'] })
+  expect(invalidate).toHaveBeenCalledWith({ queryKey: queryKeys.products })
   await waitFor(() => expect(trigger).toHaveFocus())
 })
 
@@ -175,7 +179,7 @@ it('clears incompatible subcategories, preserves errors for retry, and resets on
   expect(screen.getByLabelText('Price')).toHaveValue(9.99)
   expect(screen.getByRole('combobox', { name: 'Category' })).toHaveTextContent('Office')
   expect(client.getQueryData(queryKey)).toEqual([existingProduct])
-  expect(invalidate).toHaveBeenCalledWith({ queryKey: ['products'] })
+  expect(invalidate).toHaveBeenCalledWith({ queryKey: queryKeys.products })
   await user.click(screen.getByRole('button', { name: 'Cancel' }))
   await user.click(screen.getByRole('button', { name: 'Create product' }))
   expect(screen.getByLabelText('Name (English)')).toHaveValue('')
@@ -241,6 +245,12 @@ it('confirms archiving and removes the row only after the request and catalog re
   expect(archiveProduct).toHaveBeenCalledExactlyOnceWith(8)
   expect(within(dialog).getByRole('button', { name: 'Archiving…' })).toBeDisabled()
   expect(within(dialog).getByRole('button', { name: 'Cancel' })).toBeDisabled()
+  expect(client.getMutationCache().findAll({
+    mutationKey: mutationKeys.archiveProduct, status: 'pending',
+  })).toHaveLength(1)
+  expect(client.getMutationCache().findAll({
+    mutationKey: mutationKeys.createProduct, exact: true, status: 'pending',
+  })).toHaveLength(0)
   await user.keyboard('{Escape}')
   expect(dialog).toBeInTheDocument()
   expect(client.getQueryData(queryKey)).toEqual([existingProduct])

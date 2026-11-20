@@ -8,6 +8,7 @@ import type { ReactNode } from 'react'
 import '@/test/setup-dom'
 import { AppWrapper } from '@/test/utils'
 import { AllergensPage } from '@/pages/allergens'
+import { queryKeys } from '@/lib/query-keys'
 
 vi.mock('@/components/auth/require-auth', () => ({
   RequireAuth: ({ children }: { children: ReactNode }) => children,
@@ -28,9 +29,10 @@ test('retries a failed request and displays allergen names in the selected langu
       { id: 1, code: 'gluten', name: 'Cereals containing gluten', nameEs: 'Cereales que contienen gluten' },
     ]))
   vi.stubGlobal('fetch', fetchCatalog)
+  const client = new QueryClient()
   render(
     <AppWrapper>
-      <QueryClientProvider client={new QueryClient()}>
+      <QueryClientProvider client={client}>
         <MemoryRouter initialEntries={['/allergens']}>
           <AllergensPage />
         </MemoryRouter>
@@ -45,6 +47,7 @@ test('retries a failed request and displays allergen names in the selected langu
     ['https://api.example.test/allergens', expect.objectContaining({ credentials: 'include' })],
     ['https://api.example.test/allergens', expect.objectContaining({ credentials: 'include' })],
   ])
+  expect(client.getQueryCache().getAll().map(({ queryKey }) => queryKey)).toContainEqual(queryKeys.allergens)
   act(() => i18n.loadAndActivate({ locale: 'es', messages: {} }))
   expect(screen.getByRole('listitem').textContent).toContain('Cereales que contienen gluten')
 })

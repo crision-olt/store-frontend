@@ -8,6 +8,7 @@ import '@/test/setup-dom'
 import { AppWrapper } from '@/test/utils'
 import { listOffers, saveOffer } from '@/lib/offers-api'
 import { OffersPage } from '@/pages/offers'
+import { queryKeys } from '@/lib/query-keys'
 
 vi.mock('@/components/auth/require-auth', () => ({
   RequireAuth: ({ children }: { children: ReactNode }) => children,
@@ -36,9 +37,10 @@ test('creates a menu, then edits it into a promotion with a discounted total', a
   vi.mocked(listOffers).mockResolvedValueOnce([]).mockResolvedValueOnce([menu]).mockResolvedValue([promotion])
   vi.mocked(saveOffer).mockResolvedValueOnce(menu).mockResolvedValueOnce(promotion)
   const user = userEvent.setup()
+  const client = new QueryClient()
   render(
     <AppWrapper>
-      <QueryClientProvider client={new QueryClient()}>
+      <QueryClientProvider client={client}>
         <MemoryRouter initialEntries={['/offers']}><OffersPage /></MemoryRouter>
       </QueryClientProvider>
     </AppWrapper>,
@@ -66,6 +68,9 @@ test('creates a menu, then edits it into a promotion with a discounted total', a
     name: 'Lunch deal', nameEs: 'Oferta de almuerzo', kind: 'promotion', amount: 10, productIds: [1, 2],
   }, 1)
   await screen.findByText('Promotion · 10%')
+  expect(client.getQueryCache().getAll().map(({ queryKey }) => queryKey)).toEqual(
+    expect.arrayContaining([queryKeys.offers, queryKeys.offerCatalog]),
+  )
 })
 
 test('requires a valid minimum and saves any four of six different eligible coffees', async () => {

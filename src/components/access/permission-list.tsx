@@ -1,35 +1,24 @@
 import { useLingui } from '@lingui/react/macro'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState, type FormEvent } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { accessUseCases } from '@/features/access/access'
+import { useDeletePermission, useUpdatePermission } from '@/features/access/hooks'
 import type { Permission } from '@/features/access/domain/access'
 import { hasHttpStatus } from '@/features/access/application/http-error'
 
 function PermissionRow({ permission }: { permission: Permission }) {
   const { t } = useLingui()
-  const queryClient = useQueryClient()
   const [name, setName] = useState<string | null>(null)
-  const refresh = () => Promise.all([
-    queryClient.invalidateQueries({ queryKey: ['permissions'] }),
-    queryClient.invalidateQueries({ queryKey: ['roles'] }),
-  ])
-  const update = useMutation({
-    mutationFn: (value: string) => accessUseCases.updatePermission(permission.id, value),
-    onSuccess: async () => {
+  const update = useUpdatePermission({
+    onSuccess: () => {
       setName(null)
-      await refresh()
     },
   })
-  const remove = useMutation({
-    mutationFn: () => accessUseCases.deletePermission(permission.id),
-    onSuccess: refresh,
-  })
+  const remove = useDeletePermission()
   const error = update.error ?? remove.error
   const submit = (event: FormEvent) => {
     event.preventDefault()
-    if (name?.trim()) update.mutate(name.trim())
+    if (name?.trim()) update.mutate({ id: permission.id, name: name.trim() })
   }
 
   return (
@@ -44,7 +33,7 @@ function PermissionRow({ permission }: { permission: Permission }) {
             </Button>
             <Button type="button" variant="outline" size="sm" aria-label={t`Delete permission ${permission.name}`}
               disabled={remove.isPending}
-              onClick={() => { if (window.confirm(t`Delete permission ${permission.name}?`)) remove.mutate() }}>
+              onClick={() => { if (window.confirm(t`Delete permission ${permission.name}?`)) remove.mutate(permission.id) }}>
               {t`Delete`}
             </Button>
           </div>

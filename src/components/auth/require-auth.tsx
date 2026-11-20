@@ -1,22 +1,16 @@
-import { useQuery } from '@tanstack/react-query'
 import { useLingui } from '@lingui/react/macro'
 import type { ReactNode } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { authUseCases } from '@/features/auth/auth'
+import { useCurrentUser } from '@/features/auth/hooks'
 import { hasHttpStatus } from '@/features/auth/application/http-error'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 
 export function RequireAuth({ children }: { children: ReactNode }) {
   const { t } = useLingui()
   const location = useLocation()
-  const { isPending, error, refetch } = useQuery({
-    queryKey: ['current-user'],
-    queryFn: authUseCases.getCurrentUser,
-    retry: false,
-    staleTime: 60_000,
-  })
+  const { isPending, error, refetch } = useCurrentUser()
 
   if (hasHttpStatus(error, 401)) {
     return <Navigate to={buildLinkWithRedirect('/login', location.pathname + location.search)} replace />

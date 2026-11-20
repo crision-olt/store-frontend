@@ -1,5 +1,4 @@
 import { useLingui } from '@lingui/react/macro'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState, type FormEvent } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { RequireAuth } from '@/components/auth/require-auth'
@@ -10,9 +9,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import {
-  createCategoryUseCase, createSubcategoryUseCase, listCategoriesUseCase, listSubcategoriesUseCase,
-  updateCategoryUseCase, updateSubcategoryUseCase,
-} from '@/features/products/catalog'
+  useCategories, useCreateCategory, useCreateSubcategory, useSubcategories,
+  useUpdateCategory, useUpdateSubcategory,
+} from '@/features/products/hooks'
 import { getProductErrorStatus } from '@/features/products/application/error-status'
 import type { Category, Subcategory } from '@/features/products/domain/catalog-types'
 import { localizedName } from '@/lib/localized-name'
@@ -21,7 +20,6 @@ import { buildLinkWithRedirect } from '@/lib/redirect'
 function CategoriesContent() {
   const { t, i18n } = useLingui()
   const location = useLocation()
-  const queryClient = useQueryClient()
   const [categoryName, setCategoryName] = useState('')
   const [categoryNameEs, setCategoryNameEs] = useState('')
   const [subcategoryName, setSubcategoryName] = useState('')
@@ -33,40 +31,28 @@ function CategoriesContent() {
   const [editingSubcategory, setEditingSubcategory] = useState<Subcategory>()
   const [editingSubcategoryName, setEditingSubcategoryName] = useState('')
   const [editingSubcategoryNameEs, setEditingSubcategoryNameEs] = useState('')
-  const categories = useQuery({ queryKey: ['product-categories'], queryFn: listCategoriesUseCase, retry: false })
-  const subcategories = useQuery({ queryKey: ['product-subcategories'], queryFn: () => listSubcategoriesUseCase(), retry: false })
-  const categoryMutation = useMutation({
-    mutationFn: () => createCategoryUseCase({ name: categoryName.trim(), nameEs: categoryNameEs.trim() }),
-    onSuccess: async () => {
+  const categories = useCategories({ retry: false })
+  const subcategories = useSubcategories(undefined, { retry: false })
+  const categoryMutation = useCreateCategory({
+    onSuccess: () => {
       setCategoryName('')
       setCategoryNameEs('')
-      await queryClient.invalidateQueries({ queryKey: ['product-categories'] })
     },
   })
-  const subcategoryMutation = useMutation({
-    mutationFn: () => createSubcategoryUseCase({
-      name: subcategoryName.trim(), nameEs: subcategoryNameEs.trim(), categoryId: Number(categoryId),
-    }),
-    onSuccess: async () => {
+  const subcategoryMutation = useCreateSubcategory({
+    onSuccess: () => {
       setSubcategoryName('')
       setSubcategoryNameEs('')
-      await queryClient.invalidateQueries({ queryKey: ['product-subcategories'] })
     },
   })
-  const updateCategoryMutation = useMutation({
-    mutationFn: ({ id, name, nameEs }: { id: number; name: string; nameEs: string }) =>
-      updateCategoryUseCase(id, { name, nameEs }),
-    onSuccess: async () => {
+  const updateCategoryMutation = useUpdateCategory({
+    onSuccess: () => {
       setEditingCategory(undefined)
-      await queryClient.invalidateQueries({ queryKey: ['product-categories'] })
     },
   })
-  const updateSubcategoryMutation = useMutation({
-    mutationFn: (input: { id: number; name: string; nameEs: string }) =>
-      updateSubcategoryUseCase(input.id, input),
-    onSuccess: async () => {
+  const updateSubcategoryMutation = useUpdateSubcategory({
+    onSuccess: () => {
       setEditingSubcategory(undefined)
-      await queryClient.invalidateQueries({ queryKey: ['product-subcategories'] })
     },
   })
 
@@ -80,11 +66,17 @@ function CategoriesContent() {
 
   const submitCategory = (event: FormEvent) => {
     event.preventDefault()
-    if (categoryName.trim() && categoryNameEs.trim()) categoryMutation.mutate()
+    if (categoryName.trim() && categoryNameEs.trim()) {
+      categoryMutation.mutate({ name: categoryName.trim(), nameEs: categoryNameEs.trim() })
+    }
   }
   const submitSubcategory = (event: FormEvent) => {
     event.preventDefault()
-    if (subcategoryName.trim() && subcategoryNameEs.trim() && categoryId) subcategoryMutation.mutate()
+    if (subcategoryName.trim() && subcategoryNameEs.trim() && categoryId) {
+      subcategoryMutation.mutate({
+        name: subcategoryName.trim(), nameEs: subcategoryNameEs.trim(), categoryId: Number(categoryId),
+      })
+    }
   }
   const submitCategoryUpdate = (event: FormEvent) => {
     event.preventDefault()

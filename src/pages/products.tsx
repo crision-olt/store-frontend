@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro'
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { keepPreviousData } from '@tanstack/react-query'
 import type { ColumnFiltersState, SortingState } from '@tanstack/react-table'
 import { useCallback, useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
@@ -9,7 +9,7 @@ import { CreateProductDialog } from '@/components/products/create-product-dialog
 import { StoreLayout } from '@/components/store-layout'
 import { Button } from '@/components/ui/button'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
-import { listAllProductsUseCase, listCategoriesUseCase, listSubcategoriesUseCase } from '@/features/products/catalog'
+import { useCategories, useProducts, useSubcategories } from '@/features/products/hooks'
 import { getProductErrorStatus } from '@/features/products/application/error-status'
 import type { ProductsQuery, SortableColumn } from '@/features/products/domain/catalog-types'
 import {
@@ -37,23 +37,13 @@ function ProductsContent() {
     sortOrder: sort?.desc ? 'desc' : 'asc',
   }
 
-  const products = useQuery({
-    queryKey: ['products', query],
-    queryFn: ({ signal }) => listAllProductsUseCase(query, signal),
+  const products = useProducts(query, {
     placeholderData: keepPreviousData,
     retry: false,
     enabled: !hasInvalidPriceRange(appliedFilters),
   })
-  const categories = useQuery({
-    queryKey: ['product-categories'],
-    queryFn: listCategoriesUseCase,
-    retry: false,
-  })
-  const subcategories = useQuery({
-    queryKey: ['product-subcategories'],
-    queryFn: () => listSubcategoriesUseCase(),
-    retry: false,
-  })
+  const categories = useCategories({ retry: false })
+  const subcategories = useSubcategories(undefined, { retry: false })
   const clearSubcategoryFilter = useCallback(
     () =>
       setColumnFilters((current) =>

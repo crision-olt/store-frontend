@@ -1,7 +1,8 @@
 import { z } from 'zod'
 import { resolveServiceUrl } from '@/lib/http'
+import { queryKeys } from '@/lib/query-keys'
 
-export const zonesQueryKey = ['restaurant-zones'] as const
+export const zonesQueryKey = queryKeys.zones
 
 const zoneSchema = z.object({
   id: z.number().int().positive(),

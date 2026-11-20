@@ -1,5 +1,4 @@
 import { useLingui } from '@lingui/react/macro'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo, useState, type FormEvent } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { RequireAuth } from '@/components/auth/require-auth'
@@ -10,16 +9,14 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { calculateOfferPricing, isOfferAmountValid, isOfferMinimumValid } from '@/features/offers/domain/offer-pricing'
-import { listOffersUseCase, saveOfferUseCase } from '@/features/offers/operations'
+import { useOfferProductCatalog, useOffers, useSaveOffer } from '@/features/offers/hooks'
 import { getOfferErrorStatus } from '@/features/offers/application/error-status'
 import type { Offer, OfferInput } from '@/features/offers/domain/offer'
-import { listAllProductsUseCase } from '@/features/products/catalog'
 import { getProductErrorStatus } from '@/features/products/application/error-status'
 import type { Product } from '@/features/products/domain/product'
 import { localizedName } from '@/lib/localized-name'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 
-const key = ['offers'] as const
 const formatMoney = (locale: string) => new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' })
 
 function OfferForm({ offer, products, saving, error, onCancel, onSave }: {
@@ -180,15 +177,12 @@ function OfferForm({ offer, products, saving, error, onCancel, onSave }: {
 function OffersContent() {
   const { t, i18n } = useLingui()
   const location = useLocation()
-  const client = useQueryClient()
   const [editing, setEditing] = useState<Offer>()
   const [formVersion, setFormVersion] = useState(0)
-  const offers = useQuery({ queryKey: key, queryFn: ({ signal }) => listOffersUseCase(signal), retry: false })
-  const catalog = useQuery({ queryKey: ['offer-product-catalog'], queryFn: ({ signal }) => listAllProductsUseCase({}, signal), retry: false })
-  const save = useMutation({
-    mutationFn: (input: OfferInput) => saveOfferUseCase(input, editing?.id),
-    onSuccess: async () => {
-      await client.invalidateQueries({ queryKey: key })
+  const offers = useOffers({ retry: false })
+  const catalog = useOfferProductCatalog({ retry: false })
+  const save = useSaveOffer(editing?.id, {
+    onSuccess: () => {
       setEditing(undefined)
       setFormVersion((current) => current + 1)
     },

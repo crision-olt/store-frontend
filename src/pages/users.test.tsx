@@ -3,10 +3,12 @@ import '@/test/setup-dom'
 import { i18n } from '@lingui/core'
 import { I18nProvider } from '@lingui/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { render, screen, within } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
+import { queryKeys } from '@/lib/query-keys'
 import { defineBoundingClientRect, defineClientDimensions } from '@/test/dom'
+import { userUseCases } from '@/features/users/users'
 import { UsersPage } from './users'
 
 vi.mock('@/hooks/use-session-guard', () => ({ useSessionGuard: () => undefined }))
@@ -17,9 +19,9 @@ defineClientDimensions()
 function renderUsersPage() {
   i18n.loadAndActivate({ locale: 'en', messages: {} })
   const client = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity } } })
-  client.setQueryData(['current-user'], { id: 1, email: 'admin@example.com', created_at: '2026-01-01' })
-  client.setQueryData(['roles'], [{ id: 3, name: 'reader', permissions: [] }, { id: 4, name: 'manager', permissions: [] }])
-  client.setQueryData(['users'], [
+  client.setQueryData(queryKeys.currentUser, { id: 1, email: 'admin@example.com', created_at: '2026-01-01' })
+  client.setQueryData(queryKeys.roles, [{ id: 3, name: 'reader', permissions: [] }, { id: 4, name: 'manager', permissions: [] }])
+  client.setQueryData(queryKeys.users, [
     { id: 7, email: 'member@example.com', created_at: '2026-01-01T00:00:00.000Z', blocked: false, role: { id: 3, name: 'reader' } },
     { id: 8, email: 'fired@example.com', created_at: '2026-01-01T00:00:00.000Z', blocked: true, role: { id: 4, name: 'manager' } },
   ])
@@ -50,6 +52,32 @@ describe('users page', () => {
     expect(dialog.getByLabelText('Email')).toHaveValue('member@example.com')
     await user.click(dialog.getByRole('button', { name: 'Cancel' }))
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('updates the edited user with that user ID', async () => {
+    const user = userEvent.setup()
+    const savedUser = {
+      id: 7,
+      email: 'updated@example.com',
+      created_at: '2026-01-01T00:00:00.000Z',
+      blocked: false,
+      role: { id: 3, name: 'reader' },
+    }
+    const updateUser = vi.spyOn(userUseCases, 'updateUser').mockResolvedValue(savedUser)
+    const listUsers = vi.spyOn(userUseCases, 'listUsers').mockResolvedValue([savedUser])
+    renderUsersPage()
+
+    await user.click(screen.getByRole('button', { name: 'Edit user member@example.com' }))
+    const dialog = within(screen.getByRole('dialog', { name: 'Edit user' }))
+    await user.clear(dialog.getByLabelText('Email'))
+    await user.type(dialog.getByLabelText('Email'), 'updated@example.com')
+    await user.click(dialog.getByRole('button', { name: 'Save' }))
+
+    await waitFor(() => {
+      expect(updateUser).toHaveBeenCalledWith(7, { email: 'updated@example.com', roleId: 3 })
+    })
+    updateUser.mockRestore()
+    listUsers.mockRestore()
   })
 
   it('configures visible columns while keeping email and actions available', async () => {

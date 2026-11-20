@@ -1,11 +1,10 @@
 import { useLingui } from '@lingui/react/macro'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState, type FormEvent } from 'react'
 import { PermissionMultiSelect } from '@/components/access/permission-multiselect'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { accessUseCases } from '@/features/access/access'
+import { useDeleteRole, useUpdateRole } from '@/features/access/hooks'
 import type { Permission, Role } from '@/features/access/domain/access'
 import { hasHttpStatus } from '@/features/access/application/http-error'
 
@@ -13,24 +12,17 @@ type Draft = { name: string; permissionIds: number[] }
 
 function RoleRow({ role, permissions }: { role: Role; permissions: Permission[] }) {
   const { t } = useLingui()
-  const queryClient = useQueryClient()
   const [draft, setDraft] = useState<Draft | null>(null)
-  const refresh = () => Promise.all([
-    queryClient.invalidateQueries({ queryKey: ['roles'] }),
-    queryClient.invalidateQueries({ queryKey: ['users'] }),
-  ])
-  const update = useMutation({
-    mutationFn: (value: Draft) => accessUseCases.updateRole(role.id, value.name, value.permissionIds),
-    onSuccess: async () => {
+  const update = useUpdateRole({
+    onSuccess: () => {
       setDraft(null)
-      await refresh()
     },
   })
-  const remove = useMutation({ mutationFn: () => accessUseCases.deleteRole(role.id), onSuccess: refresh })
+  const remove = useDeleteRole()
   const error = update.error ?? remove.error
   const submit = (event: FormEvent) => {
     event.preventDefault()
-    if (draft?.name.trim()) update.mutate({ ...draft, name: draft.name.trim() })
+    if (draft?.name.trim()) update.mutate({ id: role.id, ...draft, name: draft.name.trim() })
   }
 
   return (
@@ -50,7 +42,7 @@ function RoleRow({ role, permissions }: { role: Role; permissions: Permission[] 
               </Button>
               <Button type="button" variant="outline" size="sm" aria-label={t`Delete role ${role.name}`}
                 disabled={remove.isPending}
-                onClick={() => { if (window.confirm(t`Delete role ${role.name}?`)) remove.mutate() }}>
+                onClick={() => { if (window.confirm(t`Delete role ${role.name}?`)) remove.mutate(role.id) }}>
                 {t`Delete`}
               </Button>
             </div>

@@ -1,5 +1,4 @@
 import { useLingui } from '@lingui/react/macro'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useLocation } from 'react-router-dom'
 import { RequireAuth } from '@/components/auth/require-auth'
@@ -11,12 +10,12 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { isDiscountAmountValid } from '@/features/discounts/domain/discount-rules'
 import { getDiscountErrorStatus } from '@/features/discounts/application/error-status'
-import { listDiscountsUseCase, listRolesUseCase, saveDiscountUseCase } from '@/features/discounts/operations'
+import { useDiscounts, useSaveDiscount } from '@/features/discounts/hooks'
 import type { Discount, DiscountInput, DiscountRole } from '@/features/discounts/domain/discount'
+import { useRoles } from '@/features/access/hooks'
 import { localizedName } from '@/lib/localized-name'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 
-const key = ['discounts'] as const
 const formatMoney = (locale: string) => new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' })
 
 function DiscountForm({ discount, roles, saving, error, onCancel, onSave }: {
@@ -130,15 +129,12 @@ function DiscountForm({ discount, roles, saving, error, onCancel, onSave }: {
 function DiscountsContent() {
   const { t, i18n } = useLingui()
   const location = useLocation()
-  const client = useQueryClient()
   const [editing, setEditing] = useState<Discount>()
   const [formVersion, setFormVersion] = useState(0)
-  const discounts = useQuery({ queryKey: key, queryFn: ({ signal }) => listDiscountsUseCase(signal), retry: false })
-  const roles = useQuery({ queryKey: ['roles'], queryFn: listRolesUseCase, retry: false })
-  const save = useMutation({
-    mutationFn: (input: DiscountInput) => saveDiscountUseCase(input, editing?.id),
-    onSuccess: async () => {
-      await client.invalidateQueries({ queryKey: key })
+  const discounts = useDiscounts({ retry: false })
+  const roles = useRoles({ retry: false })
+  const save = useSaveDiscount(editing?.id, {
+    onSuccess: () => {
       setEditing(undefined)
       setFormVersion((current) => current + 1)
     },

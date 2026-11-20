@@ -1,5 +1,4 @@
 import { useLingui } from '@lingui/react/macro'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState, type FormEvent } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { PermissionMultiSelect } from '@/components/access/permission-multiselect'
@@ -11,32 +10,27 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { accessUseCases } from '@/features/access/access'
+import { useCreatePermission, useCreateRole, usePermissions, useRoles } from '@/features/access/hooks'
 import { hasHttpStatus } from '@/features/access/application/http-error'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 
 function AccessContent() {
   const { t } = useLingui()
   const location = useLocation()
-  const queryClient = useQueryClient()
   const [permissionName, setPermissionName] = useState('')
   const [roleName, setRoleName] = useState('')
   const [permissionIds, setPermissionIds] = useState<number[]>([])
-  const permissions = useQuery({ queryKey: ['permissions'], queryFn: accessUseCases.listPermissions, retry: false })
-  const roles = useQuery({ queryKey: ['roles'], queryFn: accessUseCases.listRoles, retry: false })
-  const permissionMutation = useMutation({
-    mutationFn: accessUseCases.createPermission,
-    onSuccess: async () => {
+  const permissions = usePermissions()
+  const roles = useRoles()
+  const permissionMutation = useCreatePermission({
+    onSuccess: () => {
       setPermissionName('')
-      await queryClient.invalidateQueries({ queryKey: ['permissions'] })
     },
   })
-  const roleMutation = useMutation({
-    mutationFn: ({ name, ids }: { name: string; ids: number[] }) => accessUseCases.createRole(name, ids),
-    onSuccess: async () => {
+  const roleMutation = useCreateRole({
+    onSuccess: () => {
       setRoleName('')
       setPermissionIds([])
-      await queryClient.invalidateQueries({ queryKey: ['roles'] })
     },
   })
 
@@ -52,7 +46,7 @@ function AccessContent() {
   const submitRole = (event: FormEvent) => {
     event.preventDefault()
     if (roleName.trim() && permissions.isSuccess) {
-      roleMutation.mutate({ name: roleName.trim(), ids: permissionIds })
+      roleMutation.mutate({ name: roleName.trim(), permissionIds })
     }
   }
 

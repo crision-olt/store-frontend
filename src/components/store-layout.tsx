@@ -1,12 +1,12 @@
 import { useLingui } from '@lingui/react/macro'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { Boxes, FolderTree, Layers, LogOut, Percent, ShieldCheck, Store, Table, Tags, Users, Wheat } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { useSessionGuard } from '@/hooks/use-session-guard'
 import { Button } from '@/components/ui/button'
-import { authUseCases } from '@/features/auth/auth'
+import { useLogout } from '@/features/auth/hooks'
 import { cn } from '@/lib/utils'
 
 export function StoreLayout({ children }: { children: ReactNode }) {
@@ -14,8 +14,7 @@ export function StoreLayout({ children }: { children: ReactNode }) {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   useSessionGuard()
-  const logoutMutation = useMutation({
-    mutationFn: authUseCases.logout,
+  const logoutMutation = useLogout({
     onSuccess: () => {
       queryClient.clear()
       navigate('/login')

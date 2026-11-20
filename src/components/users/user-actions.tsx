@@ -1,33 +1,27 @@
 import { Dialog } from '@base-ui/react/dialog'
 import { useLingui } from '@lingui/react/macro'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { UserForm } from '@/components/users/user-form'
 import { Button } from '@/components/ui/button'
-import { userUseCases } from '@/features/users/users'
+import { useBlockUser, useUnblockUser, useUpdateUser } from '@/features/users/hooks'
 import type { User } from '@/features/users/domain/user'
 import type { Role } from '@/features/access/domain/access'
 import { hasHttpStatus } from '@/features/users/application/http-error'
 
 export function UserActions({ user, roles }: { user: User; roles: Role[] }) {
   const { t } = useLingui()
-  const queryClient = useQueryClient()
   const [editing, setEditing] = useState(false)
-  const update = useMutation({
-    mutationFn: (input: Parameters<typeof userUseCases.updateUser>[1]) => userUseCases.updateUser(user.id, input),
-    onSuccess: async () => {
+  const update = useUpdateUser({
+    onSuccess: () => {
       setEditing(false)
-      await queryClient.invalidateQueries({ queryKey: ['users'] })
     },
   })
-
-  const toggleBlock = useMutation({
-    mutationFn: () => (user.blocked ? userUseCases.unblockUser(user.id) : userUseCases.blockUser(user.id)),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['users'] }),
-  })
+  const block = useBlockUser()
+  const unblock = useUnblockUser()
+  const toggleBlock = user.blocked ? unblock : block
   const confirmBlock = () => {
     if (user.blocked || window.confirm(t`Block ${user.email}? Their session will be closed immediately and they will not be able to sign in.`)) {
-      toggleBlock.mutate()
+      toggleBlock.mutate(user.id)
     }
   }
 
@@ -36,7 +30,7 @@ export function UserActions({ user, roles }: { user: User; roles: Role[] }) {
       <div className="flex justify-end gap-2">
         <Dialog.Root open={editing} onOpenChange={(open) => {
           if (update.isPending) return
-          if (open) { update.reset(); toggleBlock.reset() }
+          if (open) { update.reset(); block.reset(); unblock.reset() }
           setEditing(open)
         }}>
           <Dialog.Trigger render={<Button type="button" variant="outline" size="sm" />}
@@ -49,7 +43,7 @@ export function UserActions({ user, roles }: { user: User; roles: Role[] }) {
               <Dialog.Title className="text-lg font-semibold">{t`Edit user`}</Dialog.Title>
               <UserForm idPrefix={`user-${user.id}`} roles={roles} initial={{ email: user.email, roleId: user.role.id }}
                 passwordRequired={false} submitLabel={t`Save`} pending={update.isPending} error={update.error}
-                onSubmit={(input) => update.mutate(input)} onCancel={() => setEditing(false)} />
+                onSubmit={(input) => update.mutate({ id: user.id, input })} onCancel={() => setEditing(false)} />
             </Dialog.Popup>
           </Dialog.Portal>
         </Dialog.Root>

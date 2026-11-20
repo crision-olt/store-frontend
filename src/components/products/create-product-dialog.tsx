@@ -1,6 +1,5 @@
 import { Dialog } from '@base-ui/react/dialog'
 import { useLingui } from '@lingui/react/macro'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { PlusIcon } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
@@ -9,17 +8,14 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { getAllergenErrorStatus } from '@/features/allergens/application/error-status'
-import { listAllergensUseCase } from '@/features/allergens/list-allergens'
+import { useAllergens } from '@/features/allergens/hooks'
 import type { Allergen } from '@/features/allergens/domain/allergen'
 import { getProductErrorStatus } from '@/features/products/application/error-status'
-import {
-  listCategoriesUseCase, listSubcategoriesUseCase, updateProductUseCase,
-} from '@/features/products/catalog'
+import { useCategories, useSaveProduct, useSubcategories } from '@/features/products/hooks'
 import type { Category, Subcategory } from '@/features/products/domain/catalog-types'
 import type { Product, ProductInput } from '@/features/products/domain/product'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 import { localizedName } from '@/lib/localized-name'
-import { createProductUseCase } from '@/features/products/create-product'
 
 function ProductForm({ categories, subcategories, allergens, initial, editing, pending, error, onSubmit }: {
   categories: Category[]
@@ -164,14 +160,11 @@ function ProductForm({ categories, subcategories, allergens, initial, editing, p
 function ProductDialog({ product, onClose }: { product?: Product; onClose?: () => void }) {
   const { t } = useLingui()
   const [open, setOpen] = useState(product !== undefined)
-  const queryClient = useQueryClient()
   const location = useLocation()
-  const categories = useQuery({ queryKey: ['product-categories'], queryFn: listCategoriesUseCase, enabled: open, retry: false })
-  const subcategories = useQuery({ queryKey: ['product-subcategories'], queryFn: () => listSubcategoriesUseCase(), enabled: open, retry: false })
-  const allergens = useQuery({ queryKey: ['allergens'], queryFn: ({ signal }) => listAllergensUseCase(signal), enabled: open, retry: false })
-  const save = useMutation({
-    mutationKey: [product ? 'update-product' : 'create-product'],
-    mutationFn: (input: ProductInput) => product ? updateProductUseCase(product.id, input) : createProductUseCase(input),
+  const categories = useCategories({ enabled: open, retry: false })
+  const subcategories = useSubcategories(undefined, { enabled: open, retry: false })
+  const allergens = useAllergens({ enabled: open, retry: false })
+  const save = useSaveProduct(product?.id, {
     onMutate: () => { if (!product) setOpen(false) },
     onSuccess: () => {
       if (product) {
@@ -180,7 +173,6 @@ function ProductDialog({ product, onClose }: { product?: Product; onClose?: () =
       }
     },
     onError: () => setOpen(true),
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ['products'] }),
   })
 
   if ([categories.error, subcategories.error, allergens.error, save.error].some((error) =>

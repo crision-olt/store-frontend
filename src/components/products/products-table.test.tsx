@@ -10,7 +10,7 @@ import { MemoryRouter } from 'react-router-dom'
 
 import { useTable, type ColumnFiltersState, type SortingState, type Updater } from '@tanstack/react-table'
 import type { Category, Product, Subcategory } from '@/lib/products-api'
-import { listAllProducts, ProductsApiError, updateProduct } from '@/lib/products-api'
+import { archiveProduct, listAllProducts, ProductsApiError, updateProduct } from '@/lib/products-api'
 import { defineBoundingClientRect, defineClientDimensions } from '@/test/dom'
 import { AppWrapper } from '@/test/utils'
 import { ProductsTable } from '@/components/products/products-table'
@@ -19,6 +19,7 @@ import { DownloadProductsButton } from '@/components/products/download-products-
 import { useProductColumns } from '@/components/products/products-table-columns'
 import { tableFeatureSet } from '@/components/table/features'
 import { ProductsPage } from '@/pages/products'
+import { queryKeys } from '@/lib/query-keys'
 
 vi.mock('@/components/auth/require-auth', () => ({
   RequireAuth: ({ children }: { children: ReactNode }) => children,
@@ -36,6 +37,7 @@ vi.mock('@/lib/products-api', async (importOriginal) => ({
   ...await importOriginal<typeof import('@/lib/products-api')>(),
   listCategories: vi.fn(async () => categories),
   listSubcategories: vi.fn(async () => subcategories),
+  archiveProduct: vi.fn(),
   updateProduct: vi.fn(),
   listAllProducts: vi.fn(),
 }))
@@ -112,6 +114,7 @@ const renderProductsTable = (props: Partial<typeof defaultProps> = {}, content?:
 describe('ProductsTable', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.mocked(archiveProduct).mockReset()
     vi.mocked(updateProduct).mockReset()
     vi.mocked(downloadExcel).mockReset()
     vi.mocked(listAllProducts).mockReset()
@@ -342,7 +345,7 @@ describe('ProductsTable', () => {
     expect(screen.getByRole('dialog', { name: 'Edit product' })).toBeInTheDocument()
     finish()
     await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Edit product' })).not.toBeInTheDocument())
-    expect(invalidate).toHaveBeenCalledWith({ queryKey: ['products'] })
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: queryKeys.products })
   })
 
   test.each([
@@ -582,8 +585,20 @@ describe('ProductsTable', () => {
 
   test('shows the shared loading state', () => {
     renderProductsTable({ isLoading: true })
+    expect(screen.getByTestId('table-loading')).toBeInTheDocument()
+  })
 
-    expect(screen.getByRole('status', { name: 'Loading' })).toBeInTheDocument()
+  test('keeps the loading state while an archive mutation is pending', async () => {
+    let finish!: () => void
+    vi.mocked(archiveProduct).mockImplementation(() => new Promise((resolve) => { finish = resolve }))
+    const user = userEvent.setup()
+    renderProductsTable({ isLoading: true })
+
+    await user.click(screen.getByRole('button', { name: 'Archive product Demo product' }))
+    await user.click(screen.getByRole('button', { name: 'Archive' }))
+
+    expect(screen.getByTestId('table-loading')).toBeInTheDocument()
+    await act(async () => finish())
   })
 
   test('shows the empty state below the sortable column headers', () => {

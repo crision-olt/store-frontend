@@ -1,5 +1,4 @@
 import { useLingui } from '@lingui/react/macro'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState, type FormEvent } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { RequireAuth } from '@/components/auth/require-auth'
@@ -8,7 +7,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { restaurantUseCases, tablesQueryKey, zonesQueryKey, type RestaurantTable, type TableInput } from '@/features/restaurant/restaurant'
+import type { RestaurantTable, TableInput } from '@/features/restaurant/domain/restaurant'
+import { useResizeTables, useSaveTable, useTables } from '@/features/restaurant/hooks'
 import { hasHttpStatus } from '@/features/restaurant/application/http-error'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 
@@ -58,25 +58,13 @@ function TableForm({ table, busy, onSave }: {
 function TablesContent() {
   const { t } = useLingui()
   const location = useLocation()
-  const client = useQueryClient()
   const [count, setCount] = useState('')
   const [confirmation, setConfirmation] = useState<{ count: number, expectedCount: number }>()
-  const tables = useQuery({ queryKey: tablesQueryKey, queryFn: ({ signal }) => restaurantUseCases.listTables(signal), retry: false })
-  const resize = useMutation({
-    mutationFn: ({ count, expectedCount }: { count: number, expectedCount: number }) => restaurantUseCases.resizeTables(count, expectedCount),
-    onSuccess: (data) => {
-      client.setQueryData(tablesQueryKey, data)
-      void client.invalidateQueries({ queryKey: zonesQueryKey })
-      setConfirmation(undefined)
-    },
+  const tables = useTables()
+  const resize = useResizeTables({
+    onSuccess: () => setConfirmation(undefined),
   })
-  const save = useMutation({
-    mutationFn: ({ number, input }: { number: number, input: TableInput }) => restaurantUseCases.saveTable(number, input),
-    onSuccess: (updated) => {
-      client.setQueryData<RestaurantTable[]>(tablesQueryKey, (previous) =>
-        previous?.map((table) => table.number === updated.number ? updated : table))
-    },
-  })
+  const save = useSaveTable()
   if ([tables.error, resize.error, save.error].some((error) => hasHttpStatus(error, 401))) {
     return <Navigate to={buildLinkWithRedirect('/login', location.pathname + location.search)} replace />
   }

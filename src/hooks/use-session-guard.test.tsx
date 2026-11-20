@@ -105,10 +105,27 @@ it('does not redirect for other request failures', async () => {
 
 it('preserves the blocked-account sign-out flow', async () => {
   const client = setup()
+  const clear = vi.spyOn(client, 'clear')
   act(() => vi.mocked(watchSession).mock.calls[0][0]())
   expect(await screen.findByText('Account blocked')).toBeInTheDocument()
   expect(logout).toHaveBeenCalledOnce()
   expect(client.getQueryData(['private-data'])).toBeUndefined()
+  expect(vi.mocked(logout).mock.invocationCallOrder[0]).toBeLessThan(clear.mock.invocationCallOrder[0])
+})
+
+it('still clears the session and reports a failed blocked-account logout', async () => {
+  const failure = new Error('Logout unavailable')
+  vi.mocked(logout).mockRejectedValueOnce(failure)
+  const error = vi.spyOn(console, 'error').mockImplementation(() => {})
+  try {
+    const client = setup()
+    act(() => vi.mocked(watchSession).mock.calls[0][0]())
+    expect(await screen.findByText('Account blocked')).toBeInTheDocument()
+    expect(client.getQueryData(['private-data'])).toBeUndefined()
+    await waitFor(() => expect(error).toHaveBeenCalledWith('Blocked session logout failed', failure))
+  } finally {
+    error.mockRestore()
+  }
 })
 
 it('keeps a late mutation from repopulating the next session cache', async () => {

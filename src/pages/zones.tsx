@@ -1,5 +1,4 @@
 import { useLingui } from '@lingui/react/macro'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Accessibility, Sun } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
@@ -10,7 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { restaurantUseCases, tablesQueryKey, zonesQueryKey, type RestaurantTable, type Zone, type ZoneInput } from '@/features/restaurant/restaurant'
+import type { RestaurantTable, Zone, ZoneInput } from '@/features/restaurant/domain/restaurant'
+import { useSaveZone, useTables, useZones } from '@/features/restaurant/hooks'
 import { hasHttpStatus } from '@/features/restaurant/application/http-error'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 
@@ -117,33 +117,15 @@ function ZoneForm({ zone, currentBaseName, tables, busy, onSave, onCancel }: {
 function ZonesContent() {
   const { t } = useLingui()
   const location = useLocation()
-  const client = useQueryClient()
   const [editor, setEditor] = useState<number | 'new'>()
-  const zones = useQuery({ queryKey: zonesQueryKey, queryFn: ({ signal }) => restaurantUseCases.listZones(signal), retry: false })
-  const tables = useQuery({ queryKey: tablesQueryKey, queryFn: ({ signal }) => restaurantUseCases.listTables(signal), retry: false })
+  const zones = useZones()
+  const tables = useTables()
   const currentBase = zones.data?.find((zone) => zone.isBase)
   const tablesByNumber = useMemo(() => new Map(tables.data?.map((table) => [table.number, table])), [tables.data])
   const assignedElsewhere = useMemo(() => new Set(zones.data?.flatMap((zone) =>
     zone.id === editor ? [] : zone.tableNumbers)), [zones.data, editor])
-  const save = useMutation({
-    mutationFn: (input: ZoneInput) => restaurantUseCases.saveZone(typeof editor === 'number' ? editor : undefined, input),
-    onSuccess: async (saved) => {
-      await client.cancelQueries({ queryKey: zonesQueryKey })
-      client.setQueryData<Zone[]>(zonesQueryKey, (previous = []) => {
-        const updated = previous.map((zone) => {
-          if (zone.id === saved.id) return saved
-          return saved.isBase && zone.isBase ? { ...zone, isBase: false } : zone
-        })
-        return previous.some((zone) => zone.id === saved.id) ? updated : [...updated, saved]
-      })
-      setEditor(undefined)
-      void client.invalidateQueries({ queryKey: zonesQueryKey })
-    },
-    onError: async (error) => {
-      if (hasHttpStatus(error, 409) || hasHttpStatus(error, 400)) {
-        await Promise.all([zones.refetch(), tables.refetch()])
-      }
-    },
+  const save = useSaveZone(typeof editor === 'number' ? editor : undefined, {
+    onSuccess: () => setEditor(undefined),
   })
   if ([zones.error, tables.error, save.error].some((error) => hasHttpStatus(error, 401))) {
     return <Navigate to={buildLinkWithRedirect('/login', location.pathname + location.search)} replace />

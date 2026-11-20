@@ -10,6 +10,7 @@ import {
   createCategory, createSubcategory, listCategories, listSubcategories,
 } from '@/lib/products-api'
 import { CategoriesPage } from '@/pages/categories'
+import { queryKeys } from '@/lib/query-keys'
 
 vi.mock('@/components/auth/require-auth', () => ({
   RequireAuth: ({ children }: { children: ReactNode }) => children,
@@ -27,9 +28,10 @@ test('creates categories and subcategories with both language names', async () =
   vi.mocked(createCategory).mockResolvedValue({ id: 2, name: 'Office', nameEs: 'Oficina' })
   vi.mocked(createSubcategory).mockResolvedValue({ id: 3, name: 'Mugs', nameEs: 'Tazas', categoryId: 1 })
   const user = userEvent.setup()
+  const client = new QueryClient()
   render(
     <AppWrapper>
-      <QueryClientProvider client={new QueryClient()}>
+      <QueryClientProvider client={client}>
         <MemoryRouter initialEntries={['/categories']}><CategoriesPage /></MemoryRouter>
       </QueryClientProvider>
     </AppWrapper>,
@@ -48,4 +50,7 @@ test('creates categories and subcategories with both language names', async () =
   expect(createSubcategory).toHaveBeenCalledWith({ name: 'Mugs', nameEs: 'Tazas', categoryId: 1 })
   expect(listCategories).toHaveBeenCalled()
   expect(listSubcategories).toHaveBeenCalled()
+  expect(client.getQueryCache().getAll().map(({ queryKey }) => queryKey)).toEqual(
+    expect.arrayContaining([queryKeys.categories, queryKeys.subcategories]),
+  )
 })

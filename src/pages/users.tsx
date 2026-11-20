@@ -1,5 +1,4 @@
 import { useLingui } from '@lingui/react/macro'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { RequireAuth } from '@/components/auth/require-auth'
@@ -8,22 +7,20 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { UserForm } from '@/components/users/user-form'
 import { UsersTable } from '@/components/users/users-table'
-import { userUseCases } from '@/features/users/users'
+import { useCreateUser, useUsers } from '@/features/users/hooks'
+import { useRoles } from '@/features/access/hooks'
 import { hasHttpStatus } from '@/features/users/application/http-error'
 import { buildLinkWithRedirect } from '@/lib/redirect'
 
 function UsersContent() {
   const { t } = useLingui()
   const location = useLocation()
-  const queryClient = useQueryClient()
   const [formKey, setFormKey] = useState(0)
-  const users = useQuery({ queryKey: ['users'], queryFn: userUseCases.listUsers, retry: false })
-  const roles = useQuery({ queryKey: ['roles'], queryFn: userUseCases.listRoles, retry: false })
-  const create = useMutation({
-    mutationFn: userUseCases.createUser,
-    onSuccess: async () => {
+  const users = useUsers()
+  const roles = useRoles()
+  const create = useCreateUser({
+    onSuccess: () => {
       setFormKey((key) => key + 1)
-      await queryClient.invalidateQueries({ queryKey: ['users'] })
     },
   })
 

@@ -9,6 +9,7 @@ details can change independently.
 | Layer | Location | Responsibility |
 | --- | --- | --- |
 | Presentation | `src/pages`, `src/components` | Render views, collect input, and show loading, success, and error states. |
+| Server-state hooks | `src/features/<feature>/hooks.ts` | Bind endpoints to TanStack Query and own cache keys, invalidation, and cache updates. |
 | Application | `src/features/<feature>/application` | Expose use cases and feature workflows to the UI. |
 | Domain | `src/features/<feature>/domain` | Define feature types, rules, and repository contracts without React or network dependencies. |
 | Infrastructure | `src/features/<feature>/infrastructure`, `src/lib/*-api.ts` | Implement repository contracts and handle HTTP, response validation, and service errors. |
@@ -18,12 +19,12 @@ details can change independently.
 The dependency direction is inward:
 
 ```text
-pages and components → feature application → domain contracts
+pages and components → feature hooks → feature application → domain contracts
 infrastructure adapters → domain contracts
 feature composition → application + infrastructure
 ```
 
-Views should call a feature's application operations, not its transport API. Use cases
+Views should use endpoint hooks, not construct queries or call transport APIs. Use cases
 depend on repository interfaces; adapters implement those interfaces and reuse the
 existing API modules instead of duplicating requests or validation. Keep domain rules
 independent of React, TanStack Query, and `fetch`. Add an interface when it protects a
@@ -33,6 +34,22 @@ For example, product creation flows from the dialog through a create-product use
 and repository contract to an API adapter. The adapter delegates to the existing
 products API, which owns HTTP and response validation. The view remains responsible
 for form interaction and rendering the result.
+
+### Endpoint hooks and cache keys
+
+Use the feature's query and mutation hooks for endpoint calls. Pass UI callbacks or
+query options such as `enabled`; keep cache invalidation inside the hooks. Shared
+resources, such as roles used by Users and Access, use the same hook and cache entry.
+
+`src/lib/query-keys.ts` defines the resource identifiers and all query/mutation keys.
+Keys start with the resource and HTTP method, for example `[Service.Users, HttpMethod.GET]`.
+Filtered product keys also include their parameters; mutations use `mutationKey`
+with their actual write method. Invalidate the centralized resource query prefix
+when all filtered variants need refreshing.
+
+`Service` and `HttpMethod` are typed, enum-like constant objects because the project enables
+TypeScript's `erasableSyntaxOnly`; they provide named identifiers without requiring
+runtime enum compilation or changing the compiler configuration.
 
 ## Local development
 

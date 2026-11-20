@@ -8,6 +8,7 @@ import '@/test/setup-dom'
 import { AppWrapper } from '@/test/utils'
 import { listDiscounts, saveDiscount } from '@/lib/discounts-api'
 import { DiscountsPage } from '@/pages/discounts'
+import { queryKeys } from '@/lib/query-keys'
 
 vi.mock('@/components/auth/require-auth', () => ({
   RequireAuth: ({ children }: { children: ReactNode }) => children,
@@ -34,9 +35,10 @@ test('creates an invoice-wide discount and requires an eligible role', async () 
   vi.mocked(listDiscounts).mockReset().mockResolvedValue([])
   vi.mocked(saveDiscount).mockReset().mockResolvedValue(discount)
   const user = userEvent.setup()
+  const client = new QueryClient()
   render(
     <AppWrapper>
-      <QueryClientProvider client={new QueryClient()}>
+      <QueryClientProvider client={client}>
         <MemoryRouter initialEntries={['/discounts']}><DiscountsPage /></MemoryRouter>
       </QueryClientProvider>
     </AppWrapper>,
@@ -58,6 +60,9 @@ test('creates an invoice-wide discount and requires an eligible role', async () 
     amount: 10,
     roleIds: [2],
   }, undefined)
+  expect(client.getQueryCache().getAll().map(({ queryKey }) => queryKey)).toEqual(
+    expect.arrayContaining([queryKeys.discounts, queryKeys.roles]),
+  )
 })
 
 test('creates a fixed-amount invoice discount', async () => {
